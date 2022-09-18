@@ -1,0 +1,48 @@
+[tool.poetry]
+name = "feature-reviser"
+version = "0.1"
+description = "TabTransformer ready for Scikit learn."
+authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
+license = "MIT"
+homepage = "https://github.com/chrislemke/feature-reviser"
+repository = "https://github.com/chrislemke/feature-reviser"
+packages = [{ include = "feature_reviser" }]
+
+[tool.poetry.dependencies]
+python = ">=3.8,<3.11"
+scikit-learn = "^1.1.2"
+joblib = "^1.2.0"
+
+
+[tool.poetry.dev-dependencies]
+black = {extras = ["jupyter"], version = "^22.3.0"}
+isort = "^5.10.1"
+pylint = "^2.13.9"
+mypy = "0.942"
+pre-commit = "^2.19.0"
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.isort]
+profile = "black"
+
+[tool.mypy]
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+ignore_missing_imports = true
+
+[tool.pylint.'MESSAGES CONTROL']
+max-line-length = 88
+disable = [
+    "C0301",
+    "C0114",
+    "C0103",
+    "E0401",
+    "R0902",
+    "R0913",
+    "R0914",
+    "R0915",
+]
