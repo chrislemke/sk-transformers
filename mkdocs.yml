@@ -58,3 +58,5 @@ plugins:
 nav:
   - Home: index.md
   - Reviser: reviser-reference.md
+  - Selector: selector-reference.md
+  - Utils: utils-reference.md

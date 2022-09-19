@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from typing import List, Tuple, Union
+from typing import List, Tuple
 
-import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.feature_selection import chi2, f_classif, mutual_info_classif
@@ -11,8 +10,8 @@ from feature_reviser.utils import check_data
 
 def revise_classifier(
     clf: BaseEstimator,
-    df: pd.DataFrame,
-    y: Union[pd.Series, np.ndarray],
+    X: pd.DataFrame,
+    y: pd.Series,
     cat_features: List[str],
     num_features: List[str],
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
@@ -23,7 +22,7 @@ def revise_classifier(
     Args:
         clf (BaseEstimator): The classifier used for examine the features.
         df (pandas.DataFrame): The dataframe containing the categorical and numerical features.
-        y (Union[pandas.Series, numpy.ndarray]): The target variable.
+        y (pandas.Series): The target variable.
         cat_features (List[str]): The list of categorical features.
         num_features (List[str]): The list of numerical features.
 
@@ -34,17 +33,18 @@ def revise_classifier(
         Tuple[pandas.DataFrame, pandas.DataFrame]: Tuple containing the result dataframes for categorical and numerical features.
     """
 
-    check_data(df, y)
+    check_data(X, y)
 
-    cat_df = df[cat_features]
-    num_df = df[num_features]
+    cat_df = X[cat_features]
+    num_df = X[num_features]
 
     if not hasattr(clf, "fit"):
-        raise AttributeError("Classifier does not have fit method.")
+        raise AttributeError("Classifier does not have fit method!")
 
     clf.fit(cat_df, y)
+
     if not hasattr(clf, "feature_importances_"):
-        raise AttributeError("Classifier does not have feature_importances_ attribute.")
+        raise AttributeError("Classifier does not have feature_importances_ attribute!")
 
     cat_feature_importances = clf.feature_importances_
     clf.fit(num_df, y)
