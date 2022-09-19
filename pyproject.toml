@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "feature-reviser"
 version = "0.1"
-description = "TabTransformer ready for Scikit learn."
+description = "Find the right features of your dataset for the right model."
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
 homepage = "https://github.com/chrislemke/feature-reviser"
@@ -9,9 +9,11 @@ repository = "https://github.com/chrislemke/feature-reviser"
 packages = [{ include = "feature_reviser" }]
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.9,<3.11"
 scikit-learn = "^1.1.2"
 joblib = "^1.2.0"
+pandas = "^1.4.4"
+numpy = "^1.23.3"
 
 
 [tool.poetry.dev-dependencies]
@@ -29,9 +31,7 @@ build-backend = "poetry.core.masonry.api"
 profile = "black"
 
 [tool.mypy]
-strict = false
-warn_return_any = true
-warn_unused_configs = true
+strict = true
 ignore_missing_imports = true
 
 [tool.pylint.'MESSAGES CONTROL']
