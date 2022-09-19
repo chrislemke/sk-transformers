@@ -40,8 +40,12 @@ repos:
     hooks:
       - id: mypy
         args: ["--config-file=pyproject.toml"]
+        exclude: "tests"
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.4
     hooks:
       - id: bandit
+        exclude: "^tests/"
+        args:
+          - "-r"

@@ -46,14 +46,7 @@ extra:
 plugins:
   - search
   - autorefs
-
-  - mkdocstrings:
-      handlers:
-        python:
-          rendering:
-            show_root_heading: false
-      watch:
-        - feature_reviser
+  - mkdocstrings
 
 nav:
   - Home: index.md

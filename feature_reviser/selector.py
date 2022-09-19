@@ -75,6 +75,7 @@ def select_with_classifier(
         num_transformer = SelectKBest(
             f_classif, k=min(num_k_best, num_df.shape[1] - 1)
         ).fit(num_df, y)
+
         cat_x = cat_transformer.transform(cat_df)
         num_x = num_transformer.transform(num_df)
 
@@ -92,8 +93,9 @@ def select_with_classifier(
         X = pd.DataFrame(data=np.column_stack((cat_x, num_x)), columns=columns)
 
     print("Selecting features with classifier...")
+
     selector = SelectFromModel(
-        estimator=clf, threshold=threshold, max_features=max_features
+        estimator=clf, threshold=threshold, max_features=max_features or X.shape[1]
     ).fit(X, y)
     selected = selector.transform(X)
     columns = [X.columns[i] for i in selector.get_support(indices=True)]

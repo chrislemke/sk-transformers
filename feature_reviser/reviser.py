@@ -42,16 +42,17 @@ def revise_classifier(
         raise AttributeError("Classifier does not have fit method!")
 
     clf.fit(cat_df, y)
-
     if not hasattr(clf, "feature_importances_"):
         raise AttributeError("Classifier does not have feature_importances_ attribute!")
-
     cat_feature_importances = clf.feature_importances_
+
     clf.fit(num_df, y)
+    if not hasattr(clf, "feature_importances_"):
+        raise AttributeError("Classifier does not have feature_importances_ attribute!")
     num_feature_importances = clf.feature_importances_
 
     chi_2, chi2_p_value = chi2(cat_df, y)
-    mi = mutual_info_classif(cat_df, y)
+    mi = mutual_info_classif(cat_df, y, discrete_features=True)
     f_statistic, f_classif_p_value = f_classif(num_df, y)
     num_corr = pd.concat([num_df, y], axis=1).corr(method="spearman").values[:-1, -1]
 

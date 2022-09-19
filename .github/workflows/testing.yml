@@ -1,0 +1,41 @@
+name: Python package
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.9", "3.10"]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install dependencies and project
+        run: |
+          python -m pip install poetry==1.2.1
+          poetry install
+      - name: Check with isort
+        run: |
+          isort --check-only ./feature_reviser  ./tests
+      - name: Check with black
+        run: |
+          black --check ./feature_reviser  ./tests
+      - name: Check with mypy
+        run: |
+          mypy --config-file=pyproject.toml .
+      - name: Check with bandit
+        run: |
+          bandit -r ./feature_reviser/*
+      - name: Lint with pylint
+        run: |
+          pylint --rcfile=pyproject.toml ./feature_reviser ./tests
+      - name: Test with pytest
+        run: |
+          pytest
