@@ -23,19 +23,19 @@ jobs:
           poetry install
       - name: Check with isort
         run: |
-          isort --check-only ./feature_reviser  ./tests
+          poetry run isort --check-only ./feature_reviser  ./tests
       - name: Check with black
         run: |
-          black --check ./feature_reviser  ./tests
+          poetry run black --check ./feature_reviser  ./tests
       - name: Check with mypy
         run: |
-          mypy --config-file=pyproject.toml .
+          poetry run mypy --config-file=pyproject.toml .
       - name: Check with bandit
         run: |
-          bandit -r ./feature_reviser/*
+          poetry run bandit -r ./feature_reviser/*
       - name: Lint with pylint
         run: |
-          pylint --rcfile=pyproject.toml ./feature_reviser ./tests
+          poetry run pylint --rcfile=pyproject.toml ./feature_reviser ./tests
       - name: Test with pytest
         run: |
-          pytest
+          poetry run pytest
