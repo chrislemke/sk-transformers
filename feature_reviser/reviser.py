@@ -6,6 +6,8 @@ import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.feature_selection import chi2, f_classif, mutual_info_classif
 
+from feature_reviser.utils import check_data
+
 
 def revise_classifier(
     clf: BaseEstimator,
@@ -32,7 +34,7 @@ def revise_classifier(
         Tuple[pandas.DataFrame, pandas.DataFrame]: Tuple containing the result dataframes for categorical and numerical features.
     """
 
-    __check_data(df, y)
+    check_data(df, y)
 
     cat_df = df[cat_features]
     num_df = df[num_features]
@@ -68,32 +70,3 @@ def revise_classifier(
     print(results_num_df)
 
     return result_cat_df, results_num_df
-
-
-def __check_data(features: pd.DataFrame, y: Union[pd.Series, np.ndarray]) -> None:
-    """
-    Checks if the data has the correct types, shapes and does not contain any missing values.
-
-    Args:
-        features (pandas.DataFrame): The dataframe containing the features.
-        y (Union[pandas.Series, numpy.ndarray]): The target variable.
-
-    Raises:
-        TypeError: If the features are not a `pandas.DataFrame` or the target variable is not a `pandas.Series` or `numpy.ndarray`.
-        ValueError: If the features or target variable contain missing values.
-
-    Returns:
-        None
-    """
-    if not isinstance(features, pd.DataFrame):
-        raise TypeError("features must be a pandas.DataFrame!")
-    if not isinstance(y, (pd.Series, np.ndarray)):
-        raise TypeError("y must be a pandas.Series or numpy.ndarray!")
-    if features.isnull().values.any():
-        raise ValueError("features must not contain NaN values!")
-    if y.isnull().values.any():
-        raise ValueError("y must not contain NaN values!")
-    if len(features.shape) != 2:
-        raise ValueError("features must be 2-dimensional!")
-    if len(y.shape) != 1:
-        raise ValueError("y must be 1-dimensional!")
