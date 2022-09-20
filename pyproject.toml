@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.1"
+version = "0.2"
 description = "Find the right features of your dataset for the right model."
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
@@ -41,6 +41,8 @@ profile = "black"
 strict = true
 disallow_subclassing_any = false
 ignore_missing_imports = true
+disallow_any_generics = false
+warn_return_any = false
 exclude = ["tests/*", "docs/*"]
 
 [tool.pytest.ini_options]
