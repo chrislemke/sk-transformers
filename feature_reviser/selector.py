@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.feature_selection import SelectFromModel, SelectKBest, chi2, f_classif
 
-from feature_reviser.utils import check_data
+from feature_reviser.utils import check_data, prepare_categorical_data
 
 
 def select_with_classifier(
@@ -15,8 +15,7 @@ def select_with_classifier(
     X: pd.DataFrame,
     y: pd.Series,
     select_k_best_first: bool = False,
-    cat_features: Optional[List[str]] = None,
-    num_features: Optional[List[str]] = None,
+    cat_features: Optional[List[Tuple[str, int]]] = None,
     cat_k_best: Optional[int] = None,
     num_k_best: Optional[int] = None,
     threshold: Optional[float] = None,
@@ -31,8 +30,9 @@ def select_with_classifier(
         X (pandas.DataFrame): The dataframe containing the categorical and numerical features.
         y (pandas.Series): The target variable.
         select_k_best_first (bool): If `True` the features are selected using `SelectKBest` first. Defaults to False.
-        cat_features (Optional[List[str]]): The list of categorical features. Defaults to None. This is needed if `select_k_best_first` is `True`.
-        num_features (Optional[List[str]]): The list of numerical features. Defaults to None. This is needed if `select_k_best_first` is `True`.
+        cat_features (Optional[List[Tuple[str, int]]]): A tuple containing the names of the categorical features and the corresponding threshold.
+            If the number of unique values is greater than the threshold, the feature is considered numerical and not categorical.
+            This is needed if `select_k_best_first` is `True`.
         cat_k_best (Optional[int]): The max number of categorical features to select using `SelectKBest`.
             Defaults to None. This is needed if `select_k_best_first` is `True`.
         num_k_best (Optional[int]): The max number of numerical features to select using `SelectKBest`.
@@ -41,31 +41,34 @@ def select_with_classifier(
         max_features (Optional[int]): The max number of features to select using `SelectFromModel`. Defaults to None.
 
     Raises:
+        ValueError: if the `cat_features` are not in the dataframe.
         ValueError: If `select_k_best_first` is `True` and `cat_features`, `num_features`, `cat_k_best` or `num_k_best` are `None`.
         TypeError: If the classifier does not contain the `fit` attribute.
 
     Returns:
         Tuple[pandas.DataFrame, pandas.Series]: Tuple containing the selected features and the target variable.
     """
+    X = X.copy()
     check_data(X, y)
+
+    if cat_features:
+        # pylint: disable=consider-using-set-comprehension
+        if not set([f[0] for f in cat_features]).issubset(set(X.columns)):
+            raise ValueError("cat_features must be in the dataframe!")
+        X = prepare_categorical_data(X, cat_features)
 
     if not hasattr(clf, "fit"):
         raise AttributeError("Classifier does not have fit method!")
 
     if select_k_best_first:
 
-        if (
-            cat_features is None
-            or num_features is None
-            or cat_k_best is None
-            or num_k_best is None
-        ):
+        if cat_features is None or cat_k_best is None or num_k_best is None:
             raise ValueError(
                 "If `select_k_best_first` is set to `True`, `cat_features`, `num_features`, `cat_k_best`, and `num_k_best` must be provided!"
             )
 
-        cat_df = X[cat_features]
-        num_df = X[num_features]
+        cat_df = X.select_dtypes(include=["category"])
+        num_df = X.select_dtypes(include=[np.float32])
 
         print("Selecting categorical features...")
         cat_transformer = SelectKBest(chi2, k=min(cat_k_best, cat_df.shape[1] - 1)).fit(

@@ -7,6 +7,7 @@
 ![build](https://img.shields.io/github/workflow/status/chrislemke/feature-reviser/deploy_package?logo=github)
 ![python version](https://img.shields.io/pypi/pyversions/feature-reviser?logo=python&logoColor=yellow)
 ![release](https://img.shields.io/github/v/release/chrislemke/feature-reviser?include_prereleases)
+![pypi](https://img.shields.io/pypi/v/feature-reviser)
 ![license](https://img.shields.io/github/license/chrislemke/feature-reviser)
 ## Introduction
 The feature-reviser makes it easier to find the right features for a classifier.

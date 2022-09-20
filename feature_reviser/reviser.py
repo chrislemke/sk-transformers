@@ -1,19 +1,19 @@
 # -*- coding: utf-8 -*-
 from typing import List, Tuple
 
+import numpy as np
 import pandas as pd
 from sklearn.base import BaseEstimator
 from sklearn.feature_selection import chi2, f_classif, mutual_info_classif
 
-from feature_reviser.utils import check_data
+from feature_reviser.utils import check_data, prepare_categorical_data
 
 
 def revise_classifier(
     clf: BaseEstimator,
     X: pd.DataFrame,
     y: pd.Series,
-    cat_features: List[str],
-    num_features: List[str],
+    cat_features: List[Tuple[str, int]],
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Examens the features of `X` for a provided classifier.
@@ -23,20 +23,26 @@ def revise_classifier(
         clf (BaseEstimator): The classifier used for examine the features.
         df (pandas.DataFrame): The dataframe containing the categorical and numerical features.
         y (pandas.Series): The target variable.
-        cat_features (List[str]): The list of categorical features.
-        num_features (List[str]): The list of numerical features.
-
+        cat_features (List[Tuple[str, int]]): A tuple containing the names of the categorical features and the corresponding threshold.
+            If the number of unique values is greater than the threshold, the feature is considered numerical and not categorical.
     Raises:
+        ValueError: if the `cat_features` are not in the dataframe.
         TypeError: If the classifier does not contain the `fit` or the `feature_importances_ attribute.
+
 
     Returns:
         Tuple[pandas.DataFrame, pandas.DataFrame]: Tuple containing the result dataframes for categorical and numerical features.
     """
 
     check_data(X, y)
+    X = prepare_categorical_data(X, cat_features)
 
-    cat_df = X[cat_features]
-    num_df = X[num_features]
+    cat_df = X.select_dtypes(include=["category"])
+    num_df = X.select_dtypes(include=[np.float32])
+
+    # pylint: disable=consider-using-set-comprehension
+    if not set([f[0] for f in cat_features]).issubset(set(X.columns)):
+        raise ValueError("cat_features must be in the dataframe!")
 
     if not hasattr(clf, "fit"):
         raise AttributeError("Classifier does not have fit method!")

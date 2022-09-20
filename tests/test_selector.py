@@ -32,7 +32,7 @@ def test_select_with_classifier_for_missing_parameter(clf, X, y):
 
 def test_select_with_classifier_column_shape_with_k_best(clf, X, y):
     result = select_with_classifier(
-        clf, X, y, True, ["c", "d", "e"], ["a", "b"], 2, 1, 0, 2
+        clf, X, y, True, [("c", 10), ("d", 10), ("e", 10)], 2, 1, 0, 2
     )
     assert result[0].shape == (10, 2)
     assert result[1].shape == (10,)
