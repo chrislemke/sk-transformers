@@ -3,6 +3,8 @@ on:
   push:
     branches:
       - main
+    paths:
+      - feature_reviser/**
 jobs:
   deploy:
     runs-on: ubuntu-latest

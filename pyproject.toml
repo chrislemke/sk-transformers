@@ -4,7 +4,7 @@ version = "0.1"
 description = "Find the right features of your dataset for the right model."
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
-homepage = "https://github.com/chrislemke/feature-reviser"
+homepage = "https://chrislemke.github.io/feature-reviser/"
 repository = "https://github.com/chrislemke/feature-reviser"
 packages = [{ include = "feature_reviser" }]
 
@@ -12,7 +12,7 @@ packages = [{ include = "feature_reviser" }]
 python = ">=3.9,<3.11"
 scikit-learn = "^1.1.2"
 joblib = "^1.2.0"
-pandas = "^1.4.4"
+pandas = "^1.5.0"
 numpy = "^1.23.3"
 
 
