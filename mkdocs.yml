@@ -52,4 +52,7 @@ nav:
   - Home: index.md
   - Reviser: reviser-reference.md
   - Selector: selector-reference.md
+  - Transformer:
+      - Column transformer: column_transformer-reference.md
+      - Custom transformer: custom_transformer-reference.md
   - Utils: utils-reference.md
