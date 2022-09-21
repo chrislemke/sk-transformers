@@ -1,11 +1,65 @@
 # -*- coding: utf-8 -*-
 
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Tuple
 
 import pandas as pd
 from feature_engine.encoding import MeanEncoder as Me
 from sklearn.base import BaseEstimator, TransformerMixin
+
+
+class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
+    """
+    Calculates the duration between to given dates.
+
+    Args:
+        X (pd.DataFrame): The input DataFrame.
+        columns (Tuple[str, str]): The two columns that contain the dates which should be used to calculate the duration.
+        unit (str): The unit in which the duration should be returned. Should be either `days` or `seconds`.
+        new_column_name (str): The name of the output column.
+    """
+
+    def __init__(self, columns: Tuple[str, str], unit: str, new_column_name: str):
+
+        if len(columns) != 2:
+            raise ValueError("columns must be a tuple of two strings!")
+
+        if unit not in ["days", "seconds"]:
+            raise ValueError("Unsupported unit. Should be either `days` or `seconds`!")
+
+        self.columns = columns
+        self.unit = unit
+        self.new_column_name = new_column_name
+
+    def fit(self) -> "DurationCalculatorTransformer":
+        """
+        Fit method that does nothing.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transform method that calculates the duration between two dates.
+
+        Args:
+            X (pandas.DataFrame): The input DataFrame.
+
+        Returns:
+            pandas.DataFrame: The transformed DataFrame.
+        """
+        X = X.copy()
+
+        if self.unit == "days":
+            X[self.new_column_name] = (
+                pd.to_datetime(X[self.columns[1]], utc=True, errors="raise")
+                - pd.to_datetime(X[self.columns[0]], utc=True, errors="raise")
+            ).dt.days
+        else:
+            (
+                pd.to_datetime(X[self.columns[1]], utc=True, errors="raise")
+                - pd.to_datetime(X[self.columns[0]], utc=True, errors="raise")
+            ).dt.total_seconds()
+        return X
 
 
 class NaNTransformer(BaseEstimator, TransformerMixin):
@@ -32,6 +86,7 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
 
         Args:
             X (pandas.DataFrame): Dataframe to transform.
+
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """

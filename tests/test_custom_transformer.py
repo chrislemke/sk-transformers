@@ -4,6 +4,7 @@ import numpy as np
 from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.custom_transformer import (
+    DurationCalculatorTransformer,
     NaNTransformer,
     TimestampTransformer,
 )
@@ -11,7 +12,20 @@ from feature_reviser.transformer.custom_transformer import (
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
 
-def test_nan_transform_in_pipeline(X_nan_values):
+def test_duration_calculator_transformer_in_pipeline(X_time_values) -> None:
+    pipeline = make_pipeline(
+        DurationCalculatorTransformer(
+            columns=("b", "c"), new_column_name="duration", unit="days"
+        )
+    )
+    X = pipeline.transform(X_time_values)
+    expected = np.array([0, 0, 365, 365, 31, 31, 1, 1, -22654, 28480])
+    assert np.array_equal(X["duration"].values, expected)
+    assert pipeline.steps[0][0] == "durationcalculatortransformer"
+    assert pipeline.steps[0][1].columns == ("b", "c")
+
+
+def test_nan_transform_in_pipeline(X_nan_values) -> None:
     pipeline = make_pipeline(NaNTransformer({"a": -1, "b": -1, "c": "missing"}))
     X = pipeline.transform(X_nan_values)
 
@@ -23,7 +37,7 @@ def test_nan_transform_in_pipeline(X_nan_values):
     assert pipeline.steps[0][1].values["a"] == -1
 
 
-def test_timestamp_transformer_in_pipeline(X_time_values):
+def test_timestamp_transformer_in_pipeline(X_time_values) -> None:
     pipeline = make_pipeline(TimestampTransformer(columns=["b"]))
     result = pipeline.transform(X_time_values)["b"].values
     expected = np.array(
