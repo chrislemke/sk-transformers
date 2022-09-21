@@ -9,7 +9,7 @@ from feature_reviser.transformer.column_transformer import transform_df_columns
 
 def test_column_transformer_transforms_correctly(
     standard_scaler, ordinal_encoder, X, y
-):
+) -> None:
     columns = [
         (["a"], standard_scaler),
         (["b"], standard_scaler),
@@ -39,7 +39,9 @@ def test_column_transformer_transforms_correctly(
     assert np.array_equal(expected_c, result["c"].values)
 
 
-def test_column_transformer_returns_a_copy_x(standard_scaler, ordinal_encoder, X, y):
+def test_column_transformer_returns_a_copy_x(
+    standard_scaler, ordinal_encoder, X, y
+) -> None:
     columns = [
         (["a"], standard_scaler),
         (["b"], standard_scaler),

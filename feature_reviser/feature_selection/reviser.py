@@ -20,7 +20,7 @@ def revise_classifier(
     It prints out different statistics and returns those as a tuple of dataframes.
 
     Args:
-        clf (BaseEstimator): The classifier used for examine the features.
+        clf (BaseEstimator): The classifier used for prediction of the features. This will be used to determine the `feature_importances_`.
         df (pandas.DataFrame): The dataframe containing the categorical and numerical features.
         y (pandas.Series): The target variable.
         cat_features (List[Tuple[str, int]]): A tuple containing the names of the categorical features and the corresponding threshold.
