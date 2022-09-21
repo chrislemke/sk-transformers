@@ -1,11 +1,124 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Union
+from datetime import datetime
+from typing import Any, Dict, List
 
 import pandas as pd
-from feature_engine.creation import MathFeatures
 from feature_engine.encoding import MeanEncoder as Me
 from sklearn.base import BaseEstimator, TransformerMixin
+
+
+class NaNTransformer(BaseEstimator, TransformerMixin):
+    """
+    Replace NaN values with a specified value.
+
+    Args:
+        X (pandas.DataFrame): Dataframe to transform.
+        values (Dict[str, Any]): Dictionary with column names as keys and values to replace NaN with as values.
+    """
+
+    def __init__(self, values: Dict[str, Any]):
+        self.values = values
+
+    def fit(self) -> "NaNTransformer":
+        """
+        Fit method that does nothing.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Replace NaN values with a specified value.
+
+        Args:
+            X (pandas.DataFrame): Dataframe to transform.
+        Returns:
+            pandas.DataFrame: Transformed dataframe.
+        """
+        X = X.copy()
+        return X.fillna(self.values)
+
+
+class TimestampTransformer(BaseEstimator, TransformerMixin):
+    """
+    Transforms a date column with a specified format into a timestamp column.
+
+    Args:
+        columns (List[str]): List of columns to transform.
+        format (str): Format of the date column. Defaults to "%Y-%m-%d".
+        errors (str): How to handle errors. Choices are "raise", "coerce", and "ignore". Defaults to "raise".
+    """
+
+    def __init__(
+        self,
+        columns: List[str],
+        date_format: str = "%Y-%m-%d",
+        errors: str = "raise",
+    ):
+        self.columns = columns
+        self.date_format = date_format
+        self.errors = errors
+
+    def fit(self) -> "TimestampTransformer":
+        """
+        Fit method that does nothing.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transforms columns from the provided dataframe.
+
+        Args:
+            X (pandas.DataFrame): Dataframe with columns to transform.
+
+        Returns:
+            pandas.DataFrame: Dataframe with transformed columns.
+        """
+        X = X.copy()
+        for col in self.columns:
+            X[col] = pd.to_datetime(X[col], format=self.date_format, errors=self.errors)
+            X[col] = (X[col] - datetime(1970, 1, 1)).dt.total_seconds()
+        return X
+
+
+class QueryTransformer(BaseEstimator, TransformerMixin):
+    """
+    Applies a list of queries to a dataframe.
+    Read more about queries [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html#pandas.DataFrame.query).
+
+    Args:
+        queries (List[str]): List of queries to apply to the dataframe.
+
+    Returns:
+        None
+
+    """
+
+    def __init__(self, queries: List[str]) -> None:
+        super().__init__()
+        self.queries = queries
+
+    def fit(self) -> "QueryTransformer":
+        """
+        No need to fit anything.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies the list of queries to the dataframe.
+
+        Args:
+            X (pd.DataFrame): Dataframe to apply the queries to.
+
+        Returns:
+            pd.DataFrame: Dataframe with the queries applied.
+        """
+        X = X.copy()
+        for query in self.queries:
+            X = X.query(query)
+        return X
 
 
 class MeanEncoder(BaseEstimator, TransformerMixin):
@@ -40,64 +153,3 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed data.
         """
         return self.encoder.transform(X.copy()).fillna(-1)
-
-
-class MathFeatureTransformer(BaseEstimator, TransformerMixin):
-    """
-    Scikit-learn API for the feature-engine [MathFeatures](https://feature-engine.readthedocs.io/en/latest/api_doc/creation/MathFeatures.html).
-    `MathFeatures(()` applies functions across multiple features returning one or more additional features as a result.
-    It uses `pandas.agg()` to create the features, setting `axis=1`.
-    For supported aggregation functions, see [pandas documentation](https://pandas.pydata.org/pandas-docs/stable/reference/api/pandas.DataFrame.agg.html).
-    More details in the Feature-engine [User Guide](https://feature-engine.readthedocs.io/en/latest/user_guide/creation/MathFeatures.html#math-features).
-
-    Args:
-        func (Union[str, List[str]]): String of a function (e.g. `sum`) or list of strings of functions to apply to the data.
-        num_columns (list[str]): List of numerical columns to apply the functions to.
-        drop_original (bool, optional): Whether to drop the original columns. Defaults to False.
-
-    Raises:
-        None
-    """
-
-    def __init__(
-        self,
-        func: Union[str, List[str]],
-        num_columns: list[str],
-        drop_original: bool = False,
-    ) -> None:
-        super().__init__()
-        self.num_columns = num_columns
-        self.func = func
-        self.drop_original = drop_original
-        self.transformer = MathFeatures(
-            num_columns,
-            func,
-            drop_original=drop_original,
-        )
-
-    def fit(self, X: pd.DataFrame) -> "MathFeatureTransformer":
-        """
-        Fit the MathFeatureTransformer to the data.
-        Args:
-            X (pandas.DataFrame): DataFrame to fit the MathFeatureTransformer to.
-
-        Returns:
-            MathFeatureTransformer: Fitted MathFeatureTransformer.
-        """
-        if "object" in [X[c].dtype for c in self.num_columns]:
-            raise ValueError(
-                "MathFeaturesTransformer only works with numerical columns!"
-            )
-
-        self.transformer.fit(X)
-        return self
-
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transform the data using the fitted MathFeatureTransformer.
-        Args:
-            X (pandas.DataFrame): DataFrame to transform.
-        Returns:
-            pandas.DataFrame: Transformed data.
-        """
-        return self.transformer.transform(X.copy())

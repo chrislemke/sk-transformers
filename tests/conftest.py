@@ -37,5 +37,37 @@ def X() -> pd.DataFrame:
 
 
 @pytest.fixture()
+def X_time_values() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "a": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            "b": [
+                "1960-01-01",
+                "1970-01-01",
+                "1970-01-02",
+                "2022-01-04",
+                "2022-01-05",
+                "2022-01-06",
+                "2022-01-07",
+                "2022-01-08",
+                "2022-01-09",
+                "2022-01-10",
+            ],
+        }
+    )
+
+
+@pytest.fixture()
+def X_nan_values() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "a": [1, None, 3, 4, 5, 6, 7, 8, 9, 10],
+            "b": [1.1, 2.2, None, 4.4, 5.5, 6.6, 7.7, 8.8, 9.9, 10.1],
+            "c": ["A", "B", "C", "D", "E", "F", None, "H", "I", "J"],
+        }
+    )
+
+
+@pytest.fixture()
 def y() -> pd.Series:
     return pd.Series([1, 1, 1, 1, 0, 0, 0, 0, 0, 0])
