@@ -2,7 +2,6 @@
 
 from typing import List, Union
 
-import numpy as np
 import pandas as pd
 from feature_engine.creation import MathFeatures
 from feature_engine.encoding import MeanEncoder as Me
@@ -31,16 +30,16 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
         self.encoder.fit(X, y)
         return self
 
-    def transform(self, X: pd.DataFrame) -> np.ndarray:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transform the data using the fitted MeanEncoder.
         Args:
             X (pandas.DataFrame): DataFrame to transform.
 
         Returns:
-            numpy.ndarray: Transformed data.
+            pandas.DataFrame: Transformed data.
         """
-        return self.encoder.transform(X.copy()).fillna(-1).values
+        return self.encoder.transform(X.copy()).fillna(-1)
 
 
 class MathFeatureTransformer(BaseEstimator, TransformerMixin):
@@ -93,12 +92,12 @@ class MathFeatureTransformer(BaseEstimator, TransformerMixin):
         self.transformer.fit(X)
         return self
 
-    def transform(self, X: pd.DataFrame) -> np.ndarray:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transform the data using the fitted MathFeatureTransformer.
         Args:
             X (pandas.DataFrame): DataFrame to transform.
         Returns:
-            numpy.ndarray: Transformed data.
+            pandas.DataFrame: Transformed data.
         """
-        return self.transformer.transform(X.copy()).values
+        return self.transformer.transform(X.copy())

@@ -2,14 +2,26 @@
 
 import pytest
 
-from feature_reviser.reviser import revise_classifier
+from feature_reviser.feature_selection.reviser import revise_classifier
 
 # pylint: disable=missing-function-docstring
 
 
+def test_revise_classifier_for_low_threshold(clf, X, y):
+    with pytest.raises(ValueError) as error:
+        revise_classifier(clf, X, y, [("c", 1), ("d", 1), ("e", 1)])
+
+    assert (
+        "cat_features must be in the dataframe! Check if the threshold is maybe a bit too low."
+        == str(error.value)
+    )
+
+
 def test_revise_classifier_for_fit_attribute(X, y):
-    with pytest.raises(AttributeError):
+    with pytest.raises(AttributeError) as error:
         revise_classifier(None, X, y, [("c", 10), ("d", 10), ("e", 10)])
+
+    assert "Classifier does not have fit method!" == str(error.value)
 
 
 def test_revise_classifier_columns(clf, X, y):

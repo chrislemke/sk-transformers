@@ -40,9 +40,10 @@ def revise_classifier(
     cat_df = X.select_dtypes(include=["category"])
     num_df = X.select_dtypes(include=[np.float32])
 
-    # pylint: disable=consider-using-set-comprehension
-    if not set([f[0] for f in cat_features]).issubset(set(X.columns)):
-        raise ValueError("cat_features must be in the dataframe!")
+    if len(X.select_dtypes(include=["category"]).columns) == 0:
+        raise ValueError(
+            "cat_features must be in the dataframe! Check if the threshold is maybe a bit too low."
+        )
 
     if not hasattr(clf, "fit"):
         raise AttributeError("Classifier does not have fit method!")

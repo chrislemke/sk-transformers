@@ -57,6 +57,11 @@ def select_with_classifier(
             raise ValueError("cat_features must be in the dataframe!")
         X = prepare_categorical_data(X, cat_features)
 
+        if len(X.select_dtypes(include=["category"]).columns) == 0:
+            raise ValueError(
+                "cat_features must be in the dataframe! Check if the threshold is maybe a bit too low."
+            )
+
     if not hasattr(clf, "fit"):
         raise AttributeError("Classifier does not have fit method!")
 

@@ -6,7 +6,7 @@ import numpy as np
 import pandas as pd
 
 
-def check_data(X: pd.DataFrame, y: pd.Series) -> None:
+def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
     """
     Checks if the data has the correct types, shapes and does not contain any missing values.
 
@@ -22,13 +22,14 @@ def check_data(X: pd.DataFrame, y: pd.Series) -> None:
         None
     """
     if not isinstance(X, pd.DataFrame):
-        raise TypeError("features must be a pandas.DataFrame!")
+        raise TypeError("Features must be a pandas.DataFrame!")
     if not isinstance(y, pd.Series):
         raise TypeError("y must be a pandas.Series!")
-    if X.isnull().values.any():
-        raise ValueError("features must not contain NaN values!")
-    if y.isnull().values.any():
-        raise ValueError("y must not contain NaN values!")
+    if check_nans:
+        if X.isnull().values.any():
+            raise ValueError("Features must not contain NaN values!")
+        if y.isnull().values.any():
+            raise ValueError("y must not contain NaN values!")
 
 
 def prepare_categorical_data(

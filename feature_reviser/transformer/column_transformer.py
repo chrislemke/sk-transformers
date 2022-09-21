@@ -2,10 +2,11 @@
 
 from typing import List, Optional, Tuple
 
-import numpy as np
 import pandas as pd
 from sklearn.base import TransformerMixin
 from sklearn_pandas import DataFrameMapper
+
+from feature_reviser.utils import check_data
 
 
 def transform_df_columns(
@@ -25,12 +26,10 @@ def transform_df_columns(
 
     Returns:
         pandas.DataFrame: Transformed DataFrame.
+        DataFrameMapper: Fitted mapper object used to transform the DataFrame.
     """
 
-    X = X.copy()
-    not_transformed_columns = list(set(X.columns) - set([c[0] for c in columns][0]))
-    mapper = DataFrameMapper(columns, drop_cols=drop_columns)
-    mapper.fit(X, y)
-    return pd.DataFrame(
-        np.concatenate([X[not_transformed_columns].values, mapper.transform(X)], axis=1)
-    )
+    check_data(X, y, check_nans=False)
+
+    mapper = DataFrameMapper(columns, drop_cols=drop_columns, default=None, df_out=True)
+    return mapper.fit_transform(X, y), mapper

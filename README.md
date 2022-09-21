@@ -1,4 +1,4 @@
-![](https://github.com/chrislemke/feature-reviser/blob/main/images/machine.png)
+![The machine](https://github.com/chrislemke/feature-reviser/blob/main/images/machine.png)
 
 *picture by stable diffusion*
 # feature-reviser
@@ -21,6 +21,16 @@ poetry add feature-reviser
 If you are using [pip](https://pypi.org/project/pip/), you can install the package with the following command:
 ```bash
 pip install feature-reviser
+```
+
+## installing dependencies
+With [Poetry](https://python-poetry.org/):
+```bash
+poetry install
+```
+With [pip](https://pypi.org/project/pip/):
+```bash
+pip install -r requirements.txt
 ```
 
 ## Further information

@@ -2,18 +2,29 @@
 
 import pandas as pd
 import pytest
+from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
 # pylint: disable=missing-function-docstring
 
 
 @pytest.fixture()
-def clf():
-    return DecisionTreeClassifier()
+def clf() -> DecisionTreeClassifier:
+    return DecisionTreeClassifier(random_state=42)
 
 
 @pytest.fixture()
-def X():
+def ordinal_encoder() -> OrdinalEncoder:
+    return OrdinalEncoder()
+
+
+@pytest.fixture()
+def standard_scaler() -> StandardScaler:
+    return StandardScaler()
+
+
+@pytest.fixture()
+def X() -> pd.DataFrame:
     return pd.DataFrame(
         {
             "a": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
@@ -26,5 +37,5 @@ def X():
 
 
 @pytest.fixture()
-def y():
+def y() -> pd.Series:
     return pd.Series([1, 1, 1, 1, 0, 0, 0, 0, 0, 0])
