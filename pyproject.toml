@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.2"
+version = "0.3"
 description = "Find the right features of your dataset for the right model."
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
