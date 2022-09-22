@@ -1,1 +1,3 @@
+This module is a collection of various custom preprocessing steps. They are compatible with [Scikit-learn pipelines](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) and so can be easily implemented in an existing preprocessing project.
+
 :::feature_reviser.transformer.custom_transformer

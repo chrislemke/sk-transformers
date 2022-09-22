@@ -5,6 +5,7 @@ import pandas as pd
 from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.custom_transformer import (
+    ColumnDropperTransformer,
     DurationCalculatorTransformer,
     EmailTransformer,
     IPAddressEncoderTransformer,
@@ -13,6 +14,15 @@ from feature_reviser.transformer.custom_transformer import (
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
+
+
+def test_column_dropper_transformer_in_pipeline(X) -> None:
+    pipeline = make_pipeline(ColumnDropperTransformer(columns=["a", "b", "c", "d"]))
+
+    result = pipeline.transform(X)
+    expected = X.drop(columns=["a", "b", "c", "d"])
+    assert result.equals(expected)
+    assert pipeline.steps[0][0] == "columndroppertransformer"
 
 
 def test_email_transformer_in_pipeline(X_strings) -> None:

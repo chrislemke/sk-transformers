@@ -49,7 +49,6 @@ plugins:
   - mkdocstrings
 
 nav:
-  - Home: index.md
   - Reviser: reviser-reference.md
   - Selector: selector-reference.md
   - Transformer:

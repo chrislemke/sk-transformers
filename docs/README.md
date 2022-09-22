@@ -34,5 +34,8 @@ With [pip](https://pypi.org/project/pip/):
 pip install -r requirements.txt
 ```
 
+## The transformer module
+Data preprocessing often involves similar processes. No matter whether it is a matter of manipulating strings or numbers. [Scikit-learn's pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) implementation makes it easy to structure and sequence such preprocessing processes. To take advantage of this, the [`custom_transformers`](https://github.com/chrislemke/feature-reviser/blob/main/feature_reviser/transformer/custom_transformer.py) module includes a set of transformers that can be easily pipelined to simplify preprocessing. The list of transformers is open and will be extended permanently.
+
 ## Further information
 For further information, please refer to the [documentation](https://chrislemke.github.io/feature-reviser/).

@@ -6,7 +6,7 @@ authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
 repository = "https://github.com/chrislemke/feature-reviser"
 documentation = "https://chrislemke.github.io/feature-reviser/"
-readme = "README.md"
+readme = "docs/README.md"
 keywords = ["feature selection", "feature engineering", "preprocessing", "scikit-learn", "pandas", "machine learning"]
 packages = [{ include = "feature_reviser" }]
 classifiers = [
@@ -14,7 +14,6 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Intended Audience :: Science/Research",
 ]
-
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"

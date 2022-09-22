@@ -5,16 +5,51 @@ import ipaddress
 import itertools
 import re
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Union
 
+import numpy as np
 import pandas as pd
 from feature_engine.encoding import MeanEncoder as Me
-from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.base import TransformerMixin
 
 # pylint: disable=unused-argument
 
 
-class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
+class ColumnDropperTransformer(TransformerMixin):
+    """
+    Drops columns from a dataframe
+
+    Args:
+        columns (Union[str, List[str]]): Columns to drop.
+        Either a single column name or a list of column names.
+
+    Returns:
+        None
+    """
+
+    def __init__(self, columns: Union[str, List[str]]) -> None:
+        self.columns = columns
+
+    def fit(self, X=None, y=None) -> "columnDropperTransformer":  # type: ignore
+        """
+        Fit method that does nothing.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Drops columns from a dataframe.
+
+        Args:
+            X (pd.DataFrame): Dataframe to drop columns from.
+
+        Returns:
+            pd.DataFrame: Dataframe with columns dropped.
+        """
+        return X.drop(self.columns, axis=1)
+
+
+class DurationCalculatorTransformer(TransformerMixin):
     """
     Calculates the duration between to given dates.
 
@@ -69,7 +104,7 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         return X
 
 
-class NaNTransformer(BaseEstimator, TransformerMixin):
+class NaNTransformer(TransformerMixin):
     """
     Replace NaN values with a specified value.
 
@@ -101,7 +136,7 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
         return X.fillna(self.values)
 
 
-class TimestampTransformer(BaseEstimator, TransformerMixin):
+class TimestampTransformer(TransformerMixin):
     """
     Transforms a date column with a specified format into a timestamp column.
 
@@ -141,7 +176,7 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
         return X
 
 
-class QueryTransformer(BaseEstimator, TransformerMixin):
+class QueryTransformer(TransformerMixin):
     """
     Applies a list of queries to a dataframe.
     Read more about queries [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html#pandas.DataFrame.query).
@@ -180,7 +215,7 @@ class QueryTransformer(BaseEstimator, TransformerMixin):
         return X
 
 
-class MeanEncoder(BaseEstimator, TransformerMixin):
+class MeanEncoder(TransformerMixin):
     """
     Scikit-learn API for the feature-engine MeanEncoder.
     """
@@ -214,7 +249,7 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
         return self.encoder.transform(X.copy()).fillna(-1)
 
 
-class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
+class IPAddressEncoderTransformer(TransformerMixin):
     """
     Encodes IPv4 and IPv6 strings addresses to a float representation.
     To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
@@ -232,21 +267,30 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
         """
         return self
 
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(
+        self, X: Union[pd.DataFrame, np.ndarray]
+    ) -> Union[pd.DataFrame, np.ndarray]:
         """
         Transforms the column containing the IP addresses to float column.
         `-1` indicates that the value could not be parsed.
 
         Args:
-            X (pandas.DataFrame): DataFrame to transform.
+            X (Union[pandas.DataFrame, numpy.ndarray]): DataFrame or array to transform.
 
         Returns:
-            pandas.DataFrame: Transformed dataframe.
+            Union[pandas.DataFrame, numpy.ndarray]: Transformed dataframe or array.
         """
+
+        if not isinstance(X, (np.ndarray, pd.DataFrame)):
+            raise TypeError("X must be a numpy.ndarray or pandas.DataFrame!")
+
         function = functools.partial(
             IPAddressEncoderTransformer.__to_float, self.ip4_divisor, self.ip6_divisor
         )
-        X = X.applymap(function)
+        if isinstance(X, pd.DataFrame):
+            X = X.applymap(function)
+        else:
+            X = np.vectorize(function)(X)
         return X
 
     @staticmethod
@@ -260,7 +304,7 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
                 return -1
 
 
-class EmailTransformer(BaseEstimator, TransformerMixin):
+class EmailTransformer(TransformerMixin):
     """
     Transforms an email address into multiple features.
     """
