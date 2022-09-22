@@ -11,6 +11,8 @@ import pandas as pd
 from feature_engine.encoding import MeanEncoder as Me
 from sklearn.base import BaseEstimator, TransformerMixin
 
+# pylint: disable=unused-argument
+
 
 class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
     """
@@ -31,7 +33,7 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         self.unit = unit
         self.new_column_name = new_column_name
 
-    def fit(self) -> "DurationCalculatorTransformer":
+    def fit(self, X=None, y=None) -> "DurationCalculatorTransformer":  # type: ignore
         """
         Fit method that does nothing.
         """
@@ -79,7 +81,7 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, values: Dict[str, Any]):
         self.values = values
 
-    def fit(self) -> "NaNTransformer":
+    def fit(self, X=None, y=None) -> "NaNTransformer":  # type: ignore
         """
         Fit method that does nothing.
         """
@@ -116,7 +118,7 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
         self.date_format = date_format
         self.errors = errors
 
-    def fit(self) -> "TimestampTransformer":
+    def fit(self, X=None, y=None) -> "TimestampTransformer":  # type: ignore
         """
         Fit method that does nothing.
         """
@@ -156,7 +158,7 @@ class QueryTransformer(BaseEstimator, TransformerMixin):
         super().__init__()
         self.queries = queries
 
-    def fit(self) -> "QueryTransformer":
+    def fit(self, X=None, y=None) -> "QueryTransformer":  # type: ignore
         """
         No need to fit anything.
         """
@@ -224,7 +226,7 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
         self.ip4_devisor = ip4_devisor
         self.ip6_devisor = ip6_devisor
 
-    def fit(self) -> "IPAddressEncoderTransformer":
+    def fit(self, X=None, y=None) -> "IPAddressEncoderTransformer":  # type: ignore
         """
         No need to fit anything.
         """
@@ -266,7 +268,7 @@ class EmailTransformer(BaseEstimator, TransformerMixin):
         new_column_name (str): The name of the output column.
     """
 
-    def fit(self) -> "EmailTransformer":
+    def fit(self, X=None, y=None) -> "EmailTransformer":  # type: ignore
         """
         No need to fit anything.
         """
