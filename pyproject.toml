@@ -1,18 +1,27 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.3.2"
+version = "0.3.3"
 description = "Find the right features of your dataset for the right model."
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
 repository = "https://github.com/chrislemke/feature-reviser"
 documentation = "https://chrislemke.github.io/feature-reviser/"
 readme = "docs/README.md"
-keywords = ["feature selection", "feature engineering", "preprocessing", "scikit-learn", "pandas", "machine learning"]
 packages = [{ include = "feature_reviser" }]
 classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
     "Intended Audience :: Science/Research",
+]
+keywords = [
+    "feature selection",
+    "feature engineering",
+    "preprocessing",
+    "scikit-learn",
+    "pipelines",
+    "pandas",
+    "machine learning",
+    "data science"
 ]
 
 [tool.poetry.dependencies]

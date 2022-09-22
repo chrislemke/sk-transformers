@@ -49,9 +49,11 @@ plugins:
   - mkdocstrings
 
 nav:
-  - Reviser: reviser-reference.md
-  - Selector: selector-reference.md
-  - Transformer:
-      - Column transformer: column_transformer-reference.md
-      - Custom transformer: custom_transformer-reference.md
-  - Utils: utils-reference.md
+  - Reference:
+    - Reviser: reviser-reference.md
+    - Selector: selector-reference.md
+    - Transformer:
+        - Column transformer: column_transformer-reference.md
+        - Custom transformer: custom_transformer-reference.md
+    - Utils: utils-reference.md
+  - How to contribute: how_to_contribute.md

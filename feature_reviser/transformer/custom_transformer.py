@@ -17,11 +17,10 @@ from sklearn.base import TransformerMixin
 
 class ColumnDropperTransformer(TransformerMixin):
     """
-    Drops columns from a dataframe
+    Drops columns from a dataframe using Pandas `drop` method.
 
     Args:
-        columns (Union[str, List[str]]): Columns to drop.
-        Either a single column name or a list of column names.
+        columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
 
     Returns:
         None
@@ -30,7 +29,7 @@ class ColumnDropperTransformer(TransformerMixin):
     def __init__(self, columns: Union[str, List[str]]) -> None:
         self.columns = columns
 
-    def fit(self, X=None, y=None) -> "columnDropperTransformer":  # type: ignore
+    def fit(self, X=None, y=None) -> "ColumnDropperTransformer":  # type: ignore
         """
         Fit method that does nothing.
         """
