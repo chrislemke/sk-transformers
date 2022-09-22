@@ -2,6 +2,8 @@
 
 import functools
 import ipaddress
+import itertools
+import re
 from datetime import datetime
 from typing import Any, Dict, List
 
@@ -222,16 +224,6 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
         self.ip4_devisor = ip4_devisor
         self.ip6_devisor = ip6_devisor
 
-    @staticmethod
-    def __to_float(ip4_devisor: float, ip6_devisor: float, ip_address: str) -> float:
-        try:
-            return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
-        except:  # pylint: disable=W0702
-            try:
-                return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
-            except:  # pylint: disable=W0702
-                return -1
-
     def fit(self) -> "IPAddressEncoderTransformer":
         """
         No need to fit anything.
@@ -254,3 +246,90 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
         )
         X = X.applymap(function)
         return X
+
+    @staticmethod
+    def __to_float(ip4_devisor: float, ip6_devisor: float, ip_address: str) -> float:
+        try:
+            return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
+        except:  # pylint: disable=W0702
+            try:
+                return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
+            except:  # pylint: disable=W0702
+                return -1
+
+
+class EmailTransformer(BaseEstimator, TransformerMixin):
+    """
+    Transforms an email address into multiple features.
+
+    Args:
+        new_column_name (str): The name of the output column.
+    """
+
+    def fit(self) -> "EmailTransformer":
+        """
+        No need to fit anything.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transforms the one column from X, containing the email addresses, into multiple columns.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Transformed dataframe containing the extra columns.
+        """
+
+        X = X.copy()
+
+        if X.shape[1] != 1:
+            raise ValueError(
+                "Only one column is allowed! Please try something like: `df[['email']]`."
+            )
+        column_name = X.iloc[:, 0].name
+
+        X[f"{column_name}_domain"] = (
+            X.iloc[:, 0].str.split("@").str[1].str.split(".").str[1]
+        )
+
+        X.iloc[:, 0] = X.iloc[:, 0].str.split("@").str[0]
+
+        X[f"{column_name}_num_of_digits"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_digits
+        )
+        X[f"{column_name}_num_of_letters"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_letters
+        )
+        X[f"{column_name}_num_of_special_chars"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_special_characters
+        )
+        X[f"{column_name}_num_of_repeated_chars"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_repeated_characters
+        )
+        X[f"{column_name}_num_of_words"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_words
+        )
+        return X
+
+    @staticmethod
+    def __num_of_digits(string: str) -> int:
+        return sum(map(str.isdigit, string))
+
+    @staticmethod
+    def __num_of_letters(string: str) -> int:
+        return sum(map(str.isalpha, string))
+
+    @staticmethod
+    def __num_of_special_characters(string: str) -> int:
+        return len(re.findall(r"[^A-Za-z0-9]", string))
+
+    @staticmethod
+    def __num_of_repeated_characters(string: str) -> int:
+        return max(len("".join(g)) for _, g in itertools.groupby(string))
+
+    @staticmethod
+    def __num_of_words(string: str) -> int:
+        return len(re.findall(r"[.\-_]", string)) + 1

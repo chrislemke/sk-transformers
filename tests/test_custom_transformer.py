@@ -1,16 +1,43 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import pandas as pd
 from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.custom_transformer import (
     DurationCalculatorTransformer,
+    EmailTransformer,
     IPAddressEncoderTransformer,
     NaNTransformer,
     TimestampTransformer,
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
+
+
+def test_email_transformer_in_pipeline(X_strings) -> None:
+    pipeline = make_pipeline(EmailTransformer())
+    result = pipeline.transform(X_strings[["email"]])
+    expected = pd.DataFrame(
+        {
+            "email": {
+                0: "test",
+                1: "test123",
+                2: "test_123$$",
+                3: "test_test",
+                4: "ttt",
+                5: "test_test_test",
+            },
+            "email_domain": {0: "com", 1: "com", 2: "com", 3: "com", 4: "com", 5: None},
+            "email_num_of_digits": {0: 0, 1: 3, 2: 3, 3: 0, 4: 0, 5: 0},
+            "email_num_of_letters": {0: 4, 1: 4, 2: 4, 3: 8, 4: 3, 5: 12},
+            "email_num_of_special_chars": {0: 0, 1: 0, 2: 3, 3: 1, 4: 0, 5: 2},
+            "email_num_of_repeated_chars": {0: 1, 1: 1, 2: 2, 3: 1, 4: 3, 5: 1},
+            "email_num_of_words": {0: 1, 1: 1, 2: 2, 3: 2, 4: 1, 5: 3},
+        }
+    )
+    assert result.equals(expected)
+    assert pipeline.steps[0][0] == "emailtransformer"
 
 
 def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
