@@ -40,13 +40,26 @@ def test_select_with_classifier_shape_without_k_best(clf, X, y) -> None:
 
 
 def test_select_with_classifier_for_missing_parameter(clf, X, y) -> None:
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError) as error:
         select_with_classifier(clf, X, y, True)
+
+    assert (
+        "If `select_k_best_first` is set to `True`, `cat_features`, `num_features`, `cat_k_best`, and `num_k_best` must be provided!"
+        == str(error.value)
+    )
 
 
 def test_select_with_classifier_column_shape_with_k_best(clf, X, y) -> None:
     result = select_with_classifier(
-        clf, X, y, True, [("c", 10), ("d", 10), ("e", 10)], 2, 1, 0, 2
+        clf=clf,
+        X=X,
+        y=y,
+        select_k_best_first=True,
+        cat_features=[("c", 10), ("d", 10), ("e", 10)],
+        cat_k_best=2,
+        num_k_best=1,
+        model_select_threshold=0,
+        max_features=2,
     )
     assert result[0].shape == (10, 2)
     assert result[1].shape == (10,)

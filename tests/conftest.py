@@ -81,5 +81,36 @@ def X_nan_values() -> pd.DataFrame:
 
 
 @pytest.fixture()
+def X_numbers() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "big_numbers": [
+                10_000_000,
+                12_891_207,
+                42_000,
+                11_111_111,
+                99_999_999_999_999,
+            ],
+            "small_numbers": [7, 12, 82, 1, 0],
+            "ip_address": [
+                "203.0.113.195",
+                "192.168.1.1",
+                "2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b",
+                "2001:0db8:85a3:08d3:1319:8a2e:0370:7344",
+                "just_a_string",
+            ],
+            "phone_number": [
+                "+491763456123",
+                "030123456",
+                "00494045654449",
+                "01764547310",
+                "+00491764547310",
+            ],
+            "time_in_seconds": ["917634", "30123", "49404565", "17645", "46787"],
+        }
+    )
+
+
+@pytest.fixture()
 def y() -> pd.Series:
     return pd.Series([1, 1, 1, 1, 0, 0, 0, 0, 0, 0])

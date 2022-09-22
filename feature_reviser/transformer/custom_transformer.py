@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 
+import functools
+import ipaddress
 from datetime import datetime
-from typing import Any, Dict, List, Tuple
+from typing import Any, Dict, List
 
 import pandas as pd
 from feature_engine.encoding import MeanEncoder as Me
@@ -19,15 +21,11 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         new_column_name (str): The name of the output column.
     """
 
-    def __init__(self, columns: Tuple[str, str], unit: str, new_column_name: str):
-
-        if len(columns) != 2:
-            raise ValueError("columns must be a tuple of two strings!")
+    def __init__(self, unit: str, new_column_name: str):
 
         if unit not in ["days", "seconds"]:
             raise ValueError("Unsupported unit. Should be either `days` or `seconds`!")
 
-        self.columns = columns
         self.unit = unit
         self.new_column_name = new_column_name
 
@@ -49,15 +47,20 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         """
         X = X.copy()
 
+        if X.shape[1] != 2:
+            raise ValueError(
+                f"Only two columns should be provided! But {X.shape[1]} were given."
+            )
+
         if self.unit == "days":
             X[self.new_column_name] = (
-                pd.to_datetime(X[self.columns[1]], utc=True, errors="raise")
-                - pd.to_datetime(X[self.columns[0]], utc=True, errors="raise")
+                pd.to_datetime(X.iloc[:, 1], utc=True, errors="raise")
+                - pd.to_datetime(X.iloc[:, 0], utc=True, errors="raise")
             ).dt.days
         else:
             (
-                pd.to_datetime(X[self.columns[1]], utc=True, errors="raise")
-                - pd.to_datetime(X[self.columns[0]], utc=True, errors="raise")
+                pd.to_datetime(X.iloc[:, 1], utc=True, errors="raise")
+                - pd.to_datetime(X.iloc[:, 0], utc=True, errors="raise")
             ).dt.total_seconds()
         return X
 
@@ -99,18 +102,15 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
     Transforms a date column with a specified format into a timestamp column.
 
     Args:
-        columns (List[str]): List of columns to transform.
         format (str): Format of the date column. Defaults to "%Y-%m-%d".
         errors (str): How to handle errors. Choices are "raise", "coerce", and "ignore". Defaults to "raise".
     """
 
     def __init__(
         self,
-        columns: List[str],
         date_format: str = "%Y-%m-%d",
         errors: str = "raise",
     ):
-        self.columns = columns
         self.date_format = date_format
         self.errors = errors
 
@@ -131,7 +131,7 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Dataframe with transformed columns.
         """
         X = X.copy()
-        for col in self.columns:
+        for col in X.columns:
             X[col] = pd.to_datetime(X[col], format=self.date_format, errors=self.errors)
             X[col] = (X[col] - datetime(1970, 1, 1)).dt.total_seconds()
         return X
@@ -208,3 +208,49 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed data.
         """
         return self.encoder.transform(X.copy()).fillna(-1)
+
+
+class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
+    """
+    Encodes IPv4 and IPv6 strings addresses to a float representation.
+    To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
+    Those values can be changed using the `ipv4_divider` and `ipv6_divider` parameters.
+    """
+
+    def __init__(self, ip4_devisor: float = 1e10, ip6_devisor: float = 1e48) -> None:
+        super().__init__()
+        self.ip4_devisor = ip4_devisor
+        self.ip6_devisor = ip6_devisor
+
+    @staticmethod
+    def __to_float(ip4_devisor: float, ip6_devisor: float, ip_address: str) -> float:
+        try:
+            return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
+        except:  # pylint: disable=W0702
+            try:
+                return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
+            except:  # pylint: disable=W0702
+                return -1
+
+    def fit(self) -> "IPAddressEncoderTransformer":
+        """
+        No need to fit anything.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transforms the column containing the IP addresses to float column.
+        `-1` indicates that the value could not be parsed.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Transformed dataframe.
+        """
+        function = functools.partial(
+            IPAddressEncoderTransformer.__to_float, self.ip4_devisor, self.ip6_devisor
+        )
+        X = X.applymap(function)
+        return X
