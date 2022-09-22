@@ -1,6 +1,5 @@
-![The machine](https://github.com/chrislemke/feature-reviser/blob/main/images/machine.png)
+![The machine](https://raw.githubusercontent.com/chrislemke/feature-reviser/master/assets/machine.png)
 
-*picture by stable diffusion*
 # feature-reviser
 
 [![tests](https://img.shields.io/github/workflow/status/chrislemke/feature-reviser/testing?label=tests&logo=github)](https://github.com/chrislemke/feature-reviser/actions/workflows/testing.yml)
@@ -12,6 +11,8 @@
 ## Introduction
 The feature-reviser makes it easier to find the right features for a classifier.
 After creating different features, the question often arises whether they improve or worsen the performance of the classifier and thus have a direct positive or negative influence on the prediction. This project is intended to simplify the selection of features and at the same time contribute to simplifying and automating the entire processing process.
+
+Additionally, this project also contains feature engineering steps, which can be used in a [Scikit-Learn pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html). Check out the [`custom_transformer`](https://github.com/chrislemke/feature-reviser/blob/main/feature_reviser/transformer/custom_transformer.py) module for more information.
 
 ## Installation
 If you are using [Poetry](https://python-poetry.org/), you can install the package with the following command:

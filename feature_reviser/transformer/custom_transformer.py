@@ -2,12 +2,16 @@
 
 import functools
 import ipaddress
+import itertools
+import re
 from datetime import datetime
 from typing import Any, Dict, List
 
 import pandas as pd
 from feature_engine.encoding import MeanEncoder as Me
 from sklearn.base import BaseEstimator, TransformerMixin
+
+# pylint: disable=unused-argument
 
 
 class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
@@ -29,7 +33,7 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         self.unit = unit
         self.new_column_name = new_column_name
 
-    def fit(self) -> "DurationCalculatorTransformer":
+    def fit(self, X=None, y=None) -> "DurationCalculatorTransformer":  # type: ignore
         """
         Fit method that does nothing.
         """
@@ -77,7 +81,7 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
     def __init__(self, values: Dict[str, Any]):
         self.values = values
 
-    def fit(self) -> "NaNTransformer":
+    def fit(self, X=None, y=None) -> "NaNTransformer":  # type: ignore
         """
         Fit method that does nothing.
         """
@@ -114,7 +118,7 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
         self.date_format = date_format
         self.errors = errors
 
-    def fit(self) -> "TimestampTransformer":
+    def fit(self, X=None, y=None) -> "TimestampTransformer":  # type: ignore
         """
         Fit method that does nothing.
         """
@@ -154,7 +158,7 @@ class QueryTransformer(BaseEstimator, TransformerMixin):
         super().__init__()
         self.queries = queries
 
-    def fit(self) -> "QueryTransformer":
+    def fit(self, X=None, y=None) -> "QueryTransformer":  # type: ignore
         """
         No need to fit anything.
         """
@@ -217,22 +221,12 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
     Those values can be changed using the `ipv4_divider` and `ipv6_divider` parameters.
     """
 
-    def __init__(self, ip4_devisor: float = 1e10, ip6_devisor: float = 1e48) -> None:
+    def __init__(self, ip4_divisor: float = 1e10, ip6_divisor: float = 1e48) -> None:
         super().__init__()
-        self.ip4_devisor = ip4_devisor
-        self.ip6_devisor = ip6_devisor
+        self.ip4_divisor = ip4_divisor
+        self.ip6_divisor = ip6_divisor
 
-    @staticmethod
-    def __to_float(ip4_devisor: float, ip6_devisor: float, ip_address: str) -> float:
-        try:
-            return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
-        except:  # pylint: disable=W0702
-            try:
-                return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
-            except:  # pylint: disable=W0702
-                return -1
-
-    def fit(self) -> "IPAddressEncoderTransformer":
+    def fit(self, X=None, y=None) -> "IPAddressEncoderTransformer":  # type: ignore
         """
         No need to fit anything.
         """
@@ -250,7 +244,91 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed dataframe.
         """
         function = functools.partial(
-            IPAddressEncoderTransformer.__to_float, self.ip4_devisor, self.ip6_devisor
+            IPAddressEncoderTransformer.__to_float, self.ip4_divisor, self.ip6_divisor
         )
         X = X.applymap(function)
         return X
+
+    @staticmethod
+    def __to_float(ip4_devisor: float, ip6_devisor: float, ip_address: str) -> float:
+        try:
+            return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
+        except:  # pylint: disable=W0702
+            try:
+                return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
+            except:  # pylint: disable=W0702
+                return -1
+
+
+class EmailTransformer(BaseEstimator, TransformerMixin):
+    """
+    Transforms an email address into multiple features.
+    """
+
+    def fit(self, X=None, y=None) -> "EmailTransformer":  # type: ignore
+        """
+        No need to fit anything.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transforms the one column from X, containing the email addresses, into multiple columns.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Transformed dataframe containing the extra columns.
+        """
+
+        X = X.copy()
+
+        if X.shape[1] != 1:
+            raise ValueError(
+                "Only one column is allowed! Please try something like: `df[['email']]`."
+            )
+        column_name = X.iloc[:, 0].name
+
+        X[f"{column_name}_domain"] = (
+            X.iloc[:, 0].str.split("@").str[1].str.split(".").str[0]
+        )
+
+        X.iloc[:, 0] = X.iloc[:, 0].str.split("@").str[0]
+
+        X[f"{column_name}_num_of_digits"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_digits
+        )
+        X[f"{column_name}_num_of_letters"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_letters
+        )
+        X[f"{column_name}_num_of_special_chars"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_special_characters
+        )
+        X[f"{column_name}_num_of_repeated_chars"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_repeated_characters
+        )
+        X[f"{column_name}_num_of_words"] = X.iloc[:, 0].map(
+            EmailTransformer.__num_of_words
+        )
+        return X
+
+    @staticmethod
+    def __num_of_digits(string: str) -> int:
+        return sum(map(str.isdigit, string))
+
+    @staticmethod
+    def __num_of_letters(string: str) -> int:
+        return sum(map(str.isalpha, string))
+
+    @staticmethod
+    def __num_of_special_characters(string: str) -> int:
+        return len(re.findall(r"[^A-Za-z0-9]", string))
+
+    @staticmethod
+    def __num_of_repeated_characters(string: str) -> int:
+        return max(len("".join(g)) for _, g in itertools.groupby(string))
+
+    @staticmethod
+    def __num_of_words(string: str) -> int:
+        return len(re.findall(r"[.\-_]", string)) + 1

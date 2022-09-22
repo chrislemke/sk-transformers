@@ -112,5 +112,21 @@ def X_numbers() -> pd.DataFrame:
 
 
 @pytest.fixture()
+def X_strings() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "email": [
+                "test@test1.com",
+                "test123@test2.com",
+                "test_123$$@test3.com",
+                "test_test@test4.com",
+                "ttt@test5.com",
+                "test_test_test",
+            ],
+        }
+    )
+
+
+@pytest.fixture()
 def y() -> pd.Series:
     return pd.Series([1, 1, 1, 1, 0, 0, 0, 0, 0, 0])
