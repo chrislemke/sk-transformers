@@ -87,7 +87,7 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
         """
         return self
 
-    def transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Replace NaN values with a specified value.
 
