@@ -87,7 +87,7 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
         """
         return self
 
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame, y: pd.Series) -> pd.DataFrame:
         """
         Replace NaN values with a specified value.
 
@@ -221,10 +221,10 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
     Those values can be changed using the `ipv4_divider` and `ipv6_divider` parameters.
     """
 
-    def __init__(self, ip4_devisor: float = 1e10, ip6_devisor: float = 1e48) -> None:
+    def __init__(self, ip4_divisor: float = 1e10, ip6_divisor: float = 1e48) -> None:
         super().__init__()
-        self.ip4_devisor = ip4_devisor
-        self.ip6_devisor = ip6_devisor
+        self.ip4_divisor = ip4_divisor
+        self.ip6_divisor = ip6_divisor
 
     def fit(self, X=None, y=None) -> "IPAddressEncoderTransformer":  # type: ignore
         """
@@ -244,7 +244,7 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed dataframe.
         """
         function = functools.partial(
-            IPAddressEncoderTransformer.__to_float, self.ip4_devisor, self.ip6_devisor
+            IPAddressEncoderTransformer.__to_float, self.ip4_divisor, self.ip6_divisor
         )
         X = X.applymap(function)
         return X
@@ -263,9 +263,6 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
 class EmailTransformer(BaseEstimator, TransformerMixin):
     """
     Transforms an email address into multiple features.
-
-    Args:
-        new_column_name (str): The name of the output column.
     """
 
     def fit(self, X=None, y=None) -> "EmailTransformer":  # type: ignore
@@ -294,7 +291,7 @@ class EmailTransformer(BaseEstimator, TransformerMixin):
         column_name = X.iloc[:, 0].name
 
         X[f"{column_name}_domain"] = (
-            X.iloc[:, 0].str.split("@").str[1].str.split(".").str[1]
+            X.iloc[:, 0].str.split("@").str[1].str.split(".").str[0]
         )
 
         X.iloc[:, 0] = X.iloc[:, 0].str.split("@").str[0]
