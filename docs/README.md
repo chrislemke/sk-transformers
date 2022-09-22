@@ -9,10 +9,14 @@
 [![pypi](https://img.shields.io/pypi/v/feature-reviser)](https://pypi.org/project/feature-reviser/)
 [![license](https://img.shields.io/github/license/chrislemke/feature-reviser)](https://github.com/chrislemke/feature-reviser/blob/main/LICENSE)
 ## Introduction
-The feature-reviser makes it easier to find the right features for a classifier.
-After creating different features, the question often arises whether they improve or worsen the performance of the classifier and thus have a direct positive or negative influence on the prediction. This project is intended to simplify the selection of features and at the same time contribute to simplifying and automating the entire processing process.
+The feature-reviser makes it easier to construct and find the right features for a classifier.
 
-Additionally, this project also contains feature engineering steps, which can be used in a [Scikit-Learn pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html). Check out the [`custom_transformer`](https://github.com/chrislemke/feature-reviser/blob/main/feature_reviser/transformer/custom_transformer.py) module for more information.
+In this project, we want to conquer two big challenges in the field of machine learning/data science: feature engineering and feature selection.
+
+Every data is different every column needs to be treated differently. So one part of this project is a [collection of various transformers](https://github.com/chrislemke/feature-reviser/blob/main/feature_reviser/transformer/custom_transformer.py) that can be used for preprocessing. Because even if columns are somehow always different, some patterns can be generalized. We believe, that a brought collection of preprocessing transformers is like a well-equipped toolbox: You always find the tool you need and sometimes you get inspired by seeing a tool you did not recognize before. BTW: Feel free to contribute to this toolbox.
+
+Once you have a set of features, you need to find the right ones. This is where the feature selection comes in. We want to provide a collection of feature selection algorithms to quickly find your best collection. The main idea is that this process should be automated. Because there are better things to do in life than trying out different feature combinations. 🛝 Check out [Scikit-learn's feature selection](https://scikit-learn.org/stable/modules/classes.html?highlight=feature+selection#module-sklearn.feature_selection) module and the options [feature-engine](https://feature-engine.readthedocs.io/en/latest/api_doc/selection/index.html) for great already existing implementations.
+
 
 ## Installation
 If you are using [Poetry](https://python-poetry.org/), you can install the package with the following command:

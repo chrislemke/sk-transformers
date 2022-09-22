@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "feature-reviser"
 version = "0.3.3"
-description = "Find the right features of your dataset for the right model."
+description = "Construct and find the right features of your dataset for the right model."
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
 repository = "https://github.com/chrislemke/feature-reviser"
