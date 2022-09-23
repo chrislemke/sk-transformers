@@ -5,7 +5,7 @@ import ipaddress
 import itertools
 import re
 from datetime import datetime
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Tuple, Union
 
 import numpy as np
 import pandas as pd
@@ -13,6 +13,125 @@ from feature_engine.encoding import MeanEncoder as Me
 from sklearn.base import TransformerMixin
 
 # pylint: disable=unused-argument
+
+
+class ValueReplacerTransformer(TransformerMixin):
+    """
+    Uses Pandas `replace` method to replace values in a column.
+
+    Args:
+        features (List[Tuple[str, str, Any]]): List of tuples containing the column name,
+            the value to replace (can be a regex), and the replacement value.
+
+    Returns:
+        None
+    """
+
+    def __init__(self, features: List[Tuple[str, str, Any]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def fit(self, X=None, y=None) -> "ValueReplacerTransformer":  # type: ignore
+        """
+        Fit method that does nothing.
+        """
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Args:
+            X (pd.DataFrame): Dataframe containing the columns where values should be replaced.
+
+        Returns:
+            pd.DataFrame: Dataframe with replaced values.
+        """
+
+        for c in [col for col, _, _ in self.features]:
+            if not c in X.columns:
+                raise ValueError(f"Column `{c}` not found in X!")
+
+        X = X.copy()
+        for (column, value, replacement) in self.features:
+
+            is_regex = ValueReplacerTransformer.__check_for_regex(value)
+            column_dtype = X[column].dtype
+
+            if column_dtype is not str and is_regex:
+                X[column] = X[column].astype(str)
+
+            X[column] = X[column].replace(value, replacement, regex=True)
+
+            if X[column].dtype != column_dtype:
+                X[column] = X[column].astype(column_dtype)
+
+        return X
+
+    @staticmethod
+    def __check_for_regex(string: str) -> bool:
+        if not isinstance(string, str):
+            return False
+        try:
+            re.compile(string)
+            is_valid = True
+        except re.error:  # pylint: disable=W0702
+            is_valid = False
+        return is_valid
+
+
+# if __name__ == "__main__":
+#     from sklearn.pipeline import make_pipeline
+
+#     def test_invalid_value_transformer_in_pipeline(x) -> None:
+#         values = [("d", r"[^0-9-]", 0)]
+#         pipeline = make_pipeline(InvalidValueTransformer(values))
+#         result = pipeline.fit_transform(x)
+#         print()
+
+#     def X_time_values() -> pd.DataFrame:
+#         return pd.DataFrame(
+#             {
+#                 "a": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+#                 "b": [
+#                     "1960-01-01",
+#                     "1970-01-01",
+#                     "1970-01-02",
+#                     "2022-01-04",
+#                     "2022-01-05",
+#                     "2022-01-06",
+#                     "2022-01-07",
+#                     "2022-01-08",
+#                     "2022-01-09",
+#                     "2022-01-10",
+#                 ],
+#                 "c": [
+#                     "1960-01-01",
+#                     "1970-01-01",
+#                     "1971-01-02",
+#                     "2023-01-04",
+#                     "2022-02-05",
+#                     "2022-02-06",
+#                     "2022-01-08",
+#                     "2022-01-09",
+#                     "1960-01-01",
+#                     "2100-01-01",
+#                 ],
+#                 "d": [
+#                     "0000-01-01",
+#                     "1970-01-01",
+#                     "1971-01-00",
+#                     "foo",
+#                     "2022.02.05",
+#                     "06-02-2022",
+#                     "2022/01/08",
+#                     "2022-01-09",
+#                     "1960-01-01",
+#                     "10000-01-01",
+#                 ],
+#             }
+#         )
+
+
+# test_invalid_value_transformer_in_pipeline(X_time_values())
 
 
 class ColumnDropperTransformer(TransformerMixin):
@@ -27,6 +146,7 @@ class ColumnDropperTransformer(TransformerMixin):
     """
 
     def __init__(self, columns: Union[str, List[str]]) -> None:
+        super().__init__()
         self.columns = columns
 
     def fit(self, X=None, y=None) -> "ColumnDropperTransformer":  # type: ignore
@@ -37,7 +157,7 @@ class ColumnDropperTransformer(TransformerMixin):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Drops columns from a dataframe.
+        Returns the dataframe with the columns dropped.
 
         Args:
             X (pd.DataFrame): Dataframe to drop columns from.
@@ -149,6 +269,7 @@ class TimestampTransformer(TransformerMixin):
         date_format: str = "%Y-%m-%d",
         errors: str = "raise",
     ):
+        super().__init__()
         self.date_format = date_format
         self.errors = errors
 
