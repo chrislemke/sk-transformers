@@ -8,28 +8,21 @@ Check out this dummy example of how to create a custom transformer ready for use
 
 ```python
 import pandas as pd
-from sklearn.base import TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin
 
-class DummyTransformer(TransformerMixin):
+class DummyTransformer(BaseEstimator, TransformerMixin):
     """
     Replaces all strings in a given column with `dummy`.
 
     Args:
         string_to_replace (str): The string which should be replaced by `dummy`.
         column (str): The column to replace the strings with dummy.
-
-    Returns:
-        None
     """
     def __init__(self, string_to_replace: str, column: str) -> None:
-        super().__init__()
         self.string_to_replace = string_to_replace
         self.column = column
 
     def fit(self, X=None, y=None) -> "DummyTransformer":
-        """
-        Fit method that does nothing.
-        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:

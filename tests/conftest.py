@@ -65,7 +65,7 @@ def X_time_values() -> pd.DataFrame:
                 "1960-01-01",
                 "2100-01-01",
             ],
-            "d": [
+            "dd": [
                 "0000-01-01",
                 "1970-01-01",
                 "1971-01-00",
@@ -77,6 +77,7 @@ def X_time_values() -> pd.DataFrame:
                 "1960-01-01",
                 "10000-01-01",
             ],
+            "e": [2, 4, 6, 8, 10, 12, 14, 16, 18, 20],
         }
     )
 
@@ -134,6 +135,22 @@ def X_strings() -> pd.DataFrame:
                 "test_test@test4.com",
                 "ttt@test5.com",
                 "test_test_test",
+            ],
+            "strings_1": [
+                "this_is_a_string",
+                "this_is_another_string",
+                "this_is_a_third_string",
+                "this_is_a_fourth_string",
+                "this_is_a_fifth_string",
+                "this_is_a_sixth_string",
+            ],
+            "strings_2": [
+                "this_is_not_a_string",
+                "this_is_another_string",
+                "this is a third string",
+                "this_is_a_fifth_string",
+                " ",
+                "!@#$%^&*()_+",
             ],
         }
     )
