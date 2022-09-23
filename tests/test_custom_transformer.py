@@ -10,6 +10,8 @@ from feature_reviser.transformer.custom_transformer import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     NaNTransformer,
+    PhoneTransformer,
+    StringSimilarityTransformer,
     TimestampTransformer,
     ValueReplacerTransformer,
 )
@@ -17,30 +19,70 @@ from feature_reviser.transformer.custom_transformer import (
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
 
+def test_phone_number_transformer(X_numbers):
+    pipeline = make_pipeline(PhoneTransformer(["phone_number"]))
+
+    X = pipeline.fit_transform(X_numbers)
+    expected_national_number = np.array(
+        [1.763456123, -999.0, 4.045654449, -999.0, -999.0]
+    )
+    expected_country_code = np.array([0.49, -999.0, 0.49, -999.0, -999.0])
+
+    assert pipeline.steps[0][0] == "phonetransformer"
+    assert np.array_equal(
+        X["phone_number_national_number"].values, expected_national_number
+    )
+    assert np.array_equal(X["phone_number_country_code"].values, expected_country_code)
+
+
+def test_string_similarity_transformer_in_pipeline(X_strings):
+    pipeline = make_pipeline(StringSimilarityTransformer(["strings_1", "strings_2"]))
+    result = pipeline.fit_transform(X_strings)
+    expected = np.array(
+        [
+            0.8888888888888888,
+            1.0,
+            0.8181818181818182,
+            0.8888888888888888,
+            0.0,
+            0.058823529411764705,
+        ]
+    )
+    assert np.array_equal(result["strings_1_strings_2_similarity"].values, expected)
+    assert pipeline.steps[0][0] == "stringsimilaritytransformer"
+
+
 def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     values = [
-        ("a", r"^(?:[1-9][0-9]+|9)$", 99),
-        ("d", "foo", "bar"),
+        (["a", "e"], r"^(?:[1-9][0-9]+|9)$", 99),
+        (
+            ["dd"],
+            r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
+            "1900-01-01",
+        ),
     ]
     pipeline = make_pipeline(ValueReplacerTransformer(values))
     result = pipeline.fit_transform(X_time_values)
     expected_a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 99, 99])
-    expected_d = np.array(
+    expected_dd = np.array(
         [
-            "0000-01-01",
+            "1900-01-01",
             "1970-01-01",
-            "1971-01-00",
-            "bar",
+            "1900-01-01",
+            "1900-01-01",
             "2022.02.05",
-            "06-02-2022",
+            "1900-01-01",
             "2022/01/08",
             "2022-01-09",
             "1960-01-01",
-            "10000-01-01",
+            "1900-01-01",
         ]
     )
+    expected_e = np.array([2, 4, 6, 8, 99, 99, 99, 99, 99, 99])
+
     assert np.array_equal(result["a"].values, expected_a)
-    assert np.array_equal(result["d"].values, expected_d)
+    assert np.array_equal(result["dd"].values, expected_dd)
+    assert np.array_equal(result["e"].values, expected_e)
     assert pipeline.steps[0][0] == "valuereplacertransformer"
 
 
@@ -54,7 +96,7 @@ def test_column_dropper_transformer_in_pipeline(X) -> None:
 
 
 def test_email_transformer_in_pipeline(X_strings) -> None:
-    pipeline = make_pipeline(EmailTransformer())
+    pipeline = make_pipeline(EmailTransformer(["email"]))
     result = pipeline.fit_transform(X_strings[["email"]])
     expected = pd.DataFrame(
         {
@@ -86,7 +128,7 @@ def test_email_transformer_in_pipeline(X_strings) -> None:
 
 
 def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
-    pipeline = make_pipeline(IPAddressEncoderTransformer())
+    pipeline = make_pipeline(IPAddressEncoderTransformer(["ip_address"]))
 
     X = pipeline.fit_transform(X_numbers[["ip_address"]])
     expected = np.array(
@@ -95,7 +137,7 @@ def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
             0.3232235777,
             4.254076642994478e-11,
             4.254076645264119e-11,
-            -1.0,
+            -999,
         ]
     )
 
@@ -104,15 +146,43 @@ def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
     print(X)
 
 
-def test_duration_calculator_transformer_in_pipeline(X_time_values) -> None:
+def test_duration_calculator_transformer_in_pipeline_days(X_time_values) -> None:
     pipeline = make_pipeline(
-        DurationCalculatorTransformer(new_column_name="duration", unit="days")
+        DurationCalculatorTransformer(
+            ("b", "c"), new_column_name="duration", unit="days"
+        )
     )
     X = pipeline.fit_transform(X_time_values[["b", "c"]])
     expected = np.array([0, 0, 365, 365, 31, 31, 1, 1, -22654, 28480])
     assert np.array_equal(X["duration"].values, expected)
     assert pipeline.steps[0][0] == "durationcalculatortransformer"
     assert pipeline.steps[0][1].unit == "days"
+
+
+def test_duration_calculator_transformer_in_pipeline_seconds(X_time_values) -> None:
+    pipeline = make_pipeline(
+        DurationCalculatorTransformer(
+            ("b", "c"), new_column_name="duration", unit="seconds"
+        )
+    )
+    X = pipeline.fit_transform(X_time_values[["b", "c"]])
+    expected = np.array(
+        [
+            0.0,
+            0.0,
+            31536000.0,
+            31536000.0,
+            2678400.0,
+            2678400.0,
+            86400.0,
+            86400.0,
+            -1957305600.0,
+            2460672000.0,
+        ]
+    )
+    assert np.array_equal(X["duration"].values, expected)
+    assert pipeline.steps[0][0] == "durationcalculatortransformer"
+    assert pipeline.steps[0][1].unit == "seconds"
 
 
 def test_nan_transform_in_pipeline(X_nan_values) -> None:
@@ -128,7 +198,7 @@ def test_nan_transform_in_pipeline(X_nan_values) -> None:
 
 
 def test_timestamp_transformer_in_pipeline(X_time_values) -> None:
-    pipeline = make_pipeline(TimestampTransformer())
+    pipeline = make_pipeline(TimestampTransformer(["b"]))
     result = pipeline.fit_transform(X_time_values[["b"]])["b"].values
     expected = np.array(
         [

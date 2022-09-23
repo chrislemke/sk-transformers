@@ -4,37 +4,34 @@ import functools
 import ipaddress
 import itertools
 import re
+import unicodedata
 from datetime import datetime
+from difflib import SequenceMatcher
 from typing import Any, Dict, List, Tuple, Union
 
-import numpy as np
 import pandas as pd
+import phonenumbers
+from feature_engine.dataframe_checks import check_X
 from feature_engine.encoding import MeanEncoder as Me
-from sklearn.base import TransformerMixin
+from sklearn.base import BaseEstimator, TransformerMixin
+from sklearn.utils.validation import check_is_fitted
 
-# pylint: disable=unused-argument
+# pylint: disable=unused-argument, missing-function-docstring
 
 
-class ValueReplacerTransformer(TransformerMixin):
+class ValueReplacerTransformer(BaseEstimator, TransformerMixin):
     """
     Uses Pandas `replace` method to replace values in a column.
 
     Args:
-        features (List[Tuple[str, str, Any]]): List of tuples containing the column name,
+        features (List[Tuple[List[str], str, Any]]): List of tuples containing the column names as a list,
             the value to replace (can be a regex), and the replacement value.
-
-    Returns:
-        None
     """
 
-    def __init__(self, features: List[Tuple[str, str, Any]]) -> None:
-        super().__init__()
+    def __init__(self, features: List[Tuple[List[str], str, Any]]) -> None:
         self.features = features
 
     def fit(self, X=None, y=None) -> "ValueReplacerTransformer":  # type: ignore
-        """
-        Fit method that does nothing.
-        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -46,23 +43,21 @@ class ValueReplacerTransformer(TransformerMixin):
             pd.DataFrame: Dataframe with replaced values.
         """
 
-        for c in [col for col, _, _ in self.features]:
-            if not c in X.columns:
-                raise ValueError(f"Column `{c}` not found in X!")
+        X = check_X(X)
 
-        X = X.copy()
-        for (column, value, replacement) in self.features:
+        for (columns, value, replacement) in self.features:
+            for column in columns:
+                print(column)
+                is_regex = ValueReplacerTransformer.__check_for_regex(value)
+                column_dtype = X[column].dtype
 
-            is_regex = ValueReplacerTransformer.__check_for_regex(value)
-            column_dtype = X[column].dtype
+                if column_dtype is not str and is_regex:
+                    X[column] = X[column].astype(str)
 
-            if column_dtype is not str and is_regex:
-                X[column] = X[column].astype(str)
+                X[column] = X[column].replace(value, replacement, regex=True)
 
-            X[column] = X[column].replace(value, replacement, regex=True)
-
-            if X[column].dtype != column_dtype:
-                X[column] = X[column].astype(column_dtype)
+                if X[column].dtype != column_dtype:
+                    X[column] = X[column].astype(column_dtype)
 
         return X
 
@@ -78,81 +73,18 @@ class ValueReplacerTransformer(TransformerMixin):
         return is_valid
 
 
-# if __name__ == "__main__":
-#     from sklearn.pipeline import make_pipeline
-
-#     def test_invalid_value_transformer_in_pipeline(x) -> None:
-#         values = [("d", r"[^0-9-]", 0)]
-#         pipeline = make_pipeline(InvalidValueTransformer(values))
-#         result = pipeline.fit_transform(x)
-#         print()
-
-#     def X_time_values() -> pd.DataFrame:
-#         return pd.DataFrame(
-#             {
-#                 "a": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-#                 "b": [
-#                     "1960-01-01",
-#                     "1970-01-01",
-#                     "1970-01-02",
-#                     "2022-01-04",
-#                     "2022-01-05",
-#                     "2022-01-06",
-#                     "2022-01-07",
-#                     "2022-01-08",
-#                     "2022-01-09",
-#                     "2022-01-10",
-#                 ],
-#                 "c": [
-#                     "1960-01-01",
-#                     "1970-01-01",
-#                     "1971-01-02",
-#                     "2023-01-04",
-#                     "2022-02-05",
-#                     "2022-02-06",
-#                     "2022-01-08",
-#                     "2022-01-09",
-#                     "1960-01-01",
-#                     "2100-01-01",
-#                 ],
-#                 "d": [
-#                     "0000-01-01",
-#                     "1970-01-01",
-#                     "1971-01-00",
-#                     "foo",
-#                     "2022.02.05",
-#                     "06-02-2022",
-#                     "2022/01/08",
-#                     "2022-01-09",
-#                     "1960-01-01",
-#                     "10000-01-01",
-#                 ],
-#             }
-#         )
-
-
-# test_invalid_value_transformer_in_pipeline(X_time_values())
-
-
-class ColumnDropperTransformer(TransformerMixin):
+class ColumnDropperTransformer(BaseEstimator, TransformerMixin):
     """
     Drops columns from a dataframe using Pandas `drop` method.
 
     Args:
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
-
-    Returns:
-        None
     """
 
     def __init__(self, columns: Union[str, List[str]]) -> None:
-        super().__init__()
         self.columns = columns
 
     def fit(self, X=None, y=None) -> "ColumnDropperTransformer":  # type: ignore
-        """
-        Fit method that does nothing.
-        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -165,32 +97,32 @@ class ColumnDropperTransformer(TransformerMixin):
         Returns:
             pd.DataFrame: Dataframe with columns dropped.
         """
+        X = check_X(X)
         return X.drop(self.columns, axis=1)
 
 
-class DurationCalculatorTransformer(TransformerMixin):
+class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
     """
     Calculates the duration between to given dates.
 
     Args:
-        X (pd.DataFrame): The input DataFrame.
-        columns (Tuple[str, str]): The two columns that contain the dates which should be used to calculate the duration.
+        features (Tuple[str, str]): The two columns that contain the dates which should be used to calculate the duration.
         unit (str): The unit in which the duration should be returned. Should be either `days` or `seconds`.
         new_column_name (str): The name of the output column.
     """
 
-    def __init__(self, unit: str, new_column_name: str):
+    def __init__(
+        self, features: Tuple[str, str], unit: str, new_column_name: str
+    ) -> None:
 
         if unit not in ["days", "seconds"]:
             raise ValueError("Unsupported unit. Should be either `days` or `seconds`!")
 
+        self.features = features
         self.unit = unit
         self.new_column_name = new_column_name
 
     def fit(self, X=None, y=None) -> "DurationCalculatorTransformer":  # type: ignore
-        """
-        Fit method that does nothing.
-        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -203,27 +135,30 @@ class DurationCalculatorTransformer(TransformerMixin):
         Returns:
             pandas.DataFrame: The transformed DataFrame.
         """
-        X = X.copy()
+
+        if not all(elem in X.columns for elem in self.features):
+            raise ValueError("Not all provided `features` could be found in `X`!")
+
+        X = check_X(X)
 
         if X.shape[1] != 2:
             raise ValueError(
                 f"Only two columns should be provided! But {X.shape[1]} were given."
             )
 
-        if self.unit == "days":
-            X[self.new_column_name] = (
-                pd.to_datetime(X.iloc[:, 1], utc=True, errors="raise")
-                - pd.to_datetime(X.iloc[:, 0], utc=True, errors="raise")
-            ).dt.days
-        else:
-            (
-                pd.to_datetime(X.iloc[:, 1], utc=True, errors="raise")
-                - pd.to_datetime(X.iloc[:, 0], utc=True, errors="raise")
-            ).dt.total_seconds()
+        duration_series = pd.to_datetime(
+            X[self.features[1]], utc=True, errors="raise"
+        ) - pd.to_datetime(X[self.features[0]], utc=True, errors="raise")
+
+        X[self.new_column_name] = (
+            duration_series.dt.days
+            if self.unit == "days"
+            else duration_series.dt.total_seconds()
+        )
         return X
 
 
-class NaNTransformer(TransformerMixin):
+class NaNTransformer(BaseEstimator, TransformerMixin):
     """
     Replace NaN values with a specified value.
 
@@ -232,13 +167,10 @@ class NaNTransformer(TransformerMixin):
         values (Dict[str, Any]): Dictionary with column names as keys and values to replace NaN with as values.
     """
 
-    def __init__(self, values: Dict[str, Any]):
+    def __init__(self, values: Dict[str, Any]) -> None:
         self.values = values
 
     def fit(self, X=None, y=None) -> "NaNTransformer":  # type: ignore
-        """
-        Fit method that does nothing.
-        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -251,32 +183,28 @@ class NaNTransformer(TransformerMixin):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        X = X.copy()
+        X = check_X(X)
         return X.fillna(self.values)
 
 
-class TimestampTransformer(TransformerMixin):
+class TimestampTransformer(BaseEstimator, TransformerMixin):
     """
     Transforms a date column with a specified format into a timestamp column.
 
     Args:
+        features (List[str]): List of features which should be transformed.
         format (str): Format of the date column. Defaults to "%Y-%m-%d".
-        errors (str): How to handle errors. Choices are "raise", "coerce", and "ignore". Defaults to "raise".
     """
 
     def __init__(
         self,
+        features: List[str],
         date_format: str = "%Y-%m-%d",
-        errors: str = "raise",
-    ):
-        super().__init__()
+    ) -> None:
+        self.features = features
         self.date_format = date_format
-        self.errors = errors
 
     def fit(self, X=None, y=None) -> "TimestampTransformer":  # type: ignore
-        """
-        Fit method that does nothing.
-        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -289,60 +217,66 @@ class TimestampTransformer(TransformerMixin):
         Returns:
             pandas.DataFrame: Dataframe with transformed columns.
         """
-        X = X.copy()
-        for col in X.columns:
-            X[col] = pd.to_datetime(X[col], format=self.date_format, errors=self.errors)
-            X[col] = (X[col] - datetime(1970, 1, 1)).dt.total_seconds()
+
+        if not all(elem in X.columns for elem in self.features):
+            raise ValueError("Not all provided `features` could be found in `X`!")
+
+        X = check_X(X)
+        for column in self.features:
+            X[column] = pd.to_datetime(
+                X[column], format=self.date_format, errors="raise"
+            )
+            X[column] = (X[column] - datetime(1970, 1, 1)).dt.total_seconds()
         return X
 
 
-class QueryTransformer(TransformerMixin):
+class QueryTransformer(BaseEstimator, TransformerMixin):
     """
     Applies a list of queries to a dataframe.
+            If it operates on a dataset used for supervised learning this transformer should
+            be applied on the dataframe containing `X` and `y`. So removing of columns by queries
+            also removes the corresponding `y` value.
     Read more about queries [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html#pandas.DataFrame.query).
 
     Args:
         queries (List[str]): List of queries to apply to the dataframe.
-
-    Returns:
-        None
-
     """
 
     def __init__(self, queries: List[str]) -> None:
-        super().__init__()
         self.queries = queries
 
     def fit(self, X=None, y=None) -> "QueryTransformer":  # type: ignore
-        """
-        No need to fit anything.
-        """
         return self
 
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+    def transform(self, Xy: pd.DataFrame) -> pd.DataFrame:
         """
         Applies the list of queries to the dataframe.
 
         Args:
-            X (pd.DataFrame): Dataframe to apply the queries to.
+            Xy (pd.DataFrame): Dataframe to apply the queries to.
 
         Returns:
             pd.DataFrame: Dataframe with the queries applied.
         """
-        X = X.copy()
+
+        Xy = check_X(Xy)
         for query in self.queries:
-            X = X.query(query)
-        return X
+            Xy = Xy.query(query)
+        return Xy
 
 
-class MeanEncoder(TransformerMixin):
+class MeanEncoder(BaseEstimator, TransformerMixin):
     """
-    Scikit-learn API for the feature-engine MeanEncoder.
+    Scikit-learn API for the [feature-engine MeanEncoder](https://feature-engine.readthedocs.io/en/latest/api_doc/encoding/MeanEncoder.html).
+
+    Args:
+        fill_na_value (Union[int, float]): Value to fill NaN values with.
+            Those may appear if a category is not present in the set the encoder was not fitted on.
     """
 
-    def __init__(self) -> None:
-        super().__init__()
+    def __init__(self, fill_na_value: Union[int, float] = -999) -> None:
         self.encoder = Me(ignore_format=False)
+        self.fill_na_value = fill_na_value
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> "MeanEncoder":
         """
@@ -366,73 +300,95 @@ class MeanEncoder(TransformerMixin):
         Returns:
             pandas.DataFrame: Transformed data.
         """
-        return self.encoder.transform(X.copy()).fillna(-1)
+        check_is_fitted(self)
+        return self.encoder.transform(X).fillna(self.fill_na_value)
 
 
-class IPAddressEncoderTransformer(TransformerMixin):
+class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
     """
     Encodes IPv4 and IPv6 strings addresses to a float representation.
     To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
     Those values can be changed using the `ipv4_divider` and `ipv6_divider` parameters.
+
+    Args:
+        features (List[str]): List of features which should be transformed.
+        ipv4_divider (float): Divider for IPv4 addresses.
+        ipv6_divider (float): Divider for IPv6 addresses.
+        error_value (Union[int, float]): Value if parsing fails.
     """
 
-    def __init__(self, ip4_divisor: float = 1e10, ip6_divisor: float = 1e48) -> None:
+    def __init__(
+        self,
+        features: List[str],
+        ip4_divisor: float = 1e10,
+        ip6_divisor: float = 1e48,
+        error_value: Union[int, float] = -999,
+    ) -> None:
         super().__init__()
+        self.features = features
         self.ip4_divisor = ip4_divisor
         self.ip6_divisor = ip6_divisor
+        self.error_value = error_value
 
     def fit(self, X=None, y=None) -> "IPAddressEncoderTransformer":  # type: ignore
-        """
-        No need to fit anything.
-        """
         return self
 
-    def transform(
-        self, X: Union[pd.DataFrame, np.ndarray]
-    ) -> Union[pd.DataFrame, np.ndarray]:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transforms the column containing the IP addresses to float column.
-        `-1` indicates that the value could not be parsed.
 
         Args:
-            X (Union[pandas.DataFrame, numpy.ndarray]): DataFrame or array to transform.
+            X (pandas.DataFrame): DataFrame to transform.
+            error_value (Union[int, float]): Value if parsing fails.
 
         Returns:
-            Union[pandas.DataFrame, numpy.ndarray]: Transformed dataframe or array.
+            pandas.DataFrame: Transformed dataframe.
         """
 
-        if not isinstance(X, (np.ndarray, pd.DataFrame)):
-            raise TypeError("X must be a numpy.ndarray or pandas.DataFrame!")
+        if not all(elem in X.columns for elem in self.features):
+            raise ValueError("Not all provided `features` could be found in `X`!")
+
+        X = check_X(X)
 
         function = functools.partial(
-            IPAddressEncoderTransformer.__to_float, self.ip4_divisor, self.ip6_divisor
+            IPAddressEncoderTransformer.__to_float,
+            self.ip4_divisor,
+            self.ip6_divisor,
+            self.error_value,
         )
-        if isinstance(X, pd.DataFrame):
-            X = X.applymap(function)
-        else:
-            X = np.vectorize(function)(X)
+        for column in self.features:
+            X[column] = X[column].map(function)
+
         return X
 
     @staticmethod
-    def __to_float(ip4_devisor: float, ip6_devisor: float, ip_address: str) -> float:
+    def __to_float(
+        ip4_devisor: float,
+        ip6_devisor: float,
+        error_value: Union[int, float],
+        ip_address: str,
+    ) -> float:
         try:
             return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
         except:  # pylint: disable=W0702
             try:
                 return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
             except:  # pylint: disable=W0702
-                return -1
+                return error_value
 
 
-class EmailTransformer(TransformerMixin):
+class EmailTransformer(BaseEstimator, TransformerMixin):
     """
     Transforms an email address into multiple features.
+
+    Args:
+        features (List[str]): List of features which should be transformed.
     """
 
+    def __init__(self, features: List[str]) -> None:
+        self.features = features
+
     def fit(self, X=None, y=None) -> "EmailTransformer":  # type: ignore
-        """
-        No need to fit anything.
-        """
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -446,35 +402,32 @@ class EmailTransformer(TransformerMixin):
             pandas.DataFrame: Transformed dataframe containing the extra columns.
         """
 
-        X = X.copy()
+        if not all(elem in X.columns for elem in self.features):
+            raise ValueError("Not all provided `features` could be found in `X`!")
 
-        if X.shape[1] != 1:
-            raise ValueError(
-                "Only one column is allowed! Please try something like: `df[['email']]`."
+        X = check_X(X)
+
+        for column in self.features:
+
+            X[f"{column}_domain"] = (
+                X[column].str.split("@").str[1].str.split(".").str[0]
             )
-        column_name = X.iloc[:, 0].name
 
-        X[f"{column_name}_domain"] = (
-            X.iloc[:, 0].str.split("@").str[1].str.split(".").str[0]
-        )
+            X[column] = X[column].str.split("@").str[0]
 
-        X.iloc[:, 0] = X.iloc[:, 0].str.split("@").str[0]
-
-        X[f"{column_name}_num_of_digits"] = X.iloc[:, 0].map(
-            EmailTransformer.__num_of_digits
-        )
-        X[f"{column_name}_num_of_letters"] = X.iloc[:, 0].map(
-            EmailTransformer.__num_of_letters
-        )
-        X[f"{column_name}_num_of_special_chars"] = X.iloc[:, 0].map(
-            EmailTransformer.__num_of_special_characters
-        )
-        X[f"{column_name}_num_of_repeated_chars"] = X.iloc[:, 0].map(
-            EmailTransformer.__num_of_repeated_characters
-        )
-        X[f"{column_name}_num_of_words"] = X.iloc[:, 0].map(
-            EmailTransformer.__num_of_words
-        )
+            X[f"{column}_num_of_digits"] = X[column].map(
+                EmailTransformer.__num_of_digits
+            )
+            X[f"{column}_num_of_letters"] = X[column].map(
+                EmailTransformer.__num_of_letters
+            )
+            X[f"{column}_num_of_special_chars"] = X[column].map(
+                EmailTransformer.__num_of_special_characters
+            )
+            X[f"{column}_num_of_repeated_chars"] = X[column].map(
+                EmailTransformer.__num_of_repeated_characters
+            )
+            X[f"{column}_num_of_words"] = X[column].map(EmailTransformer.__num_of_words)
         return X
 
     @staticmethod
@@ -496,3 +449,132 @@ class EmailTransformer(TransformerMixin):
     @staticmethod
     def __num_of_words(string: str) -> int:
         return len(re.findall(r"[.\-_]", string)) + 1
+
+
+class StringSimilarityTransformer(BaseEstimator, TransformerMixin):
+    """
+    Calculates the similarity between two strings using the `gestalt pattern matching` algorithm from the `SequenceMatcher` class.
+    Args:
+        features (Tuple[str, str]): The two columns that contain the strings for which the similarity should be calculated.
+    """
+
+    def __init__(self, features: Tuple[str, str]) -> None:
+        self.features = features
+
+    def fit(self, X=None, y=None) -> "StringSimilarityTransformer":  # type: ignore
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Calculates the similarity of two strings provided in `features`.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
+        """
+        if not all(elem in X.columns for elem in self.features):
+            raise ValueError("Not all provided `features` could be found in `X`!")
+
+        X = check_X(X)
+
+        X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
+            [self.features[0], self.features[1]]
+        ].apply(
+            lambda x: StringSimilarityTransformer.__similar(
+                StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
+                StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
+            ),
+            axis=1,
+        )
+        return X
+
+    @staticmethod
+    def __similar(a: str, b: str) -> float:
+        return SequenceMatcher(None, a, b).ratio()
+
+    @staticmethod
+    def __normalize_string(string: str) -> str:
+        string = string.strip().lower()
+        return (
+            unicodedata.normalize("NFKD", string)
+            .encode("utf8", "strict")
+            .decode("utf8")
+        )
+
+
+class PhoneTransformer(BaseEstimator, TransformerMixin):
+    """
+    Transforms a phone number into multiple features.
+
+    Args:
+        features (List[str]): List of features which should be transformed.
+        national_number_divisor (float): Divider `national_number`.
+        country_code_divisor (flat): Divider for `country_code`.
+        error_value (str): Value to use if the phone number is invalid or the parsing fails.
+    """
+
+    def __init__(
+        self,
+        features: List[str],
+        national_number_divisor: float = 1e9,
+        country_code_divisor: float = 1e2,
+        error_value: str = "-999",
+    ) -> None:
+        self.features = features
+        self.national_number_divisor = national_number_divisor
+        self.country_code_divisor = country_code_divisor
+        self.error_value = error_value
+
+    def fit(self, X=None, y=None) -> "PhoneTransformer":  # type: ignore
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Calculates the similarity of two strings provided in `features`.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
+        """
+
+        if not all(elem in X.columns for elem in self.features):
+            raise ValueError("Not all provided `features` could be found in `X`!")
+
+        X = check_X(X)
+
+        for column in self.features:
+
+            X[f"{column}_national_number"] = X[column].apply(
+                lambda x: PhoneTransformer.__phone_to_float(
+                    "national_number",
+                    x,
+                    int(self.national_number_divisor),
+                    self.error_value,
+                )
+            )
+            X[f"{column}_country_code"] = X[column].apply(
+                lambda x: PhoneTransformer.__phone_to_float(
+                    "country_code", x, int(self.country_code_divisor), self.error_value
+                )
+            )
+
+        return X
+
+    @staticmethod
+    def __phone_to_float(
+        attribute: str, phone: str, divisor: int, error_value: str
+    ) -> float:
+        phone = phone.replace(" ", "")
+        phone = re.sub(r"[^0-9+-]", "", phone)
+        phone = re.sub(r"^00", "+", phone)
+        try:
+            return float(getattr(phonenumbers.parse(phone, None), attribute)) / divisor
+        except:  # pylint: disable=W0702
+            try:
+                return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
+            except:  # pylint: disable=W0702
+                return float(error_value)
