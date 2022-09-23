@@ -68,17 +68,19 @@ def test_prepare_categorical_data() -> None:
             "b": [1, 2, 3, 4, 5, 6, 7, 8],
             "c": [1, 2, 3, 1, 2, 3, 1, 3],
             "d": ["1", "2", "3", "4", "5", "6", "7", "8"],
+            "e": ["A", "B", "C", "D", "E", "F", "G", "H"],
         }
     )
 
-    categories = [("a", 2), ("c", 3)]
-    result = prepare_categorical_data(X, categories).dtypes    
+    categories = [("a", 2), ("c", 3), ("d", 3)]
+    result = prepare_categorical_data(X, categories).dtypes
     expected = pd.Series(
         [
             "category",
-            "float32",
+            "int64",
             "category",
             "float32",
+            "object",
         ],
         index=X.columns
     )

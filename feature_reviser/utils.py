@@ -73,7 +73,7 @@ def prepare_categorical_data(
     for column in X.columns:
         if column in cat_features:
             X[column] = X[column].astype("category").copy()
-        else:
+        elif column in cont_features:
             X[column] = X[column].astype(np.float32).copy()
 
     return X
