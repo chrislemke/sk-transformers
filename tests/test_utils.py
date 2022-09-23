@@ -72,7 +72,7 @@ def test_prepare_categorical_data() -> None:
         }
     )
 
-    categories = [("a", 2), ("c", 3), ("d", 3)]
+    categories = [("a", 2), ("b", 3), ("c", 3), ("d", 3)]
     result = prepare_categorical_data(X, categories).dtypes
     expected = pd.Series(
         [

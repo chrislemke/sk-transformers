@@ -59,10 +59,14 @@ def prepare_categorical_data(
     if not set(set(cat_features)).issubset(set(X.columns)):
         raise ValueError("cat_features must be in the dataframe!")
 
+    disc_features = []
     cont_features = []
     for feature, threshold in categories:
         if X[feature].nunique() > threshold:
-            cont_features.append(feature)
+            if str(X.dtypes.loc[feature])[:3] == "int":
+                disc_features.append(feature)
+            else:
+                cont_features.append(feature)
             cat_features.remove(feature)
             print(
                 f"""{feature} has less unique vlaues that {threshold}.
@@ -75,5 +79,7 @@ def prepare_categorical_data(
             X[column] = X[column].astype("category").copy()
         elif column in cont_features:
             X[column] = X[column].astype(np.float32).copy()
+        elif column in disc_features:
+            X[column] = X[column].astype(np.int64).copy()
 
     return X
