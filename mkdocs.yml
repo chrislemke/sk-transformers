@@ -26,6 +26,8 @@ theme:
     repo: fontawesome/brands/github
   name: material
   language: en
+  favicon: assets/images/logo.png
+  logo: assets/images/logo.png
   features:
     - navigation.tracking
     - navigation.top
