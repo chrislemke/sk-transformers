@@ -31,7 +31,7 @@ jobs:
           mypy --config-file=pyproject.toml .
       - name: Check with bandit
         run: |
-          run bandit -r ./feature_reviser/*
+          bandit -r ./feature_reviser/*
       - name: Lint with pylint
         run: |
           pylint --rcfile=pyproject.toml ./feature_reviser ./tests
