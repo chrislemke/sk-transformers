@@ -2,9 +2,9 @@
 
 # feature-reviser
 
-[![tests](https://img.shields.io/github/workflow/status/chrislemke/feature-reviser/testing?label=tests&logo=github)](https://github.com/chrislemke/feature-reviser/actions/workflows/testing.yml)
+[![testing](https://github.com/chrislemke/feature-reviser/actions/workflows/testing.yml/badge.svg?branch=main)](https://github.com/chrislemke/feature-reviser/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/github/chrislemke/feature-reviser/branch/main/graph/badge.svg?token=LJLXQXX6M8)](https://codecov.io/github/chrislemke/feature-reviser)
-[![build](https://img.shields.io/github/workflow/status/chrislemke/feature-reviser/deploy_package?logo=github)](https://github.com/chrislemke/feature-reviser/actions/workflows/deploy_package.yml)
+[![deploy package](https://github.com/chrislemke/feature-reviser/actions/workflows/deploy-package.yml/badge.svg)](https://github.com/chrislemke/feature-reviser/actions/workflows/deploy-package.yml)
 [![python version](https://img.shields.io/pypi/pyversions/feature-reviser?logo=python&logoColor=yellow)](https://www.python.org/)
 [![release](https://img.shields.io/github/v/release/chrislemke/feature-reviser?include_prereleases)](https://github.com/chrislemke/feature-reviser/releases)
 [![pypi](https://img.shields.io/pypi/v/feature-reviser)](https://pypi.org/project/feature-reviser/)
