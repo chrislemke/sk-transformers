@@ -142,3 +142,16 @@ def X_strings() -> pd.DataFrame:
 @pytest.fixture()
 def y() -> pd.Series:
     return pd.Series([1, 1, 1, 1, 0, 0, 0, 0, 0, 0])
+
+
+@pytest.fixture()
+def X_categorical() -> pd.DataFrame:
+    return pd.DataFrame(
+            {
+                "a": ["A1", "A2", "A2", "A1", "A1", "A2", "A1", "A1"],
+                "b": [1, 2, 3, 4, 5, 6, 7, 8],
+                "c": [1, 2, 3, 1, 2, 3, 1, 3],
+                "d": [1.1, 2, 3, 4, 5, 6, 7, 8],
+                "e": ["A", "B", "C", "D", "E", "F", "G", "H"],
+            }
+        )

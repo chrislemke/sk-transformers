@@ -46,34 +46,16 @@ def test_prepare_categorical_data_x_type() -> None:
     assert "features must be a pandas.DataFrame!" == str(error.value)
 
 
-def test_prepare_categorical_data_x_value() -> None:
-    X = pd.DataFrame(
-        {
-            "c": [1, 2, 3],
-            "d": [4, 5, 6],
-            "e": [7, 8, 9],
-        }
-    )
-
+def test_prepare_categorical_data_x_value(X_categorical) -> None:
     with pytest.raises(ValueError) as error:
-        prepare_categorical_data(X, [("a", 1), ("b", 2)])
+        prepare_categorical_data(X_categorical, [("f", 1)])
 
     assert "cat_features must be in the dataframe!" == str(error.value)
 
 
-def test_prepare_categorical_data() -> None:
-    X = pd.DataFrame(
-        {
-            "a": ["A1", "A2", "A2", "A1", "A1", "A2", "A1", "A1"],
-            "b": [1, 2, 3, 4, 5, 6, 7, 8],
-            "c": [1, 2, 3, 1, 2, 3, 1, 3],
-            "d": [1.1, 2, 3, 4, 5, 6, 7, 8],
-            "e": ["A", "B", "C", "D", "E", "F", "G", "H"],
-        }
-    )
-
+def test_prepare_categorical_data(X_categorical) -> None:
     categories = [("a", 2), ("b", 3), ("c", 3), ("d", 3), ("e", 3)]
-    result = prepare_categorical_data(X, categories).dtypes
+    result = prepare_categorical_data(X_categorical, categories).dtypes
     expected = pd.Series(
         [
             "category",
@@ -82,6 +64,6 @@ def test_prepare_categorical_data() -> None:
             "float64",
             "object",
         ],
-        index=X.columns
+        index=X_categorical.columns
     )
     assert result.equals(expected)
