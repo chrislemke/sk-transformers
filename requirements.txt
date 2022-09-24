@@ -485,9 +485,6 @@ setuptools==65.3.0 ; python_version >= "3.8" and python_version < "3.11" \
 six==1.16.0 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:1e61c37477a1626458e36f7b1d82aa5c9b094fa4802892072e49de9c60c4c926 \
     --hash=sha256:8abb2f1d86890a2dfb989f9a77cfcfd3e47c2a354b01111771326f8aa26e0254
-sklearn-pandas==2.2.0 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:9383e577be14448ee7f7d5f42e78b89394c1f71be43377d2b1bcbd876a94f629 \
-    --hash=sha256:bf908ea0e384e132da04355c7db67bd4f8efe145f0c9cd9f14726ce899d27542
 smmap==5.0.0 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:2aba19d6a040e78d8b09de5c57e96207b09ed71d8e55ce0959eeee6c8e190d94 \
     --hash=sha256:c840e62059cd3be204b0c9c9f74be2c09d5648eddd4580d9314c3ecde0b30936
@@ -633,6 +630,9 @@ wrapt==1.14.1 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:ee2b1b1769f6707a8a445162ea16dddf74285c3964f605877a20e38545c3c462 \
     --hash=sha256:ee6acae74a2b91865910eef5e7de37dc6895ad96fa23603d1d27ea69df545015 \
     --hash=sha256:ef3f72c9666bba2bab70d2a8b79f2c6d2c1a42a7f7e2b0ec83bb2f9e383950af
+xdoctest==1.1.0 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:0fd4fad7932f0a2f082dfdfb857dd6ca41603757586c39b1e5b4d333fc389f8a \
+    --hash=sha256:da330c4dacee51f3c785820bc743188fb6f7c64c5fa1c54bff8836b3cf23d69b
 zipp==3.8.1 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:05b45f1ee8f807d0cc928485ca40a07cb491cf092ff587c0df9cb1fd154848d2 \
     --hash=sha256:47c40d7fe183a6f21403a199b3e4192cca5774656965b0a4988ad2f8feb5f009
