@@ -49,7 +49,7 @@ click==8.1.3 ; python_version >= "3.8" and python_version < "3.11" \
 colorama==0.4.5 ; python_version >= "3.8" and python_version < "3.11" and platform_system == "Windows" or python_version >= "3.8" and python_version < "3.11" and sys_platform == "win32" \
     --hash=sha256:854bf444933e37f5824ae7bfc1e98d5bce2ebe4160d46b5edf346a89358e99da \
     --hash=sha256:e6c6b4334fc50988a639d9b98aa429a0b57da6e17b9a44f0451f930b6967b7a4
-coverage==6.4.4 ; python_version >= "3.8" and python_version < "3.11" \
+coverage[toml]==6.4.4 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:01778769097dbd705a24e221f42be885c544bb91251747a8a3efdec6eb4788f2 \
     --hash=sha256:08002f9251f51afdcc5e3adf5d5d66bb490ae893d9e21359b085f0e03390a820 \
     --hash=sha256:1238b08f3576201ebf41f7c20bf59baa0d05da941b123c6656e42cdb668e9827 \
@@ -374,6 +374,9 @@ pymdown-extensions==9.5 ; python_version >= "3.8" and python_version < "3.11" \
 pyparsing==3.0.9 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:2b020ecf7d21b687f219b71ecad3631f644a47f01403fa1d1036b0c6416d70fb \
     --hash=sha256:5026bae9a10eeaefb61dab2f09052b9f4307d44aee4eda64b309723d8d206bbc
+pytest-cov==3.0.0 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:578d5d15ac4a25e5f961c938b85a05b09fdaae9deef3bb6de9a6e766622ca7a6 \
+    --hash=sha256:e7f0f5b1617d2210a2cabc266dfe2f4c75a8d32fb89eafb7ad9d06f6d076d470
 pytest==7.1.3 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:1377bda3466d70b55e3f5cecfa55bb7cfcf219c7964629b967c37cf0bda818b7 \
     --hash=sha256:4f365fec2dff9c1162f834d9f18af1ba13062db0c708bf7b946f8a5c76180c39
