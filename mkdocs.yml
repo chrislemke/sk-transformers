@@ -49,11 +49,13 @@ plugins:
   - mkdocstrings
 
 nav:
-  - Reference:
-    - Reviser: reviser-reference.md
-    - Selector: selector-reference.md
-    - Transformer:
-        - Column transformer: column_transformer-reference.md
-        - Custom transformer: custom_transformer-reference.md
-    - Utils: utils-reference.md
+  - API reference:
+      - Reviser: reviser-reference.md
+      - Selector: selector-reference.md
+      - Transformer:
+          - Generic transformer: generic_transformer-reference.md
+          - Encoder transformer: encoder_transformer-reference.md
+          - Datetime transformer: datetime_transformer-reference.md
+          - String transformer: string_transformer-reference.md
+      - Utils: utils-reference.md
   - How to contribute: how_to_contribute.md
