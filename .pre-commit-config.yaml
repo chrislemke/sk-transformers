@@ -57,3 +57,8 @@ repos:
         exclude: "^tests/"
         args:
           - "-r"
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v2.38.0
+    hooks:
+      - id: pyupgrade
