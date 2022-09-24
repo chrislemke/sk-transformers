@@ -1,4 +1,4 @@
-![The machine](https://raw.githubusercontent.com/chrislemke/feature-reviser/master/assets/machine.png)
+![The machine](https://raw.githubusercontent.com/chrislemke/feature-reviser/master/docs/assets/images/image.png)
 
 # feature-reviser
 
