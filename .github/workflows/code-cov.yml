@@ -15,6 +15,6 @@ jobs:
           python -m pip install poetry==1.2.1
           poetry install
       - name: Run tests and collect coverage
-        run: poetry run pytest --cov app
+        run: pytest --cov feature_reviser
       - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
