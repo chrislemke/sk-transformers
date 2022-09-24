@@ -44,7 +44,7 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: The transformed DataFrame.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -97,7 +97,7 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Dataframe with transformed columns.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)

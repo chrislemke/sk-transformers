@@ -57,7 +57,7 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed dataframe.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -114,7 +114,7 @@ class EmailTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed dataframe containing the extra columns.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -186,7 +186,7 @@ class StringSimilarityTransformer(BaseEstimator, TransformerMixin):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -253,7 +253,7 @@ class PhoneTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)

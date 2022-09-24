@@ -105,6 +105,7 @@ def X_numbers() -> pd.DataFrame:
                 99_999_999_999_999,
             ],
             "small_numbers": [7, 12, 82, 1, 0],
+            "small_float_numbers": [4.5, 3.5, 6.9, 1.9, 0.6],
             "ip_address": [
                 "203.0.113.195",
                 "192.168.1.1",
