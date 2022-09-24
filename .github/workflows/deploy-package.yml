@@ -1,4 +1,4 @@
-name: deploy_package
+name: DeployPackage
 on:
   push:
     branches:
@@ -8,12 +8,12 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment: deploy_package
+    environment: deploy-package
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v2
         with:
           python-version: 3.9
       - run: pip install poetry==1.2.1
-      - run: poetry config pypi-token.pypi ${{ secrets.PYPI_GITHUB_ACTIONS_TOKEN }}
+      - run: poetry config pypi-token.pypi ${{ secrets.FEATURE_REVISER_UPLOAD_TOKEN }}
       - run: poetry publish --build

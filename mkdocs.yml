@@ -58,4 +58,4 @@ nav:
           - Datetime transformer: datetime_transformer-reference.md
           - String transformer: string_transformer-reference.md
       - Utils: utils-reference.md
-  - How to contribute: how_to_contribute.md
+  - How to contribute: CONTRIBUTING.md
