@@ -34,9 +34,9 @@ black==22.8.0 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:dd82842bb272297503cbec1a2600b6bfb338dae017186f8f215c8958f8acf869 \
     --hash=sha256:e8166b7bfe5dcb56d325385bd1d1e0f635f24aae14b3ae437102dedc0c186747 \
     --hash=sha256:e981e20ec152dfb3e77418fb616077937378b322d7b26aa1ff87717fb18b4875
-certifi==2022.9.14 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:36973885b9542e6bd01dea287b2b4b3b21236307c56324fcc3f1160f2d655ed5 \
-    --hash=sha256:e232343de1ab72c2aa521b625c80f699e356830fd0e2c620b465b304b17b0516
+certifi==2022.9.24 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:0d9c601124e5a6ba9712dbc60d9c53c21e34f5f641fe83002317394311bdce14 \
+    --hash=sha256:90c1a32f1d68f940488354e36370f6cca89f0f106db09518524c88d6ed83f382
 cfgv==3.3.1 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:c6a0883f3917a037485059700b9e75da2464e6c27051014ad85ba6aaa5884426 \
     --hash=sha256:f5a830efb9ce7a445376bb66ec94c638a9787422f96264c98edc6bdeed8ab736
