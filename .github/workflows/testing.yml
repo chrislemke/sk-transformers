@@ -18,25 +18,23 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies and project
-        run: |
-          python -m pip install poetry==1.2.1
-          poetry install
+      - name: Install requirements
+        run: pip install -r requirements.txt
       - name: Check with isort
         run: |
-          poetry run isort --check-only ./feature_reviser  ./tests
+          isort --check-only ./feature_reviser  ./tests
       - name: Check with black
         run: |
-          poetry run black --check ./feature_reviser  ./tests
+          black --check ./feature_reviser  ./tests
       - name: Check with mypy
         run: |
-          poetry run mypy --config-file=pyproject.toml .
+          mypy --config-file=pyproject.toml .
       - name: Check with bandit
         run: |
-          poetry run bandit -r ./feature_reviser/*
+          run bandit -r ./feature_reviser/*
       - name: Lint with pylint
         run: |
-          poetry run pylint --rcfile=pyproject.toml ./feature_reviser ./tests
+          pylint --rcfile=pyproject.toml ./feature_reviser ./tests
       - name: Test with pytest
         run: |
-          poetry run coverage run --source=feature_reviser -m pytest & coverage report -m
+          pytest
