@@ -7,11 +7,21 @@ from sklearn.pipeline import make_pipeline
 from feature_reviser.transformer.generic_transformer import (
     ColumnDropperTransformer,
     NaNTransformer,
+    QueryTransformer,
     ValueIndicatorTransformer,
     ValueReplacerTransformer,
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
+
+
+def test_query_transformer_in_pipeline(X) -> None:
+    pipeline = make_pipeline(QueryTransformer(["a > 6"]))
+    X = pipeline.fit_transform(X)
+
+    assert X.shape[0] == 4
+    assert X.shape[1] == 5
+    assert pipeline.steps[0][0] == "querytransformer"
 
 
 def test_value_indicator_transformer_in_pipeline(X_nan_values) -> None:

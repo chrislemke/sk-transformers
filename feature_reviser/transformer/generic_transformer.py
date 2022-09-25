@@ -70,7 +70,6 @@ class ValueIndicatorTransformer(BaseTransformer):
     Sometimes the present of a `NaN` value is actually important information.
     But obviously this method works with any kind of data.
 
-
     `NaN`, `None` or `np.nan` are **Not** caught by this implementation.
 
     Example:
@@ -87,7 +86,6 @@ class ValueIndicatorTransformer(BaseTransformer):
     Args:
         features (List[Tuple[str, Any]]): A list of tuples where the first value in represents the column
             name and the second value represents the value to check for.
-
     """
 
     def __init__(self, features: List[Tuple[str, Any]], as_int: bool = False) -> None:
