@@ -45,7 +45,7 @@ Data preprocessing often involves similar processes. No matter whether it's mani
 
 ### Usage
 Let's assume you want to use some method from [NumPy's mathematical functions](https://numpy.org/doc/stable/reference/routines.math.html) to sum up the values of column `foo` and column `bar`. You could
-use the [`MathExpressionTransformer`]([number_transformer-reference.md#feature_reviser.transformer.number_transformer.MathExpressionTransformer](https://chrislemke.github.io/feature-reviser/number_transformer-reference/#feature_reviser.transformer.number_transformer.MathExpressionTransformer)):
+use the [`MathExpressionTransformer`](https://chrislemke.github.io/feature-reviser/number_transformer-reference/#feature_reviser.transformer.number_transformer.MathExpressionTransformer)):
 ```python
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
 transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
@@ -56,7 +56,7 @@ array([[1, 4, 5],
        [2, 5, 7],
        [3, 6, 9]])
 ```
-Even if we only pass one tuple to the transformer - in this example. Like with most other transformers the idea is to simplify preprocessing by giving the possibility to operate on multiple columns at the same time. In this case, the [`MathExpressionTransformer`]([number_transformer-reference.md#feature_reviser.transformer.number_transformer.MathExpressionTransformer](https://chrislemke.github.io/feature-reviser/number_transformer-reference/#feature_reviser.transformer.number_transformer.MathExpressionTransformer)) has created an extra column with the name `foo_sum_bar`.
+Even if we only pass one tuple to the transformer - in this example. Like with most other transformers the idea is to simplify preprocessing by giving the possibility to operate on multiple columns at the same time. In this case, the [`MathExpressionTransformer`](https://chrislemke.github.io/feature-reviser/number_transformer-reference/#feature_reviser.transformer.number_transformer.MathExpressionTransformer)) has created an extra column with the name `foo_sum_bar`.
 
 ## The feature reviser (under construction)
 Finding the best features for your model is hard. In the `feature_selection` part of the project, we try to automate this process to make it a bit easier. This part of the project is still in development and is not yet ready for use. 🚧 If you want to help, you can find more information in the [contributing guide](CONTRIBUTING.md).
