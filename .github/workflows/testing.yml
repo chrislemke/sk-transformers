@@ -39,4 +39,4 @@ jobs:
           poetry run pylint --rcfile=pyproject.toml ./feature_reviser ./tests
       - name: Test with pytest
         run: |
-          poetry run pytest --cov feature_reviser --cov-fail-under=90 --cov-report term-missing --xdoc
+          poetry run pytest --cov feature_reviser --cov-fail-under=90 --cov-report term-missing

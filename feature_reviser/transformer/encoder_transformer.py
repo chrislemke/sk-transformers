@@ -7,7 +7,7 @@ from feature_engine.encoding import MeanEncoder as Me
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.utils.validation import check_is_fitted
 
-# pylint: disable=unused-argument
+# pylint: disable= missing-function-docstring, unused-argument
 
 
 class MeanEncoder(BaseEstimator, TransformerMixin):

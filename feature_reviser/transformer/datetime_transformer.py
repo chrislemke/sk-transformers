@@ -4,12 +4,13 @@ from typing import List, Tuple
 
 import pandas as pd
 from feature_engine.dataframe_checks import check_X
-from sklearn.base import BaseEstimator, TransformerMixin
 
-# pylint: disable=unused-argument, missing-function-docstring
+from feature_reviser.transformer.base_transformer import BaseTransformer
+
+# pylint: disable= missing-function-docstring, unused-argument
 
 
-class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
+class DurationCalculatorTransformer(BaseTransformer):
     """
     Calculates the duration between to given dates.
 
@@ -30,9 +31,6 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         self.unit = unit
         self.new_column_name = new_column_name
 
-    def fit(self, X=None, y=None) -> "DurationCalculatorTransformer":  # type: ignore
-        return self
-
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transform method that calculates the duration between two dates.
@@ -44,7 +42,7 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: The transformed DataFrame.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -66,7 +64,7 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         return X
 
 
-class TimestampTransformer(BaseEstimator, TransformerMixin):
+class TimestampTransformer(BaseTransformer):
     """
     Transforms a date column with a specified format into a timestamp column.
 
@@ -83,9 +81,6 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
         self.features = features
         self.date_format = date_format
 
-    def fit(self, X=None, y=None) -> "TimestampTransformer":  # type: ignore
-        return self
-
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transforms columns from the provided dataframe.
@@ -97,7 +92,7 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Dataframe with transformed columns.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
