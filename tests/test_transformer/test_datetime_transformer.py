@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+import pytest
 from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.datetime_transformer import (
@@ -47,6 +48,14 @@ def test_duration_calculator_transformer_in_pipeline_days(X_time_values) -> None
     assert np.array_equal(X["duration"].values, expected)
     assert pipeline.steps[0][0] == "durationcalculatortransformer"
     assert pipeline.steps[0][1].unit == "days"
+
+
+def test_duration_calculator_transformer_exception() -> None:
+    with pytest.raises(ValueError) as error:
+        DurationCalculatorTransformer(
+            ("b", "c"), new_column_name="duration", unit="not_supported"
+        )
+    assert "Unsupported unit. Should be either `days` or `seconds`!" == str(error.value)
 
 
 def test_timestamp_transformer_in_pipeline(X_time_values) -> None:

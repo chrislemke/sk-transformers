@@ -13,7 +13,7 @@ from feature_reviser.utils import (
 
 def test_check_data_x_type() -> None:
     with pytest.raises(TypeError) as error:
-        check_data("wrong_type", pd.Series([1, 2, 3]))  # type: ignore
+        check_data("wrong_type", pd.Series([1, 2, 3]))
 
     assert "Features must be a pandas.DataFrame!" == str(error.value)
 

@@ -11,12 +11,13 @@ from typing import List, Tuple, Union
 import pandas as pd
 import phonenumbers
 from feature_engine.dataframe_checks import check_X
-from sklearn.base import BaseEstimator, TransformerMixin
 
-# pylint: disable=unused-argument, missing-function-docstring
+from feature_reviser.transformer.base_transformer import BaseTransformer
+
+# pylint: disable= missing-function-docstring, unused-argument
 
 
-class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
+class IPAddressEncoderTransformer(BaseTransformer):
     """
     Encodes IPv4 and IPv6 strings addresses to a float representation.
     To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
@@ -42,9 +43,6 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
         self.ip6_divisor = ip6_divisor
         self.error_value = error_value
 
-    def fit(self, X=None, y=None) -> "IPAddressEncoderTransformer":  # type: ignore
-        return self
-
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transforms the column containing the IP addresses to float column.
@@ -57,7 +55,7 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed dataframe.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -89,7 +87,7 @@ class IPAddressEncoderTransformer(BaseEstimator, TransformerMixin):
                 return error_value
 
 
-class EmailTransformer(BaseEstimator, TransformerMixin):
+class EmailTransformer(BaseTransformer):
     """
     Transforms an email address into multiple features.
 
@@ -99,9 +97,6 @@ class EmailTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self, features: List[str]) -> None:
         self.features = features
-
-    def fit(self, X=None, y=None) -> "EmailTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -114,7 +109,7 @@ class EmailTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Transformed dataframe containing the extra columns.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -163,7 +158,7 @@ class EmailTransformer(BaseEstimator, TransformerMixin):
         return len(re.findall(r"[.\-_]", string)) + 1
 
 
-class StringSimilarityTransformer(BaseEstimator, TransformerMixin):
+class StringSimilarityTransformer(BaseTransformer):
     """
     Calculates the similarity between two strings using the `gestalt pattern matching` algorithm from the `SequenceMatcher` class.
     Args:
@@ -172,9 +167,6 @@ class StringSimilarityTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self, features: Tuple[str, str]) -> None:
         self.features = features
-
-    def fit(self, X=None, y=None) -> "StringSimilarityTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -186,7 +178,7 @@ class StringSimilarityTransformer(BaseEstimator, TransformerMixin):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
@@ -216,7 +208,7 @@ class StringSimilarityTransformer(BaseEstimator, TransformerMixin):
         )
 
 
-class PhoneTransformer(BaseEstimator, TransformerMixin):
+class PhoneTransformer(BaseTransformer):
     """
     Transforms a phone number into multiple features.
 
@@ -239,9 +231,6 @@ class PhoneTransformer(BaseEstimator, TransformerMixin):
         self.country_code_divisor = country_code_divisor
         self.error_value = error_value
 
-    def fit(self, X=None, y=None) -> "PhoneTransformer":  # type: ignore
-        return self
-
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Calculates the similarity of two strings provided in `features`.
@@ -253,7 +242,7 @@ class PhoneTransformer(BaseEstimator, TransformerMixin):
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
 
-        if not all(elem in X.columns for elem in self.features):
+        if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_X(X)
