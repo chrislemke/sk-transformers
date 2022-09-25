@@ -7,7 +7,7 @@
 [![deploy package](https://github.com/chrislemke/feature-reviser/actions/workflows/deploy-package.yml/badge.svg)](https://github.com/chrislemke/feature-reviser/actions/workflows/deploy-package.yml)
 [![release](https://img.shields.io/github/v/release/chrislemke/feature-reviser?include_prereleases)](https://github.com/chrislemke/feature-reviser/releases)
 [![pypi](https://img.shields.io/pypi/v/feature-reviser)](https://pypi.org/project/feature-reviser/)
-![downloads](https://img.shields.io/pypi/dm/feature-reviser)
+[![downloads](https://img.shields.io/pypi/dm/feature-reviser)](https://pypistats.org/packages/feature-reviser)
 ![python version](https://img.shields.io/pypi/pyversions/feature-reviser?logo=python&logoColor=yellow)
 [![license](https://img.shields.io/github/license/chrislemke/feature-reviser)](https://github.com/chrislemke/feature-reviser/blob/main/LICENSE)
 ## Introduction
