@@ -3,10 +3,7 @@
 import pandas as pd
 import pytest
 
-from feature_reviser.utils import (
-    check_data,
-    prepare_categorical_data,
-)
+from feature_reviser.utils import check_data, prepare_categorical_data
 
 # pylint: disable=missing-function-docstring
 
