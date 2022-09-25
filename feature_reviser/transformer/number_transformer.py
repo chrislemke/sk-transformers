@@ -2,7 +2,6 @@
 
 
 import operator
-from inspect import signature
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -68,20 +67,16 @@ class MathExpressionTransformer(BaseTransformer):
             new_column_with_value = f"{feature}_{operation}_{value}".replace("np.", "")
 
             if is_np_op:
-                try:
-                    if isinstance(op, np.ufunc) and (op.nargs == 1):
-                        X[new_column] = op(X[feature])
-                except ValueError:
-                    if len(signature(op).parameters) == 1:
-                        X[new_column] = op(X[feature])
-                if isinstance(value, str):
+                if value is None:
+                    X[new_column] = op(X[feature], **kwargs or {})
+                elif isinstance(value, str):
                     X[new_column_with_value] = op(
                         [X[feature], X[value]], **kwargs or {}
                     )
                 else:
                     X[new_column_with_value] = op([X[feature], value], **kwargs or {})
             else:
-                if len(signature(op).parameters) == 1:
+                if value is None:
                     X[new_column] = op(X[feature])
                 elif isinstance(value, str):
                     X[new_column_with_value] = op(X[feature], X[value])
