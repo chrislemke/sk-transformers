@@ -58,7 +58,7 @@ def select_with_classifier(
 
     if cat_features:
         # pylint: disable=consider-using-set-comprehension
-        if not set([f[0] for f in cat_features]).issubset(set(X.columns)):
+        if not {f[0] for f in cat_features}.issubset(set(X.columns)):
             raise ValueError("cat_features must be in the dataframe!")
         X = prepare_categorical_data(X, cat_features)
 
@@ -77,7 +77,7 @@ def select_with_classifier(
             )
 
         cat_df = X.select_dtypes(include=["category"])
-        num_df = X.select_dtypes(include=[np.float32])
+        num_df = X.select_dtypes(include=[np.float64, np.int64])
 
         print("Selecting categorical features...")
         cat_transformer = SelectKBest(chi2, k=min(cat_k_best, cat_df.shape[1] - 1)).fit(

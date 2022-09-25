@@ -51,5 +51,5 @@ def test_revise_classifier_chi2(clf, X, y) -> None:
 
 def test_revise_classifier_f_statistic(clf, X, y) -> None:
     result = revise_classifier(clf, X, y, [("c", 10), ("d", 10), ("e", 10)])
-    assert result[1].iloc[0][0] == 21.33333396911621
-    assert result[1].iloc[0][1] == 23.945640563964844
+    assert result[1].iloc[0][0] == 21.333333333333332
+    assert result[1].iloc[0][1] == 23.9456209150327

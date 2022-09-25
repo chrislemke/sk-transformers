@@ -2,7 +2,6 @@
 
 from typing import List, Tuple
 
-import numpy as np
 import pandas as pd
 
 
@@ -42,12 +41,11 @@ def prepare_categorical_data(
     Args:
         X (pandas.DataFrame): The dataframe containing the categorical features.
         categories (List[Tuple[str, int]]): The list of categorical features and their thresholds.
-            If the number of unique values is greater than the threshold, the feature is considered numerical and not categorical.
+            If the number of unique values is greater than the threshold, the feature is not considered categorical.
 
     Raises:
         TypeError: If the features are not a `pandas.DataFrame` or the categorical features are not a `List[str]`.
         ValueError: If the categorical features are not in the dataframe.
-        ValueError: If the dataframe does not contain any categorical features.
 
     Returns:
         pandas.DataFrame: The original dataframe with the categorical features converted to `category` dtype.
@@ -59,21 +57,17 @@ def prepare_categorical_data(
     if not set(set(cat_features)).issubset(set(X.columns)):
         raise ValueError("cat_features must be in the dataframe!")
 
-    cont_features = []
     for feature, threshold in categories:
-        if X[feature].nunique() > threshold:
-            cont_features.append(feature)
+        if (str(X[feature].dtype) != "object") or (X[feature].nunique() > threshold):
             cat_features.remove(feature)
             print(
-                f"""{feature} has less unique vlaues that {threshold}.
-            So it is not a categorical feature and will be handled as a numerical feature."""
+                f"""{feature} has fewer unique values than {threshold}.
+                So it will not be converted to Category dtype."""
             )
 
     pd.options.mode.chained_assignment = None
     for column in X.columns:
         if column in cat_features:
             X[column] = X[column].astype("category").copy()
-        else:
-            X[column] = X[column].astype(np.float32).copy()
 
     return X
