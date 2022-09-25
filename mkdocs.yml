@@ -58,6 +58,8 @@ nav:
           - Generic transformer: generic_transformer-reference.md
           - Encoder transformer: encoder_transformer-reference.md
           - Datetime transformer: datetime_transformer-reference.md
+          - Number Transformer: number_transformer-reference.md
           - String transformer: string_transformer-reference.md
+          - Base transformer: base_transformer-reference.md
       - Utils: utils-reference.md
   - How to contribute: CONTRIBUTING.md

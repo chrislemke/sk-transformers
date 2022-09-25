@@ -5,12 +5,13 @@ from typing import Any, Dict, List, Tuple, Union
 
 import pandas as pd
 from feature_engine.dataframe_checks import check_X
-from sklearn.base import BaseEstimator, TransformerMixin
 
-# pylint: disable=unused-argument, missing-function-docstring
+from feature_reviser.transformer.base_transformer import BaseTransformer
+
+# pylint: disable= missing-function-docstring, unused-argument
 
 
-class ColumnDropperTransformer(BaseEstimator, TransformerMixin):
+class ColumnDropperTransformer(BaseTransformer):
     """
     Drops columns from a dataframe using Pandas `drop` method.
 
@@ -20,9 +21,6 @@ class ColumnDropperTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self, columns: Union[str, List[str]]) -> None:
         self.columns = columns
-
-    def fit(self, X=None, y=None) -> "ColumnDropperTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -38,7 +36,7 @@ class ColumnDropperTransformer(BaseEstimator, TransformerMixin):
         return X.drop(self.columns, axis=1)
 
 
-class NaNTransformer(BaseEstimator, TransformerMixin):
+class NaNTransformer(BaseTransformer):
     """
     Replace NaN values with a specified value. Internally Pandas `fillna` method is used.
 
@@ -49,9 +47,6 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self, values: Dict[str, Any]) -> None:
         self.values = values
-
-    def fit(self, X=None, y=None) -> "NaNTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -67,7 +62,61 @@ class NaNTransformer(BaseEstimator, TransformerMixin):
         return X.fillna(self.values)
 
 
-class QueryTransformer(BaseEstimator, TransformerMixin):
+class ValueIndicatorTransformer(BaseTransformer):
+    """
+    Adds a column to a dataframe indicating if a value is equal to a specified value.
+    The idea behind this method is, that it is often useful to know if a `NaN` value was
+    present in the original data and has been changed by some imputation step.
+    Sometimes the present of a `NaN` value is actually important information.
+    But obviously this method works with any kind of data.
+
+
+    `NaN`, `None` or `np.nan` are **Not** caught by this implementation.
+
+    Example:
+        >>> X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
+        >>> transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
+        >>> transformer.fit_transform(X).to_dict()
+        {
+            'foo': {0: 1, 1: -999, 2: 3},
+            'bar': {0: 'a', 1: '-999', 2: 'c'},
+            'foo_found_indicator': {0: False, 1: True, 2: False},
+            'bar_found_indicator': {0: False, 1: True, 2: False}
+        }
+
+    Args:
+        features (List[Tuple[str, Any]]): A list of tuples where the first value in represents the column
+            name and the second value represents the value to check for.
+
+    """
+
+    def __init__(self, features: List[Tuple[str, Any]], as_int: bool = False) -> None:
+        self.features = features
+        self.as_int = as_int
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Add a column to a dataframe indicating if a value is equal to a specified value.
+
+        Args:
+            X (pandas.DataFrame): Dataframe to transform.
+
+        Returns:
+            pandas.DataFrame: Transformed dataframe containing columns indicating if a certain value was found.
+                Format of the new columns: `"column_name"_nan_indicator`.
+        """
+        if not all(f in X.columns for f in [f[0] for f in self.features]):
+            raise ValueError("Not all provided `features` could be found in `X`!")
+        X = check_X(X)
+
+        for (column, indicator) in self.features:
+            X[f"{column}_found_indicator"] = (X[column] == indicator).astype(
+                int if self.as_int else bool
+            )
+        return X
+
+
+class QueryTransformer(BaseTransformer):
     """
     Applies a list of queries to a dataframe.
     If it operates on a dataset used for supervised learning this transformer should
@@ -81,9 +130,6 @@ class QueryTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self, queries: List[str]) -> None:
         self.queries = queries
-
-    def fit(self, X=None, y=None) -> "QueryTransformer":  # type: ignore
-        return self
 
     def transform(self, Xy: pd.DataFrame) -> pd.DataFrame:
         """
@@ -103,7 +149,7 @@ class QueryTransformer(BaseEstimator, TransformerMixin):
         return Xy
 
 
-class ValueReplacerTransformer(BaseEstimator, TransformerMixin):
+class ValueReplacerTransformer(BaseTransformer):
     """
     Uses Pandas `replace` method to replace values in a column. This transformer loops over the `features` and applies
     `replace` to the according columns. If the column is not from type string but a valid regular expression is provided
@@ -117,9 +163,6 @@ class ValueReplacerTransformer(BaseEstimator, TransformerMixin):
 
     def __init__(self, features: List[Tuple[List[str], str, Any]]) -> None:
         self.features = features
-
-    def fit(self, X=None, y=None) -> "ValueReplacerTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """

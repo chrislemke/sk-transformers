@@ -5,9 +5,10 @@
 [![testing](https://github.com/chrislemke/feature-reviser/actions/workflows/testing.yml/badge.svg?branch=main)](https://github.com/chrislemke/feature-reviser/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/github/chrislemke/feature-reviser/branch/main/graph/badge.svg?token=LJLXQXX6M8)](https://codecov.io/github/chrislemke/feature-reviser)
 [![deploy package](https://github.com/chrislemke/feature-reviser/actions/workflows/deploy-package.yml/badge.svg)](https://github.com/chrislemke/feature-reviser/actions/workflows/deploy-package.yml)
-[![python version](https://img.shields.io/pypi/pyversions/feature-reviser?logo=python&logoColor=yellow)](https://www.python.org/)
 [![release](https://img.shields.io/github/v/release/chrislemke/feature-reviser?include_prereleases)](https://github.com/chrislemke/feature-reviser/releases)
 [![pypi](https://img.shields.io/pypi/v/feature-reviser)](https://pypi.org/project/feature-reviser/)
+![downloads](https://img.shields.io/pypi/dm/feature-reviser)
+![python version](https://img.shields.io/pypi/pyversions/feature-reviser?logo=python&logoColor=yellow)
 [![license](https://img.shields.io/github/license/chrislemke/feature-reviser)](https://github.com/chrislemke/feature-reviser/blob/main/LICENSE)
 ## Introduction
 The feature-reviser makes it easier to construct and find the right features for a classifier.

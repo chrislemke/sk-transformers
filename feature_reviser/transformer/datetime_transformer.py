@@ -4,12 +4,13 @@ from typing import List, Tuple
 
 import pandas as pd
 from feature_engine.dataframe_checks import check_X
-from sklearn.base import BaseEstimator, TransformerMixin
 
-# pylint: disable=unused-argument, missing-function-docstring
+from feature_reviser.transformer.base_transformer import BaseTransformer
+
+# pylint: disable= missing-function-docstring, unused-argument
 
 
-class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
+class DurationCalculatorTransformer(BaseTransformer):
     """
     Calculates the duration between to given dates.
 
@@ -29,9 +30,6 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         self.features = features
         self.unit = unit
         self.new_column_name = new_column_name
-
-    def fit(self, X=None, y=None) -> "DurationCalculatorTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -66,7 +64,7 @@ class DurationCalculatorTransformer(BaseEstimator, TransformerMixin):
         return X
 
 
-class TimestampTransformer(BaseEstimator, TransformerMixin):
+class TimestampTransformer(BaseTransformer):
     """
     Transforms a date column with a specified format into a timestamp column.
 
@@ -82,9 +80,6 @@ class TimestampTransformer(BaseEstimator, TransformerMixin):
     ) -> None:
         self.features = features
         self.date_format = date_format
-
-    def fit(self, X=None, y=None) -> "TimestampTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """

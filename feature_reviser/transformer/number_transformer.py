@@ -8,25 +8,27 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 from feature_engine.dataframe_checks import check_X
-from sklearn.base import BaseEstimator, TransformerMixin
 
-# pylint: disable=unused-argument, missing-function-docstring
+from feature_reviser.transformer.base_transformer import BaseTransformer
+
+# pylint: disable= missing-function-docstring, unused-argument
 
 
-class MathExpressionTransformer(BaseEstimator, TransformerMixin):
+class MathExpressionTransformer(BaseTransformer):
     """
     Applies an operation to a column and a given value or column.
     The operation can be any operation from the `numpy` or `operator` package.
+
+    **Warning!** Some operators may not work as expected. Especially not all NumPy methods are supported. For example:
+    various NumPy methods return values which are not fitting the size of the source column.
+
     Example:
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        >>> transformer = MathExpressionTransformer(((("foo", "np.sum", "bar", {"axis": 0}))
+        >>> transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
         >>> transformer.fit_transform(X).values
         array([[1, 4, 5],
                [2, 5, 7],
                [3, 6, 9]])
-
-    *Warning!* Some operators may not work as expected. Especially not all NumPy methods are supported. For example:
-    various NumPy methods return values which are not fitting the size of the source column.
 
     Args:
         features (List[str, str, Union[int, float]]): List of tuples containing the name of the column to apply the operation on,
@@ -42,9 +44,6 @@ class MathExpressionTransformer(BaseEstimator, TransformerMixin):
         ],
     ) -> None:
         self.features = features
-
-    def fit(self, X=None, y=None) -> "MathExpressionTransformer":  # type: ignore
-        return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """

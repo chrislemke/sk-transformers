@@ -1,15 +1,45 @@
 # -*- coding: utf-8 -*-
 
 import numpy as np
+import pytest
 from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.generic_transformer import (
     ColumnDropperTransformer,
     NaNTransformer,
+    ValueIndicatorTransformer,
     ValueReplacerTransformer,
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
+
+
+def test_value_indicator_transformer_in_pipeline(X_nan_values) -> None:
+    pipeline = make_pipeline(
+        ValueIndicatorTransformer([("d", -999), ("e", "-999")], as_int=True)
+    )
+    X = pipeline.fit_transform(X_nan_values)
+
+    assert X.loc[5, "d_found_indicator"] == 1
+    assert X.loc[6, "d_found_indicator"] == 0
+    assert X.loc[6, "e_found_indicator"] == 1
+    assert X.loc[7, "e_found_indicator"] == 0
+
+    assert pipeline.steps[0][0] == "valueindicatortransformer"
+
+
+def test_value_indicator_transformer_in_pipeline_with_non_existing_column(
+    X_nan_values,
+) -> None:
+    with pytest.raises(ValueError) as error:
+        pipeline = make_pipeline(
+            ValueIndicatorTransformer(
+                [("d", -999), ("not_existing", "-999")], as_int=True
+            )
+        )
+        _ = pipeline.fit_transform(X_nan_values)
+
+    assert "Not all provided `features` could be found in `X`!" == str(error.value)
 
 
 def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
