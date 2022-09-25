@@ -58,7 +58,7 @@ def select_with_classifier(
 
     if cat_features:
         # pylint: disable=consider-using-set-comprehension
-        if not set([f[0] for f in cat_features]).issubset(set(X.columns)):
+        if not {f[0] for f in cat_features}.issubset(set(X.columns)):
             raise ValueError("cat_features must be in the dataframe!")
         X = prepare_categorical_data(X, cat_features)
 
