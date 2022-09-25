@@ -59,7 +59,7 @@ def prepare_categorical_data(
         raise ValueError("cat_features must be in the dataframe!")
 
     for feature, threshold in categories:
-        if (str(X[feature].dtype) != 'object') or (X[feature].nunique() > threshold):
+        if (str(X[feature].dtype) != "object") or (X[feature].nunique() > threshold):
             cat_features.remove(feature)
             print(
                 f"""{feature} has fewer unique values than {threshold}.

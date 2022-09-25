@@ -61,6 +61,6 @@ def test_prepare_categorical_data(X_categorical) -> None:
             "float64",
             "object",
         ],
-        index=X_categorical.columns
+        index=X_categorical.columns,
     )
     assert result.equals(expected)
