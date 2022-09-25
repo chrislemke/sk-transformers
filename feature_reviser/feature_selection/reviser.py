@@ -38,7 +38,7 @@ def revise_classifier(
     X = prepare_categorical_data(X, cat_features)
 
     cat_df = X.select_dtypes(include=["category"])
-    num_df = X.select_dtypes(include=[np.float32])
+    num_df = X.select_dtypes(include=[np.float64, np.int64])
 
     if len(X.select_dtypes(include=["category"]).columns) == 0:
         raise ValueError(

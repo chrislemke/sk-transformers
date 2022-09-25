@@ -77,7 +77,7 @@ def select_with_classifier(
             )
 
         cat_df = X.select_dtypes(include=["category"])
-        num_df = X.select_dtypes(include=[np.float32])
+        num_df = X.select_dtypes(include=[np.float64, np.int64])
 
         print("Selecting categorical features...")
         cat_transformer = SelectKBest(chi2, k=min(cat_k_best, cat_df.shape[1] - 1)).fit(
