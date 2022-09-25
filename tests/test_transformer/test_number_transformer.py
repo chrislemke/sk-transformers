@@ -73,7 +73,9 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
     assert np.array_equal(
         result["small_numbers_sum_small_float_numbers"].values, expected_sum
     )
-    assert np.array_equal(result["small_numbers_sin"].values, expected_sin)
+    assert np.array_equal(
+        result["small_numbers_sin"].values.round(3), expected_sin.round(3)
+    )
     assert np.array_equal(result["big_numbers_neg"].values, expected_neg)
 
 
