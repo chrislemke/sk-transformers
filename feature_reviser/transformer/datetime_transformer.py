@@ -47,11 +47,6 @@ class DurationCalculatorTransformer(BaseTransformer):
 
         X = check_X(X)
 
-        if X.shape[1] != 2:
-            raise ValueError(
-                f"Only two columns should be provided! But {X.shape[1]} were given."
-            )
-
         duration_series = pd.to_datetime(
             X[self.features[1]], utc=True, errors="raise"
         ) - pd.to_datetime(X[self.features[0]], utc=True, errors="raise")
