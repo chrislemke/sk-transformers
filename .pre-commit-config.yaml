@@ -18,14 +18,6 @@ repos:
       - id: fix-encoding-pragma
       - id: forbid-new-submodules
 
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.2.1
-    hooks:
-      - id: poetry-check
-      - id: poetry-lock
-      - id: poetry-export
-        args: ["--dev", "-f", "requirements.txt", "-o", "requirements.txt"]
-
   - repo: https://github.com/psf/black
     rev: 22.8.0
     hooks:
@@ -62,3 +54,11 @@ repos:
     rev: v2.38.0
     hooks:
       - id: pyupgrade
+
+  - repo: https://github.com/python-poetry/poetry
+    rev: 1.2.1
+    hooks:
+      - id: poetry-check
+      - id: poetry-lock
+      - id: poetry-export
+        args: ["--dev", "-f", "requirements.txt", "-o", "requirements.txt"]

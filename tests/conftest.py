@@ -176,3 +176,8 @@ def X_categorical() -> pd.DataFrame:
             "e": ["A", "B", "C", "D", "E", "F", "G", "H"],
         }
     )
+
+
+@pytest.fixture()
+def y_categorical() -> pd.Series:
+    return pd.Series([1, 1, 0, 1, 0, 0, 0, 0])

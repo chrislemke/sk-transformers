@@ -12,7 +12,7 @@
 ![python version](https://img.shields.io/pypi/pyversions/feature-reviser?logo=python&logoColor=yellow)
 [![license](https://img.shields.io/github/license/chrislemke/feature-reviser)](https://github.com/chrislemke/feature-reviser/blob/main/LICENSE)
 ## Introduction
-Every data is different every column needs to be treated differently. [Scikit-learn](https://scikit-learn.org/stable/index.html) has a nice [collection of dataset transformers](https://scikit-learn.org/stable/data_transforms.html). But the possibilities of data transformation are infinite - one collection is simply not enough. This project provides a brought collection of data transformers. The idea is simple. It is like a well-equipped toolbox 🧰: You always find the tool you need and sometimes you get inspired by seeing a tool you did not know before. Please feel free to [contribute](https://chrislemke.github.io/feature-reviser/CONTRIBUTING/) your tools and ideas.
+Every data tabular is different. Every column needs to be treated differently. [Scikit-learn](https://scikit-learn.org/stable/index.html) has a nice [collection of dataset transformers](https://scikit-learn.org/stable/data_transforms.html). But the possibilities of data transformation are infinite - one collection is simply not enough. This project provides a brought collection of data transformers. The idea is simple. It is like a well-equipped toolbox 🧰: You always find the tool you need and sometimes you get inspired by seeing a tool you did not know before. Please feel free to [contribute](https://chrislemke.github.io/feature-reviser/CONTRIBUTING/) your tools and ideas.
 
 ## Installation
 If you are using [Poetry](https://python-poetry.org/), you can install the package with the following command:
@@ -41,6 +41,8 @@ Data preprocessing often involves similar processes. No matter whether it's mani
 Let's assume you want to use some method from [NumPy's mathematical functions](https://numpy.org/doc/stable/reference/routines.math.html), to sum up the values of column `foo` and column `bar`. You could
 use the [`MathExpressionTransformer`](https://chrislemke.github.io/feature-reviser/number_transformer-reference/#feature_reviser.transformer.number_transformer.MathExpressionTransformer):
 ```python
+from feature_reviser import MathExpressionTransformer
+import pandas as pd
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
 transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
 print(transformer.fit_transform(X).values)
@@ -56,7 +58,7 @@ Even if we only pass one tuple to the transformer - in this example. Like with m
 Finding the best features for your model is hard. In the `feature_selection` part of the project, we try to automate this process to make it a bit easier. This part of the project is still in development and is not yet ready for use. If you want to help, you can find more information in the [contributing guide](https://chrislemke.github.io/feature-reviser/CONTRIBUTING/).
 
 ## Contributing
-We're all kind of in the same boat. Preprocessing in data science is somehow very individual - every feature is different and must be handled and processed differently. But somehow we all have the same problems: sometimes date columns have to be changed. Sometimes strings have to be formatted, sometimes durations have to be calculated, etc. There is a huge number of preprocessing possibilities but we all use the same tools.
+We're all kind of in the same boat. Preprocessing/feature engineering in data science is somehow very individual - every feature is different and must be handled and processed differently. But somehow we all have the same problems: sometimes date columns have to be changed. Sometimes strings have to be formatted, sometimes durations have to be calculated, etc. There is a huge number of preprocessing possibilities but we all use the same tools.
 
 [Scikit-learns pipelines](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) help to use formalized functions. So why not also share these so-called transformers with others? This open source project has the goal to collect useful preprocessing pipeline steps. Let us all collect what we used for preprocessing and share it with others. This way we can all benefit from each other's work and save a lot of time. So if you have a preprocessing step that you use regularly, please feel free to contribute it to this project. The idea is that this is not only a toolbox but also an inspiration for what is possible. Maybe you have not thought about this preprocessing step before.
 

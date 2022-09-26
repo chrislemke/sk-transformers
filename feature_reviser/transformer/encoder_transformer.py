@@ -5,7 +5,6 @@ from typing import Union
 import pandas as pd
 from feature_engine.encoding import MeanEncoder as Me
 from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.utils.validation import check_is_fitted
 
 # pylint: disable= missing-function-docstring, unused-argument
 
@@ -45,5 +44,4 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
         Returns:
             pandas.DataFrame: Transformed data.
         """
-        check_is_fitted(self)
         return self.encoder.transform(X).fillna(self.fill_na_value)

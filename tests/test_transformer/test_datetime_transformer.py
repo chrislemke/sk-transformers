@@ -14,7 +14,7 @@ def test_duration_calculator_transformer_in_pipeline_seconds(X_time_values) -> N
             ("b", "c"), new_column_name="duration", unit="seconds"
         )
     )
-    X = pipeline.fit_transform(X_time_values[["b", "c"]])
+    X = pipeline.fit_transform(X_time_values)
     expected = np.array(
         [
             0.0,
@@ -40,7 +40,7 @@ def test_duration_calculator_transformer_in_pipeline_days(X_time_values) -> None
             ("b", "c"), new_column_name="duration", unit="days"
         )
     )
-    X = pipeline.fit_transform(X_time_values[["b", "c"]])
+    X = pipeline.fit_transform(X_time_values)
     expected = np.array([0, 0, 365, 365, 31, 31, 1, 1, -22654, 28480])
     assert np.array_equal(X["duration"].values, expected)
     assert pipeline.steps[0][0] == "durationcalculatortransformer"
@@ -57,7 +57,7 @@ def test_duration_calculator_transformer_exception() -> None:
 
 def test_timestamp_transformer_in_pipeline(X_time_values) -> None:
     pipeline = make_pipeline(TimestampTransformer(["b"]))
-    result = pipeline.fit_transform(X_time_values[["b"]])["b"].values
+    result = pipeline.fit_transform(X_time_values)["b"].values
     expected = np.array(
         [
             -3.1561920e08,

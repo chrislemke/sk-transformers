@@ -17,7 +17,7 @@ from feature_reviser import (
 def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
     pipeline = make_pipeline(IPAddressEncoderTransformer(["ip_address"]))
 
-    X = pipeline.fit_transform(X_numbers[["ip_address"]])
+    X = pipeline.fit_transform(X_numbers)
     expected = np.array(
         [
             0.3405803971,
@@ -33,7 +33,7 @@ def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
 
 def test_email_transformer_in_pipeline(X_strings) -> None:
     pipeline = make_pipeline(EmailTransformer(["email"]))
-    result = pipeline.fit_transform(X_strings[["email"]])
+    result = pipeline.fit_transform(X_strings)
     expected = pd.DataFrame(
         {
             "email": {
@@ -44,13 +44,29 @@ def test_email_transformer_in_pipeline(X_strings) -> None:
                 4: "ttt",
                 5: "test_test_test",
             },
+            "strings_1": {
+                0: "this_is_a_string",
+                1: "this_is_another_string",
+                2: "this_is_a_third_string",
+                3: "this_is_a_fourth_string",
+                4: "this_is_a_fifth_string",
+                5: "this_is_a_sixth_string",
+            },
+            "strings_2": {
+                0: "this_is_not_a_string",
+                1: "this_is_another_string",
+                2: "this is a third string",
+                3: "this_is_a_fifth_string",
+                4: " ",
+                5: "!@#$%^&*()_+",
+            },
             "email_domain": {
                 0: "test1",
                 1: "test2",
                 2: "test3",
                 3: "test4",
                 4: "test5",
-                5: None,
+                5: np.nan,
             },
             "email_num_of_digits": {0: 0, 1: 3, 2: 3, 3: 0, 4: 0, 5: 0},
             "email_num_of_letters": {0: 4, 1: 4, 2: 4, 3: 8, 4: 3, 5: 12},
