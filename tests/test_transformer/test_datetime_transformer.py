@@ -3,10 +3,7 @@ import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser.transformer.datetime_transformer import (
-    DurationCalculatorTransformer,
-    TimestampTransformer,
-)
+from feature_reviser import DurationCalculatorTransformer, TimestampTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

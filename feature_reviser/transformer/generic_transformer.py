@@ -75,7 +75,7 @@ class ValueIndicatorTransformer(BaseTransformer):
     Example:
         >>> X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
         >>> transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
-        >>> transformer.fit_transform(X).to_dict()
+        >>> print(transformer.fit_transform(X).to_dict())
         {
             'foo': {0: 1, 1: -999, 2: 3},
             'bar': {0: 'a', 1: '-999', 2: 'c'},
@@ -148,18 +148,39 @@ class QueryTransformer(BaseTransformer):
 
 
 class ValueReplacerTransformer(BaseTransformer):
-    """
+    r"""
     Uses Pandas `replace` method to replace values in a column. This transformer loops over the `features` and applies
     `replace` to the according columns. If the column is not from type string but a valid regular expression is provided
     the column will be temporarily changed to a string column and after the manipulation by `replace` changed back to its
     original type. It may happen, that this type changing fails if the modified column is not compatible with its original type.
+
+    Example:
+        >>> X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
+        >>> transformer = (
+        ...     ValueReplacerTransformer(
+        ...         [
+        ...             (
+        ...                 ["foo"],
+        ...                 r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
+        ...                 "1900-01-01",
+        ...             )
+        ...         ]
+        ...     ),
+        ... )
+        >>> print(transformer.fit_transform(X).values)
+        array([['1900-01-01'],
+              ['2022/01/08'],
+              ['1900-01-01'],
+              ['1982-12-7'],
+              ['1900-01-01']], dtype=object)
+
 
     Args:
         features (List[Tuple[List[str], str, Any]]): List of tuples containing the column names as a list,
             the value to replace (can be a regex), and the replacement value.
     """
 
-    def __init__(self, features: List[Tuple[List[str], str, Any]]) -> None:
+    def __init__(self, features: List[Tuple[List[str], Any, Any]]) -> None:
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -175,14 +196,13 @@ class ValueReplacerTransformer(BaseTransformer):
 
         for (columns, value, replacement) in self.features:
             for column in columns:
-                print(column)
                 is_regex = ValueReplacerTransformer.__check_for_regex(value)
                 column_dtype = X[column].dtype
 
                 if column_dtype is not str and is_regex:
                     X[column] = X[column].astype(str)
 
-                X[column] = X[column].replace(value, replacement, regex=True)
+                X[column] = X[column].replace(value, replacement, regex=is_regex)
 
                 if X[column].dtype != column_dtype:
                     X[column] = X[column].astype(column_dtype)
@@ -190,12 +210,12 @@ class ValueReplacerTransformer(BaseTransformer):
         return X
 
     @staticmethod
-    def __check_for_regex(string: str) -> bool:
-        if not isinstance(string, str):
+    def __check_for_regex(value: Any) -> bool:
+        if not isinstance(value, str):
             return False
         try:
-            re.compile(string)
+            re.compile(value)
             is_valid = True
-        except re.error:  # pylint: disable=W0702
+        except re.error:
             is_valid = False
         return is_valid

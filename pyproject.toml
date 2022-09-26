@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.3.7"
-description = "Library of various transformers for all different kinds of data preprocessing 🛠"
+version = "0.3.72"
+description = "Library of various transformers for all different kinds of data preprocessing"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
 homepage = "https://chrislemke.github.io/feature-reviser/"

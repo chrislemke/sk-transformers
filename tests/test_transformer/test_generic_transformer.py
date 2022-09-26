@@ -60,7 +60,9 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
             r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
             "1900-01-01",
         ),
+        (["f"], "\\N", "-999"),
     ]
+
     pipeline = make_pipeline(ValueReplacerTransformer(values))
     result = pipeline.fit_transform(X_time_values)
     expected_a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 99, 99])
@@ -79,10 +81,12 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
         ]
     )
     expected_e = np.array([2, 4, 6, 8, 99, 99, 99, 99, 99, 99])
+    expected_f = np.array(["2", "4", "6", "8", "-999", "12", "14", "16", "18", "20"])
 
     assert np.array_equal(result["a"].values, expected_a)
     assert np.array_equal(result["dd"].values, expected_dd)
     assert np.array_equal(result["e"].values, expected_e)
+    assert np.array_equal(result["f"].values, expected_f)
     assert pipeline.steps[0][0] == "valuereplacertransformer"
 
 

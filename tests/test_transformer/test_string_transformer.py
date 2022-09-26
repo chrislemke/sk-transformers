@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser.transformer.string_transformer import (
+from feature_reviser import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     PhoneTransformer,

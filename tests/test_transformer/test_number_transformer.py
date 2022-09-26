@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser.transformer.number_transformer import MathExpressionTransformer
+from feature_reviser import MathExpressionTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
