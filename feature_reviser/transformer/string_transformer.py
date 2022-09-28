@@ -279,3 +279,38 @@ class PhoneTransformer(BaseTransformer):
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
             except:  # pylint: disable=W0702
                 return float(error_value)
+
+
+class StringTruncatorTransformer(BaseTransformer):
+    """
+    Truncates each entry in a string column up to a specified number of characters.
+
+    Args:
+        feature (str): The feature which should be transformed.
+        n_chars (int): The number of characters to truncate (default = 1).
+    """
+
+    def __init__(
+        self,
+        feature: str,
+        n_chars: int = 1,
+    ) -> None:
+        self.feature = feature
+        self.n_chars = n_chars
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Truncates a string feature up to a specified number of characters.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Original dataframe with truncated strings in the feature.
+        """
+
+        X = check_X(X)
+
+        X[self.feature] = [x[: self.n_chars] for x in X[self.feature]]
+
+        return X

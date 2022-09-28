@@ -9,6 +9,7 @@ from feature_reviser import (
     IPAddressEncoderTransformer,
     PhoneTransformer,
     StringSimilarityTransformer,
+    StringTruncatorTransformer,
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
@@ -110,3 +111,21 @@ def test_string_similarity_transformer_in_pipeline(X_strings):
     )
     assert np.array_equal(result["strings_1_strings_2_similarity"].values, expected)
     assert pipeline.steps[0][0] == "stringsimilaritytransformer"
+
+
+def test_string_truncator_transformer_in_pipeline(X_strings):
+    pipeline = make_pipeline(StringTruncatorTransformer("strings_2", 2))
+    result = pipeline.fit_transform(X_strings)
+    expected = pd.Series(
+        [
+            "th",
+            "th",
+            "th",
+            "th",
+            " ",
+            "!@",
+        ]
+    )
+
+    assert pipeline.steps[0][0] == "stringtruncatortransformer"
+    assert result["strings_2"].equals(expected)
