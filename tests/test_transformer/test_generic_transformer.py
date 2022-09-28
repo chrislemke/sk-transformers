@@ -6,6 +6,7 @@ from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.generic_transformer import (
     ColumnDropperTransformer,
+    MapTransformer,
     NaNTransformer,
     QueryTransformer,
     ValueIndicatorTransformer,
@@ -13,6 +14,21 @@ from feature_reviser.transformer.generic_transformer import (
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
+
+
+def test_map_transformer_in_pipeline(X) -> None:
+
+    pipeline = make_pipeline(MapTransformer([("a", lambda x: x**2)]))
+    result = pipeline.fit_transform(X)
+    expected = np.array([1, 4, 9, 16, 25, 36, 49, 64, 81, 100])
+    assert np.array_equal(result["a"].values, expected)
+
+
+def test_map_transformer_raises_error(X) -> None:
+    with pytest.raises(ValueError) as error:
+        MapTransformer([("non_existing", lambda x: x**2)]).fit_transform(X)
+
+    assert "Not all provided `features` could be found in `X`!" == str(error.value)
 
 
 def test_query_transformer_in_pipeline(X) -> None:

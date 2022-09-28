@@ -3,9 +3,9 @@ from datetime import datetime
 from typing import List, Tuple
 
 import pandas as pd
-from feature_engine.dataframe_checks import check_X
 
 from feature_reviser.transformer.base_transformer import BaseTransformer
+from feature_reviser.utils import check_ready_to_transform
 
 # pylint: disable= missing-function-docstring, unused-argument
 
@@ -23,7 +23,7 @@ class DurationCalculatorTransformer(BaseTransformer):
     def __init__(
         self, features: Tuple[str, str], unit: str, new_column_name: str
     ) -> None:
-
+        super().__init__()
         if unit not in ["days", "seconds"]:
             raise ValueError("Unsupported unit. Should be either `days` or `seconds`!")
 
@@ -42,10 +42,7 @@ class DurationCalculatorTransformer(BaseTransformer):
             pandas.DataFrame: The transformed DataFrame.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-
-        X = check_X(X)
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
 
         duration_series = pd.to_datetime(
             X[self.features[1]], utc=True, errors="raise"
@@ -73,6 +70,7 @@ class TimestampTransformer(BaseTransformer):
         features: List[str],
         date_format: str = "%Y-%m-%d",
     ) -> None:
+        super().__init__()
         self.features = features
         self.date_format = date_format
 
@@ -90,7 +88,7 @@ class TimestampTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, self.features)
         for column in self.features:
             X[column] = pd.to_datetime(
                 X[column], format=self.date_format, errors="raise"
