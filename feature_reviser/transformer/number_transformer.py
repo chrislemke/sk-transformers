@@ -2,6 +2,7 @@
 
 
 import operator
+import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -69,9 +70,7 @@ class MathExpressionTransformer(BaseTransformer):
             new_column_with_value = f"{feature}_{operation}_{value}".replace("np.", "")
 
             if is_np_op:
-                np.warnings.filterwarnings(
-                    "ignore", category=np.VisibleDeprecationWarning
-                )
+                warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
                 if value is None:
                     X[new_column] = op(X[feature], **kwargs or {})
                 elif isinstance(value, str):

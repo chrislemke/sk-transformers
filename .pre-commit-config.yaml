@@ -39,7 +39,8 @@ repos:
     rev: v0.971
     hooks:
       - id: mypy
-        args: [--config-file=pyproject.toml]
+        args:
+          - "--config-file=pyproject.toml"
         exclude: "tests"
 
   - repo: https://github.com/PyCQA/bandit
