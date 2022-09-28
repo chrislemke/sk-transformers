@@ -73,6 +73,8 @@ class ValueIndicatorTransformer(BaseTransformer):
     `NaN`, `None` or `np.nan` are **Not** caught by this implementation.
 
     Example:
+        >>> from feature_reviser import ValueIndicatorTransformer
+        >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
         >>> transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
         >>> print(transformer.fit_transform(X).to_dict())
@@ -155,6 +157,8 @@ class ValueReplacerTransformer(BaseTransformer):
     original type. It may happen, that this type changing fails if the modified column is not compatible with its original type.
 
     Example:
+        >>> from feature_reviser import ValueReplacerTransformer
+        >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
         >>> transformer = (
         ...     ValueReplacerTransformer(

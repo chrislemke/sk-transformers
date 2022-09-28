@@ -22,6 +22,8 @@ class MathExpressionTransformer(BaseTransformer):
     various NumPy methods return values which are not fitting the size of the source column.
 
     Example:
+        >>> from feature_reviser import MathExpressionTransformer
+        >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
         >>> transformer.fit_transform(X).values
@@ -67,6 +69,9 @@ class MathExpressionTransformer(BaseTransformer):
             new_column_with_value = f"{feature}_{operation}_{value}".replace("np.", "")
 
             if is_np_op:
+                np.warnings.filterwarnings(
+                    "ignore", category=np.VisibleDeprecationWarning
+                )
                 if value is None:
                     X[new_column] = op(X[feature], **kwargs or {})
                 elif isinstance(value, str):
@@ -81,7 +86,9 @@ class MathExpressionTransformer(BaseTransformer):
                 elif isinstance(value, str):
                     X[new_column_with_value] = op(X[feature], X[value])
                 else:
-                    X[new_column_with_value] = op(X[feature], value)
+                    X[new_column_with_value] = op(
+                        X[feature], value
+                    )  # This created a ragged array in will be deprecated in future.
         return X
 
     def __verify_operation(self, operation: str) -> Tuple[bool, Any]:
