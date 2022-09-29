@@ -333,12 +333,12 @@ class StringSlicerTransformer(BaseTransformer):
                ['gi', 'pq']], dtype=object)
 
     Args:
-        slice_args (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
+        features (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
     """
 
     def __init__(
         self,
-        slice_args: List[
+        features: List[
             Tuple[
                 str,
                 Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
@@ -346,7 +346,7 @@ class StringSlicerTransformer(BaseTransformer):
         ],
     ) -> None:
         super().__init__()
-        self.slice_args = slice_args
+        self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -361,7 +361,7 @@ class StringSlicerTransformer(BaseTransformer):
 
         X = check_X(X)
 
-        for feature, slice_arg in self.slice_args:
-            X[feature] = [x[slice(*slice_arg)] for x in X[feature]]
+        for feature, slice_args in self.features:
+            X[feature] = [x[slice(*slice_args)] for x in X[feature]]
 
         return X
