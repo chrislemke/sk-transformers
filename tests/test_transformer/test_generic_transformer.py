@@ -120,6 +120,7 @@ def test_value_indicator_transformer_in_pipeline_with_non_existing_column(
 def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     values = [
         (["a", "e"], r"^(?:[1-9][0-9]+|9)$", 99),
+        (["dd"], "\\N", "-999"),
         (
             ["dd"],
             r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
@@ -134,7 +135,7 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     expected_dd = np.array(
         [
             "1900-01-01",
-            "1970-01-01",
+            "1900-01-01",
             "1900-01-01",
             "1900-01-01",
             "2022.02.05",
