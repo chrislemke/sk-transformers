@@ -6,6 +6,7 @@ from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.generic_transformer import (
     ColumnDropperTransformer,
+    FunctionsTransformer,
     MapTransformer,
     NaNTransformer,
     QueryTransformer,
@@ -16,12 +17,60 @@ from feature_reviser.transformer.generic_transformer import (
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
 
+def test_functions_transformer_in_pipeline(X):
+    pipeline = make_pipeline(
+        FunctionsTransformer([("a", np.log1p, None), ("b", np.sqrt, None)])
+    )
+    result = pipeline.fit_transform(X)
+    expected_a = np.array(
+        [
+            0.6931471805599453,
+            1.0986122886681098,
+            1.3862943611198906,
+            1.6094379124341003,
+            1.791759469228055,
+            1.9459101490553132,
+            2.0794415416798357,
+            2.1972245773362196,
+            2.302585092994046,
+            2.3978952727983707,
+        ]
+    )
+
+    expected_b = np.array(
+        [
+            1.0488088481701516,
+            1.4832396974191326,
+            1.816590212458495,
+            2.0976176963403033,
+            2.345207879911715,
+            2.569046515733026,
+            2.7748873851023217,
+            2.9664793948382653,
+            3.146426544510455,
+            3.1780497164141406,
+        ]
+    )
+
+    assert np.array_equal(result["a"].values, expected_a)
+    assert np.array_equal(result["b"].values, expected_b)
+    assert pipeline.steps[0][0] == "functionstransformer"
+
+
+def test_functions_transformer_raises_error(X) -> None:
+    with pytest.raises(ValueError) as error:
+        FunctionsTransformer([("non_existing", np.sqrt, None)]).fit_transform(X)
+
+    assert "Not all provided `features` could be found in `X`!" == str(error.value)
+
+
 def test_map_transformer_in_pipeline(X) -> None:
 
     pipeline = make_pipeline(MapTransformer([("a", lambda x: x**2)]))
     result = pipeline.fit_transform(X)
     expected = np.array([1, 4, 9, 16, 25, 36, 49, 64, 81, 100])
     assert np.array_equal(result["a"].values, expected)
+    assert pipeline.steps[0][0] == "maptransformer"
 
 
 def test_map_transformer_raises_error(X) -> None:
