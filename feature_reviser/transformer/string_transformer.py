@@ -279,3 +279,55 @@ class PhoneTransformer(BaseTransformer):
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
             except:  # pylint: disable=W0702
                 return float(error_value)
+
+
+class StringSlicerTransformer(BaseTransformer):
+    """
+    Slices all entries of specified string features using the `slice()` function.
+
+    Note: The arguments for the `slice()` function are passed as a tuple. This shares
+    the python quirk of writing a tuple with a single argument with the trailing comma.
+
+    Example:
+        >>> from feature_reviser import StringSlicerTransformer
+        >>> import pandas as pd
+        >>> X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
+        >>> transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
+        >>> transformer.fit_transform(X).values
+        array([['ac', 'jk'],
+               ['df', 'mn'],
+               ['gi', 'pq']], dtype=object)
+
+    Args:
+        features (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
+    """
+
+    def __init__(
+        self,
+        features: List[
+            Tuple[
+                str,
+                Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
+            ]
+        ],
+    ) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Slices the strings of specified features in the dataframe.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Original dataframe with sliced strings in specified features.
+        """
+
+        X = check_X(X)
+
+        for feature, slice_args in self.features:
+            X[feature] = [x[slice(*slice_args)] for x in X[feature]]
+
+        return X
