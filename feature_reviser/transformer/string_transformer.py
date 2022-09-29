@@ -328,7 +328,7 @@ class StringSlicerTransformer(BaseTransformer):
             pandas.DataFrame: Original dataframe with sliced strings in specified features.
         """
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
 
         for feature, slice_args in self.features:
             X[feature] = [x[slice(*slice_args)] for x in X[feature]]
