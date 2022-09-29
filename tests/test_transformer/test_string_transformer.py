@@ -9,6 +9,7 @@ from feature_reviser import (
     IPAddressEncoderTransformer,
     PhoneTransformer,
     StringSimilarityTransformer,
+    StringSlicerTransformer,
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
@@ -96,7 +97,7 @@ def test_phone_number_transformer(X_numbers):
 
 
 def test_string_similarity_transformer_in_pipeline(X_strings):
-    pipeline = make_pipeline(StringSimilarityTransformer(["strings_1", "strings_2"]))
+    pipeline = make_pipeline(StringSimilarityTransformer(("strings_1", "strings_2")))
     result = pipeline.fit_transform(X_strings)
     expected = np.array(
         [
@@ -110,3 +111,48 @@ def test_string_similarity_transformer_in_pipeline(X_strings):
     )
     assert np.array_equal(result["strings_1_strings_2_similarity"].values, expected)
     assert pipeline.steps[0][0] == "stringsimilaritytransformer"
+
+
+def test_string_slicer_transformer_in_pipeline(X_strings):
+    pipeline = make_pipeline(
+        StringSlicerTransformer(
+            [
+                ("email", (5,)),
+                ("strings_1", (8, 16)),
+                ("strings_2", (5, 15, 2)),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(X_strings)
+
+    expected = pd.DataFrame(
+        {
+            "email": [
+                "test@",
+                "test1",
+                "test_",
+                "test_",
+                "ttt@t",
+                "test_",
+            ],
+            "strings_1": [
+                "a_string",
+                "another_",
+                "a_third_",
+                "a_fourth",
+                "a_fifth_",
+                "a_sixth_",
+            ],
+            "strings_2": [
+                "i_o__",
+                "i_nte",
+                "i  hr",
+                "i__it",
+                "",
+                "^*)+",
+            ],
+        }
+    )
+
+    assert pipeline.steps[0][0] == "stringslicertransformer"
+    assert result.equals(expected)

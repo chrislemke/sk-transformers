@@ -1,11 +1,44 @@
 # -*- coding: utf-8 -*-
 
+import numpy as np
 import pandas as pd
 import pytest
 
-from feature_reviser.utils import check_data, prepare_categorical_data
+from feature_reviser.utils import (
+    check_data,
+    check_ready_to_transform,
+    prepare_categorical_data,
+)
 
 # pylint: disable=missing-function-docstring
+
+
+def test_check_ready_to_transform_for_empty_df() -> None:
+    with pytest.raises(ValueError) as error:
+        check_ready_to_transform(pd.DataFrame())
+
+    assert "X must not be empty!" == str(error.value)
+
+
+def test_check_ready_to_transform_for_not_dataframe() -> None:
+    with pytest.raises(ValueError) as error:
+        check_ready_to_transform(np.ndarray([1, 2, 3]))
+
+    assert "X must be a Pandas dataframe!" == str(error.value)
+
+
+def test_check_ready_to_transform_for_wrong_column() -> None:
+    with pytest.raises(ValueError) as error:
+        check_ready_to_transform(pd.DataFrame({"a": [1, 2, 3]}), "b")
+
+    assert "Column `b` not in dataframe!" == str(error.value)
+
+
+def test_check_ready_to_transform_for_wrong_columns() -> None:
+    with pytest.raises(ValueError) as error:
+        check_ready_to_transform(pd.DataFrame({"a": [1, 2, 3]}), ["b", "c"])
+
+    assert "Not all provided `features` could be found in `X`!" == str(error.value)
 
 
 def test_check_data_x_type() -> None:

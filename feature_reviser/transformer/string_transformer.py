@@ -10,9 +10,9 @@ from typing import List, Tuple, Union
 
 import pandas as pd
 import phonenumbers
-from feature_engine.dataframe_checks import check_X
 
 from feature_reviser.transformer.base_transformer import BaseTransformer
+from feature_reviser.utils import check_ready_to_transform
 
 # pylint: disable= missing-function-docstring, unused-argument
 
@@ -58,7 +58,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, self.features)
 
         function = functools.partial(
             IPAddressEncoderTransformer.__to_float,
@@ -96,6 +96,7 @@ class EmailTransformer(BaseTransformer):
     """
 
     def __init__(self, features: List[str]) -> None:
+        super().__init__()
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -112,7 +113,7 @@ class EmailTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, self.features)
 
         for column in self.features:
 
@@ -166,6 +167,7 @@ class StringSimilarityTransformer(BaseTransformer):
     """
 
     def __init__(self, features: Tuple[str, str]) -> None:
+        super().__init__()
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -181,7 +183,7 @@ class StringSimilarityTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, list(self.features))
 
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
             [self.features[0], self.features[1]]
@@ -200,7 +202,7 @@ class StringSimilarityTransformer(BaseTransformer):
 
     @staticmethod
     def __normalize_string(string: str) -> str:
-        string = string.strip().lower()
+        string = str(string).strip().lower()
         return (
             unicodedata.normalize("NFKD", string)
             .encode("utf8", "strict")
@@ -226,6 +228,7 @@ class PhoneTransformer(BaseTransformer):
         country_code_divisor: float = 1e2,
         error_value: str = "-999",
     ) -> None:
+        super().__init__()
         self.features = features
         self.national_number_divisor = national_number_divisor
         self.country_code_divisor = country_code_divisor
@@ -245,7 +248,7 @@ class PhoneTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, self.features)
 
         for column in self.features:
 
@@ -279,3 +282,55 @@ class PhoneTransformer(BaseTransformer):
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
             except:  # pylint: disable=W0702
                 return float(error_value)
+
+
+class StringSlicerTransformer(BaseTransformer):
+    """
+    Slices all entries of specified string features using the `slice()` function.
+
+    Note: The arguments for the `slice()` function are passed as a tuple. This shares
+    the python quirk of writing a tuple with a single argument with the trailing comma.
+
+    Example:
+        >>> from feature_reviser import StringSlicerTransformer
+        >>> import pandas as pd
+        >>> X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
+        >>> transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
+        >>> transformer.fit_transform(X).values
+        array([['ac', 'jk'],
+               ['df', 'mn'],
+               ['gi', 'pq']], dtype=object)
+
+    Args:
+        features (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
+    """
+
+    def __init__(
+        self,
+        features: List[
+            Tuple[
+                str,
+                Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
+            ]
+        ],
+    ) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Slices the strings of specified features in the dataframe.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Original dataframe with sliced strings in specified features.
+        """
+
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+
+        for feature, slice_args in self.features:
+            X[feature] = [x[slice(*slice_args)] for x in X[feature]]
+
+        return X

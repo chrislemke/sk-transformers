@@ -1,14 +1,107 @@
 # -*- coding: utf-8 -*-
 
 import re
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
-from feature_engine.dataframe_checks import check_X
+from sklearn.preprocessing import FunctionTransformer
 
 from feature_reviser.transformer.base_transformer import BaseTransformer
+from feature_reviser.utils import check_ready_to_transform
 
-# pylint: disable= missing-function-docstring, unused-argument
+# pylint: disable=missing-function-docstring, unused-argument
+
+
+class FunctionsTransformer(BaseTransformer):
+    """
+    This transformer is a plain wrapper around the [`sklearn.preprocessing.FunctionTransformer`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.FunctionTransformer.html).
+    Its main function is to apply multiple functions to different columns. Other than the scikit-learn transformer,
+    this transformer *does not* support the `inverse_func`, `accept_sparse`, `feature_names_out` and, `inv_kw_args` parameters.
+
+    Example:
+        >>> from feature_reviser import FunctionsTransformer
+        >>> import pandas as pd
+        >>> X = pd.DataFrame([("foo": [1, 2, 3], "bar": [4, 5, 6])])
+        >>> transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
+        >>> transformer.fit_transform(X).values
+        array([[0.6931..., 2.        ],
+               [1.0986..., 2.2360...],
+               [1.3862..., 2.4494...]])
+
+    Args:
+        features (List[str, Callable, Optional[Dict[str, Any]]]): List of tuples containing the name of the
+            column to apply the function on and the function itself.
+            As well as a dictionary passed to the function as `kwargs`.
+    """
+
+    def __init__(
+        self, features: List[Tuple[str, Callable, Optional[Dict[str, Any]]]]
+    ) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies the functions to the columns. And returns the dataframe with the modified columns.
+
+        Args:
+            X (pandas.DataFrame): DataFrame containing the columns to apply the functions on.
+
+        Returns:
+            pandas.DataFrame: The original dataframe with the modified columns.
+        """
+
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+
+        for (column, func, kwargs) in self.features:
+            X[column] = FunctionTransformer(
+                func, validate=True, kw_args=kwargs
+            ).transform(X[[column]].values)
+
+        return X
+
+
+class MapTransformer(BaseTransformer):
+    """
+    This transformer iterates over all columns in the `features` list and applies the given callback to the column.
+    For this it uses the `pandas.Series.map` method.
+
+    Example:
+        >>> from feature_reviser import MapTransformer
+        >>> import pandas as pd
+        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+        >>> transformer = MapTransformer([("foo", lambda x: x + 1)])
+        >>> transformer.fit_transform(X).values
+        array([[2, 4],
+               [3, 5],
+               [4, 6]])
+
+    Args:
+        features (List[str, Callable]): List of tuples containing the name of the
+            column to apply the callback on and the callback itself.
+    """
+
+    def __init__(self, features: List[Tuple[str, Callable]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies the callback to the column.
+
+        Args:
+            X (pandas.DataFrame): Dataframe containing the the columns to apply the callback on.
+        Returns:
+            pandas.DataFrame: The dataframe containing
+                the new column together with the non-transformed original columns.
+        """
+
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+
+        for (feature, callback) in self.features:
+            X[feature] = X[feature].map(callback)
+
+        return X
 
 
 class ColumnDropperTransformer(BaseTransformer):
@@ -20,6 +113,7 @@ class ColumnDropperTransformer(BaseTransformer):
     """
 
     def __init__(self, columns: Union[str, List[str]]) -> None:
+        super().__init__()
         self.columns = columns
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -32,7 +126,7 @@ class ColumnDropperTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with columns dropped.
         """
-        X = check_X(X)
+        X = check_ready_to_transform(X, self.columns)
         return X.drop(self.columns, axis=1)
 
 
@@ -46,6 +140,7 @@ class NaNTransformer(BaseTransformer):
     """
 
     def __init__(self, values: Dict[str, Any]) -> None:
+        super().__init__()
         self.values = values
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -58,7 +153,7 @@ class NaNTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        X = check_X(X)
+        X = check_ready_to_transform(X)
         return X.fillna(self.values)
 
 
@@ -77,7 +172,7 @@ class ValueIndicatorTransformer(BaseTransformer):
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
         >>> transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
-        >>> print(transformer.fit_transform(X).to_dict())
+        >>> transformer.fit_transform(X).to_dict()
         {
             'foo': {0: 1, 1: -999, 2: 3},
             'bar': {0: 'a', 1: '-999', 2: 'c'},
@@ -91,6 +186,7 @@ class ValueIndicatorTransformer(BaseTransformer):
     """
 
     def __init__(self, features: List[Tuple[str, Any]], as_int: bool = False) -> None:
+        super().__init__()
         self.features = features
         self.as_int = as_int
 
@@ -105,9 +201,7 @@ class ValueIndicatorTransformer(BaseTransformer):
             pandas.DataFrame: Transformed dataframe containing columns indicating if a certain value was found.
                 Format of the new columns: `"column_name"_nan_indicator`.
         """
-        if not all(f in X.columns for f in [f[0] for f in self.features]):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-        X = check_X(X)
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
 
         for (column, indicator) in self.features:
             X[f"{column}_found_indicator"] = (X[column] == indicator).astype(
@@ -129,6 +223,7 @@ class QueryTransformer(BaseTransformer):
     """
 
     def __init__(self, queries: List[str]) -> None:
+        super().__init__()
         self.queries = queries
 
     def transform(self, Xy: pd.DataFrame) -> pd.DataFrame:
@@ -143,7 +238,7 @@ class QueryTransformer(BaseTransformer):
             pd.DataFrame: Dataframe with the queries applied.
         """
 
-        Xy = check_X(Xy)
+        Xy = check_ready_to_transform(Xy)
         for query in self.queries:
             Xy = Xy.query(query, inplace=False)
         return Xy
@@ -171,7 +266,7 @@ class ValueReplacerTransformer(BaseTransformer):
         ...         ]
         ...     ),
         ... )
-        >>> print(transformer.fit_transform(X).values)
+        >>> transformer.fit_transform(X).values
         array([['1900-01-01'],
               ['2022/01/08'],
               ['1900-01-01'],
@@ -185,6 +280,7 @@ class ValueReplacerTransformer(BaseTransformer):
     """
 
     def __init__(self, features: List[Tuple[List[str], Any, Any]]) -> None:
+        super().__init__()
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -196,7 +292,7 @@ class ValueReplacerTransformer(BaseTransformer):
             pd.DataFrame: Dataframe with replaced values.
         """
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, [feature[0][0] for feature in self.features])
 
         for (columns, value, replacement) in self.features:
             for column in columns:

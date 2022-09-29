@@ -6,6 +6,8 @@ from feature_reviser.transformer.datetime_transformer import (
 from feature_reviser.transformer.encoder_transformer import MeanEncoder
 from feature_reviser.transformer.generic_transformer import (
     ColumnDropperTransformer,
+    FunctionsTransformer,
+    MapTransformer,
     NaNTransformer,
     QueryTransformer,
     ValueIndicatorTransformer,
@@ -17,4 +19,5 @@ from feature_reviser.transformer.string_transformer import (
     IPAddressEncoderTransformer,
     PhoneTransformer,
     StringSimilarityTransformer,
+    StringSlicerTransformer,
 )

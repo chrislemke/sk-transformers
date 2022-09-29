@@ -1,8 +1,42 @@
 # -*- coding: utf-8 -*-
 
-from typing import List, Tuple
+from typing import List, Optional, Tuple, Union
 
 import pandas as pd
+
+
+def check_ready_to_transform(
+    X: pd.DataFrame, features: Optional[Union[str, List[str]]] = None
+) -> pd.DataFrame:
+    """
+    Args:
+        X (pandas.DataFrame): pandas dataframe or NumPy array. The input to check and copy or transform.
+        features (Optional[Union[str, List[str]]]): The features to check if they are in the dataframe.
+
+    Raises:
+        ValueError: If the input `X` is not a Pandas dataframe.
+        ValueError: If the input is an empty Pandas dataframe.
+        ValueError: If the input `X` does not contain the feature.
+        ValueError: if the input `X` does not contain all features.
+
+
+    Returns:
+        pandas.DataFrame: A copy of original dataframe.
+    """
+
+    if not isinstance(X, pd.DataFrame):
+        raise ValueError("X must be a Pandas dataframe!")
+    if X.empty:
+        raise ValueError("X must not be empty!")
+    if features:
+        if isinstance(features, str):
+            if not features in X.columns:
+                raise ValueError(f"Column `{features}` not in dataframe!")
+        elif isinstance(features, list):
+            if not all(c in X.columns for c in features):
+                raise ValueError("Not all provided `features` could be found in `X`!")
+
+    return X.copy()
 
 
 def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
