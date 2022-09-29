@@ -2,13 +2,14 @@
 
 
 import operator
+import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
-from feature_engine.dataframe_checks import check_X
 
 from feature_reviser.transformer.base_transformer import BaseTransformer
+from feature_reviser.utils import check_ready_to_transform
 
 # pylint: disable= missing-function-docstring, unused-argument
 
@@ -35,7 +36,7 @@ class MathExpressionTransformer(BaseTransformer):
         features (List[str, str, Union[int, float]]): List of tuples containing the name of the column to apply the operation on,
             a string representation of the operation (see list above) and the value to apply the operation on. The value can be
             an number (int or float) or the name of another column in the dataframe. If the value is `None`, it it expected that
-            the operation only takes one argument.
+            the operation only takes one argument. The forth entry of the tuple is a dictionary passed as `kwargs` to the operation.
     """
 
     def __init__(
@@ -44,6 +45,7 @@ class MathExpressionTransformer(BaseTransformer):
             Tuple[str, str, Union[int, float, str, None], Optional[Dict[str, Any]]]
         ],
     ) -> None:
+        super().__init__()
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
@@ -60,7 +62,7 @@ class MathExpressionTransformer(BaseTransformer):
         if not all(f in X.columns for f in [f[0] for f in self.features]):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_X(X)
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
 
         for (feature, operation, value, kwargs) in self.features:
             is_np_op, op = self.__verify_operation(operation)
@@ -69,9 +71,7 @@ class MathExpressionTransformer(BaseTransformer):
             new_column_with_value = f"{feature}_{operation}_{value}".replace("np.", "")
 
             if is_np_op:
-                np.warnings.filterwarnings(
-                    "ignore", category=np.VisibleDeprecationWarning
-                )
+                warnings.filterwarnings("ignore", category=np.VisibleDeprecationWarning)
                 if value is None:
                     X[new_column] = op(X[feature], **kwargs or {})
                 elif isinstance(value, str):

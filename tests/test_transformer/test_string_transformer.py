@@ -97,7 +97,7 @@ def test_phone_number_transformer(X_numbers):
 
 
 def test_string_similarity_transformer_in_pipeline(X_strings):
-    pipeline = make_pipeline(StringSimilarityTransformer(["strings_1", "strings_2"]))
+    pipeline = make_pipeline(StringSimilarityTransformer(("strings_1", "strings_2")))
     result = pipeline.fit_transform(X_strings)
     expected = np.array(
         [

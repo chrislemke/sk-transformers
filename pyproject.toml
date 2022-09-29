@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.3.73"
+version = "0.3.8"
 description = "A collection of various scikit-learn transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
@@ -42,7 +42,7 @@ isort = "^5.10.1"
 mkdocs = "^1.4.0"
 mkdocstrings = "^0.18.1"
 mkdocs-material = "^8.5.3"
-mypy = "^0.971"
+mypy = "^0.981"
 pre-commit = "^2.20.0"
 pylint = "^2.15.3"
 pytest = "^7.1.3"
