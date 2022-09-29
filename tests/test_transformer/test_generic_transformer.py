@@ -52,8 +52,8 @@ def test_functions_transformer_in_pipeline(X):
         ]
     )
 
-    assert np.array_equal(result["a"].values, expected_a)
-    assert np.array_equal(result["b"].values, expected_b)
+    assert np.array_equal(result["a"].values.round(6), expected_a.round(6))
+    assert np.array_equal(result["b"].values.round(6), expected_b.round(6))
     assert pipeline.steps[0][0] == "functionstransformer"
 
 

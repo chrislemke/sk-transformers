@@ -56,7 +56,7 @@ class FunctionsTransformer(BaseTransformer):
         for (column, func, kwargs) in self.features:
             X[column] = FunctionTransformer(
                 func, validate=True, kw_args=kwargs
-            ).transform(X[[column]])
+            ).transform(X[[column]].values)
 
         return X
 
