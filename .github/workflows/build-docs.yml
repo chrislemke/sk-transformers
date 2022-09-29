@@ -1,8 +1,13 @@
 name: BuildDocs
+
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - main
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
