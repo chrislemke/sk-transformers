@@ -202,7 +202,7 @@ class StringSimilarityTransformer(BaseTransformer):
 
     @staticmethod
     def __normalize_string(string: str) -> str:
-        string = string.strip().lower()
+        string = str(string).strip().lower()
         return (
             unicodedata.normalize("NFKD", string)
             .encode("utf8", "strict")
