@@ -51,7 +51,7 @@ class FunctionsTransformer(BaseTransformer):
             pandas.DataFrame: The original dataframe with the modified columns.
         """
 
-        check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
 
         for (column, func, kwargs) in self.features:
             X[column] = FunctionTransformer(
