@@ -281,46 +281,12 @@ class PhoneTransformer(BaseTransformer):
                 return float(error_value)
 
 
-class StringTruncatorTransformer(BaseTransformer):
-    """
-    Truncates each entry in a string column up to a specified number of characters.
-
-    Args:
-        feature (str): The feature which should be transformed.
-        n_chars (int): The number of characters to truncate (default = 1).
-    """
-
-    def __init__(
-        self,
-        feature: str,
-        n_chars: int = 1,
-    ) -> None:
-        self.feature = feature
-        self.n_chars = n_chars
-
-    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Truncates a string feature up to a specified number of characters.
-
-        Args:
-            X (pandas.DataFrame): DataFrame to transform.
-
-        Returns:
-            pandas.DataFrame: Original dataframe with truncated strings in the feature.
-        """
-
-        X = check_X(X)
-
-        X[self.feature] = [x[: self.n_chars] for x in X[self.feature]]
-
-        return X
-
-
 class StringSlicerTransformer(BaseTransformer):
     """
     Slices all entries of specified string features using the `slice()` function.
 
-    Note: The arguments for the `slice()` function are passed as a tuple. This shares the python quirk of writing a tuple with a single argument with the trailing comma.
+    Note: The arguments for the `slice()` function are passed as a tuple. This shares
+    the python quirk of writing a tuple with a single argument with the trailing comma.
 
     Example:
         >>> from feature_reviser import StringSlicerTransformer

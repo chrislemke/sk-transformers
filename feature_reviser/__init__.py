@@ -18,5 +18,4 @@ from feature_reviser.transformer.string_transformer import (
     PhoneTransformer,
     StringSimilarityTransformer,
     StringSlicerTransformer,
-    StringTruncatorTransformer,
 )
