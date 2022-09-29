@@ -133,18 +133,45 @@ def test_string_truncator_transformer_in_pipeline(X_strings):
 
 
 def test_string_slicer_transformer_in_pipeline(X_strings):
-    pipeline = make_pipeline(StringSlicerTransformer("strings_2", (5, 15, 2)))
+    pipeline = make_pipeline(
+        StringSlicerTransformer(
+            [
+                ("email", (5,)),
+                ("strings_1", (8, 16)),
+                ("strings_2", (5, 15, 2)),
+            ]
+        )
+    )
     result = pipeline.fit_transform(X_strings)
-    expected = pd.Series(
-        [
-            "i_o__",
-            "i_nte",
-            "i  hr",
-            "i__it",
-            "",
-            "^*)+",
-        ]
+
+    expected = pd.DataFrame(
+        {
+            "email": [
+                "test@",
+                "test1",
+                "test_",
+                "test_",
+                "ttt@t",
+                "test_",
+            ],
+            "strings_1": [
+                "a_string",
+                "another_",
+                "a_third_",
+                "a_fourth",
+                "a_fifth_",
+                "a_sixth_",
+            ],
+            "strings_2": [
+                "i_o__",
+                "i_nte",
+                "i  hr",
+                "i__it",
+                "",
+                "^*)+",
+            ],
+        }
     )
 
     assert pipeline.steps[0][0] == "stringslicertransformer"
-    assert result["strings_2"].equals(expected)
+    assert result.equals(expected)

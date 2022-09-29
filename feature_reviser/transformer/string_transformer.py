@@ -318,37 +318,50 @@ class StringTruncatorTransformer(BaseTransformer):
 
 class StringSlicerTransformer(BaseTransformer):
     """
-    Applies the python `slice()` function on all entries of a string column.
+    Slices all entries of specified string features using the `slice()` function.
 
-    Note: `slice_args` must be a tuple. This shares the python quirk of writing a tuple with
-    a single argument with the trailing comma.
+    Note: The arguments for the `slice()` function are passed as a tuple. This shares the python quirk of writing a tuple with a single argument with the trailing comma.
+
+    Example:
+        >>> from feature_reviser import StringSlicerTransformer
+        >>> import pandas as pd
+        >>> X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
+        >>> transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
+        >>> transformer.fit_transform(X).values
+        array([['ac', 'jk'],
+               ['df', 'mn'],
+               ['gi', 'pq']], dtype=object)
 
     Args:
-        feature (str): The feature which should be transformed.
-        slice_args (Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]]): The arguments to the `slice` function.
+        slice_args (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
     """
 
     def __init__(
         self,
-        feature: str,
-        slice_args: Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
+        slice_args: List[
+            Tuple[
+                str,
+                Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
+            ]
+        ],
     ) -> None:
-        self.feature = feature
+        super().__init__()
         self.slice_args = slice_args
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Applies the `slice()` function on all strings of the `feature` column.
+        Slices the strings of specified features in the dataframe.
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.
 
         Returns:
-            pandas.DataFrame: Original dataframe with sliced strings in the feature.
+            pandas.DataFrame: Original dataframe with sliced strings in specified features.
         """
 
         X = check_X(X)
 
-        X[self.feature] = [x[slice(*self.slice_args)] for x in X[self.feature]]
+        for feature, slice_arg in self.slice_args:
+            X[feature] = [x[slice(*slice_arg)] for x in X[feature]]
 
         return X
