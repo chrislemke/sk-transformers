@@ -17,5 +17,6 @@ from feature_reviser.transformer.string_transformer import (
     IPAddressEncoderTransformer,
     PhoneTransformer,
     StringSimilarityTransformer,
+    StringSlicerTransformer,
     StringTruncatorTransformer,
 )

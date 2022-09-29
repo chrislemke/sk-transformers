@@ -314,3 +314,41 @@ class StringTruncatorTransformer(BaseTransformer):
         X[self.feature] = [x[: self.n_chars] for x in X[self.feature]]
 
         return X
+
+
+class StringSlicerTransformer(BaseTransformer):
+    """
+    Applies the python `slice()` function on all entries of a string column.
+
+    Note: `slice_args` must be a tuple. This shares the python quirk of writing a tuple with
+    a single argument with the trailing comma.
+
+    Args:
+        feature (str): The feature which should be transformed.
+        slice_args (Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]]): The arguments to the `slice` function.
+    """
+
+    def __init__(
+        self,
+        feature: str,
+        slice_args: Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
+    ) -> None:
+        self.feature = feature
+        self.slice_args = slice_args
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Applies the `slice()` function on all strings of the `feature` column.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Original dataframe with sliced strings in the feature.
+        """
+
+        X = check_X(X)
+
+        X[self.feature] = [x[slice(*self.slice_args)] for x in X[self.feature]]
+
+        return X

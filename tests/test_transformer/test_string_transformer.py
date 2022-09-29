@@ -9,6 +9,7 @@ from feature_reviser import (
     IPAddressEncoderTransformer,
     PhoneTransformer,
     StringSimilarityTransformer,
+    StringSlicerTransformer,
     StringTruncatorTransformer,
 )
 
@@ -128,4 +129,22 @@ def test_string_truncator_transformer_in_pipeline(X_strings):
     )
 
     assert pipeline.steps[0][0] == "stringtruncatortransformer"
+    assert result["strings_2"].equals(expected)
+
+
+def test_string_slicer_transformer_in_pipeline(X_strings):
+    pipeline = make_pipeline(StringSlicerTransformer("strings_2", (5, 15, 2)))
+    result = pipeline.fit_transform(X_strings)
+    expected = pd.Series(
+        [
+            "i_o__",
+            "i_nte",
+            "i  hr",
+            "i__it",
+            "",
+            "^*)+",
+        ]
+    )
+
+    assert pipeline.steps[0][0] == "stringslicertransformer"
     assert result["strings_2"].equals(expected)
