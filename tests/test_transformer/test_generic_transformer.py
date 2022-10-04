@@ -23,12 +23,20 @@ def test_aggregate_transformer_in_pipeline(X) -> None:
     result = pipeline.fit_transform(X)
     expected = np.array(
         [
-            [1, 1.1, "1", "5", "5", 5.0, 8.0, 4.5],
-            [2, 2.2, "1", "5", "5", 7.0, 2.0, 9.5],
+            [1, 1.1, "1", "5", "5", 8.0, 4.5],
+            [2, 2.2, "1", "5", "5", 8.0, 4.5],
+            [3, 3.3, "1", "5", "5", 8.0, 4.5],
+            [4, 4.4, "1", "6", "5", 8.0, 4.5],
+            [5, 5.5, "2", "6", "5", 8.0, 4.5],
+            [6, 6.6, "2", "6", "5", 8.0, 4.5],
+            [7, 7.7, "2", "6", "5", 8.0, 4.5],
+            [8, 8.8, "3", "7", "5", 8.0, 4.5],
+            [9, 9.9, "3", "7", "7", 2.0, 9.5],
+            [10, 10.1, "4", "7", "7", 2.0, 9.5],
         ],
         dtype=object,
     )
-    assert np.array_equal(result.iloc[0:2].to_numpy(), expected)
+    assert np.array_equal(result.to_numpy(), expected)
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
 

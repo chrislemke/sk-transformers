@@ -16,6 +16,32 @@ from feature_reviser.utils import check_ready_to_transform
 class AggregateTransformer(BaseTransformer):
     """
     This transformer uses Pandas `groupby` method and `agg` to apply function on certain columns to create new ones.
+    Read more about Pandas [`aggregate`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.aggregate.html) method
+    to understand how to use function for aggregation. Other than Pandas function this transformer only support functions and string-names.
+
+    Example:
+        >>> from feature_reviser import AggregateTransformer
+        >>> import pandas as pd
+        >>> X = pd.DataFrame({"foo": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "bar": ["A", "A", "B", "B", "B", "A", "B", "A", "B", "A"]})
+        >>> transformer = AggregateTransformer([("foo", "bar", ["mean"])])
+        >>> transformer.fit_transform(X).to_numpy()
+        array([['A', 1, 5.4...],
+               ['A', 2, 5.4...],
+               ['B', 3, 5.6...],
+               ['B', 4, 5.6...],
+               ['B', 5, 5.6...],
+               ['A', 6, 5.4...],
+               ['B', 7, 5.6...],
+               ['A', 8, 5.4...],
+               ['B', 9, 5.6...],
+               ['A', 10, 5.4...]], dtype=object)
+
+    Args:
+        features (List[Tuple[str, str, List[str]]]): List of tuples containing the column identifiers and the aggregation function(s).
+                The first column identifier (features[0]) is the column that will be used to group the data.
+                It can be either numerical or categorical. The second column identifier (features[1]) is the column that will be used
+                for aggregations. This column must be numerical.
+
     """
 
     def __init__(self, features: List[Tuple[str, str, List[str]]]) -> None:
@@ -23,6 +49,15 @@ class AggregateTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Creates new columns by using Pandas `groupby` method and `agg` to apply function on the column.
+
+        Args:
+            X (pd.DataFrame): Input dataframe.
+
+        Returns:
+            pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
+        """
 
         check_ready_to_transform(
             X,
@@ -38,10 +73,10 @@ class AggregateTransformer(BaseTransformer):
                 columns={agg: f"{agg.upper()}({groupby_column})" for agg in aggs}
             )
 
-            for column in list(agg_df.columns).pop(0):
+            for column in list(np.delete(agg_df.columns, 0)):
                 agg_df[column] = agg_df[column].astype(np.float32)
 
-            X = pd.concat([X, agg_df], axis=1)
+            X = X.merge(agg_df, on=groupby_column, how="left")
 
         return X
 
@@ -55,7 +90,7 @@ class FunctionsTransformer(BaseTransformer):
     Example:
         >>> from feature_reviser import FunctionsTransformer
         >>> import pandas as pd
-        >>> X = pd.DataFrame([("foo": [1, 2, 3], "bar": [4, 5, 6])])
+        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
         >>> transformer.fit_transform(X).to_numpy()
         array([[0.6931..., 2.        ],
