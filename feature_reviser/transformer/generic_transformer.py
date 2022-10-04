@@ -3,6 +3,7 @@
 import re
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import FunctionTransformer
 
@@ -10,6 +11,77 @@ from feature_reviser.transformer.base_transformer import BaseTransformer
 from feature_reviser.utils import check_ready_to_transform
 
 # pylint: disable=missing-function-docstring, unused-argument
+
+
+class AggregateTransformer(BaseTransformer):
+    """
+    This transformer uses Pandas `groupby` method and `aggregate` to apply function on a column grouped by another column.
+    Read more about Pandas [`aggregate`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.aggregate.html) method
+    to understand how to use function for aggregation. Other than Pandas function this transformer only support functions and string-names.
+
+    Example:
+        >>> from feature_reviser import AggregateTransformer
+        >>> import pandas as pd
+        >>> X = pd.DataFrame({"foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"], "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56]})
+        >>> transformer = AggregateTransformer([("foo", "bar", ["mean"])])
+        >>> transformer.fit_transform(X).to_numpy()
+        array([["mr", 46, 52.17...],
+               ["mr", 32, 52.17...],
+               ["ms", 78, 68.75],
+               ["ms", 48, 68.75],
+               ["ms", 93, 68.75],
+               ["mr", 68, 52.17...],
+               ["mr", 53, 52.17...],
+               ["mr", 38, 52.17...],
+               ["mr", 76, 52.17...],
+               ["ms", 56, 68.75]], dtype=object)
+
+    Args:
+        features (List[Tuple[str, str, List[str]]]): List of tuples containing the column identifiers and the aggregation function(s).
+                The first column identifier (features[0]) is the column that will be used to group the data.
+                It can be either numerical or categorical. The second column identifier (features[1]) is the column that will be used
+                for aggregations. This column must be numerical.
+    """
+
+    def __init__(self, features: List[Tuple[str, str, List[str]]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Creates new columns by using Pandas `groupby` method and `aggregate` to apply function on the column.
+
+        Args:
+            X (pd.DataFrame): Input dataframe.
+
+        Returns:
+            pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
+        """
+
+        check_ready_to_transform(
+            X,
+            [feature[0] for feature in self.features]
+            + [feature[1] for feature in self.features],
+        )
+
+        for (groupby_column, agg_column, aggs) in self.features:
+
+            agg_df = (
+                X.groupby([groupby_column])[agg_column]
+                .aggregate(aggs, engine="cython")
+                .reset_index()
+            )
+
+            agg_df = agg_df.rename(
+                columns={agg: f"{agg.upper()}({groupby_column})" for agg in aggs}
+            )
+
+            for column in list(np.delete(agg_df.columns, 0)):
+                agg_df[column] = agg_df[column].astype(np.float32)
+
+            X = X.merge(agg_df, on=groupby_column, how="left")
+
+        return X
 
 
 class FunctionsTransformer(BaseTransformer):
@@ -21,9 +93,9 @@ class FunctionsTransformer(BaseTransformer):
     Example:
         >>> from feature_reviser import FunctionsTransformer
         >>> import pandas as pd
-        >>> X = pd.DataFrame([("foo": [1, 2, 3], "bar": [4, 5, 6])])
+        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
-        >>> transformer.fit_transform(X).values
+        >>> transformer.fit_transform(X).to_numpy()
         array([[0.6931..., 2.        ],
                [1.0986..., 2.2360...],
                [1.3862..., 2.4494...]])
@@ -56,7 +128,7 @@ class FunctionsTransformer(BaseTransformer):
         for (column, func, kwargs) in self.features:
             X[column] = FunctionTransformer(
                 func, validate=True, kw_args=kwargs
-            ).transform(X[[column]].values)
+            ).transform(X[[column]].to_numpy())
 
         return X
 
@@ -71,7 +143,7 @@ class MapTransformer(BaseTransformer):
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = MapTransformer([("foo", lambda x: x + 1)])
-        >>> transformer.fit_transform(X).values
+        >>> transformer.fit_transform(X).to_numpy()
         array([[2, 4],
                [3, 5],
                [4, 6]])
@@ -266,7 +338,7 @@ class ValueReplacerTransformer(BaseTransformer):
         ...         ]
         ...     ),
         ... )
-        >>> transformer.fit_transform(X).values
+        >>> transformer.fit_transform(X).to_numpy()
         array([['1900-01-01'],
               ['2022/01/08'],
               ['1900-01-01'],

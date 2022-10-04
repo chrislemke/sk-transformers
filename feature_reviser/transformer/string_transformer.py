@@ -296,7 +296,7 @@ class StringSlicerTransformer(BaseTransformer):
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
         >>> transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
-        >>> transformer.fit_transform(X).values
+        >>> transformer.fit_transform(X).to_numpy()
         array([['ac', 'jk'],
                ['df', 'mn'],
                ['gi', 'pq']], dtype=object)

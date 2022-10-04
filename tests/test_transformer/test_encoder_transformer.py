@@ -17,5 +17,5 @@ def test_mean_encoder_in_pipeline(X_categorical, y_categorical) -> None:
     )
 
     assert result.shape[0] == 8
-    assert np.array_equal(result.values.round(4), expected.round(4))
+    assert np.array_equal(result.to_numpy().round(4), expected.round(4))
     assert pipeline.steps[0][0] == "meanencoder"

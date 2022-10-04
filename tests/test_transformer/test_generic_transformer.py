@@ -5,6 +5,7 @@ import pytest
 from sklearn.pipeline import make_pipeline
 
 from feature_reviser.transformer.generic_transformer import (
+    AggregateTransformer,
     ColumnDropperTransformer,
     FunctionsTransformer,
     MapTransformer,
@@ -17,7 +18,38 @@ from feature_reviser.transformer.generic_transformer import (
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
 
-def test_functions_transformer_in_pipeline(X):
+def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
+    pipeline = make_pipeline(AggregateTransformer([("a", "b", ["mean"])]))
+    result = pipeline.fit_transform(X_group_by)
+    expected = np.array(
+        [
+            ["mr", 46, 52.16666793823242],
+            ["mr", 32, 52.16666793823242],
+            ["ms", 78, 68.75],
+            ["ms", 48, 68.75],
+            ["ms", 93, 68.75],
+            ["mr", 68, 52.16666793823242],
+            ["mr", 53, 52.16666793823242],
+            ["mr", 38, 52.16666793823242],
+            ["mr", 76, 52.16666793823242],
+            ["ms", 56, 68.75],
+        ],
+        dtype=object,
+    )
+    assert np.array_equal(result.to_numpy(), expected)
+    assert pipeline.steps[0][0] == "aggregatetransformer"
+
+
+def test_aggregate_transformer_raises_error(X) -> None:
+    with pytest.raises(ValueError) as error:
+        AggregateTransformer([("e", "non_existing", ["count", "mean"])]).fit_transform(
+            X
+        )
+
+    assert "Not all provided `features` could be found in `X`!" == str(error.value)
+
+
+def test_functions_transformer_in_pipeline(X) -> None:
     pipeline = make_pipeline(
         FunctionsTransformer([("a", np.log1p, None), ("b", np.sqrt, None)])
     )
@@ -52,8 +84,8 @@ def test_functions_transformer_in_pipeline(X):
         ]
     )
 
-    assert np.array_equal(result["a"].values.round(6), expected_a.round(6))
-    assert np.array_equal(result["b"].values.round(6), expected_b.round(6))
+    assert np.array_equal(result["a"].to_numpy().round(6), expected_a.round(6))
+    assert np.array_equal(result["b"].to_numpy().round(6), expected_b.round(6))
     assert pipeline.steps[0][0] == "functionstransformer"
 
 
@@ -69,7 +101,7 @@ def test_map_transformer_in_pipeline(X) -> None:
     pipeline = make_pipeline(MapTransformer([("a", lambda x: x**2)]))
     result = pipeline.fit_transform(X)
     expected = np.array([1, 4, 9, 16, 25, 36, 49, 64, 81, 100])
-    assert np.array_equal(result["a"].values, expected)
+    assert np.array_equal(result["a"].to_numpy(), expected)
     assert pipeline.steps[0][0] == "maptransformer"
 
 
@@ -149,10 +181,10 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     expected_e = np.array([2, 4, 6, 8, 99, 99, 99, 99, 99, 99])
     expected_f = np.array(["2", "4", "6", "8", "-999", "12", "14", "16", "18", "20"])
 
-    assert np.array_equal(result["a"].values, expected_a)
-    assert np.array_equal(result["dd"].values, expected_dd)
-    assert np.array_equal(result["e"].values, expected_e)
-    assert np.array_equal(result["f"].values, expected_f)
+    assert np.array_equal(result["a"].to_numpy(), expected_a)
+    assert np.array_equal(result["dd"].to_numpy(), expected_dd)
+    assert np.array_equal(result["e"].to_numpy(), expected_e)
+    assert np.array_equal(result["f"].to_numpy(), expected_f)
     assert pipeline.steps[0][0] == "valuereplacertransformer"
 
 

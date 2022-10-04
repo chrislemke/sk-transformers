@@ -29,7 +29,7 @@ def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
         ]
     )
     assert pipeline.steps[0][0] == "ipaddressencodertransformer"
-    assert np.array_equal(X["ip_address"].values, expected)
+    assert np.array_equal(X["ip_address"].to_numpy(), expected)
 
 
 def test_email_transformer_in_pipeline(X_strings) -> None:
@@ -91,9 +91,11 @@ def test_phone_number_transformer(X_numbers):
 
     assert pipeline.steps[0][0] == "phonetransformer"
     assert np.array_equal(
-        X["phone_number_national_number"].values, expected_national_number
+        X["phone_number_national_number"].to_numpy(), expected_national_number
     )
-    assert np.array_equal(X["phone_number_country_code"].values, expected_country_code)
+    assert np.array_equal(
+        X["phone_number_country_code"].to_numpy(), expected_country_code
+    )
 
 
 def test_string_similarity_transformer_in_pipeline(X_strings):
@@ -109,7 +111,7 @@ def test_string_similarity_transformer_in_pipeline(X_strings):
             0.058823529411764705,
         ]
     )
-    assert np.array_equal(result["strings_1_strings_2_similarity"].values, expected)
+    assert np.array_equal(result["strings_1_strings_2_similarity"].to_numpy(), expected)
     assert pipeline.steps[0][0] == "stringsimilaritytransformer"
 
 

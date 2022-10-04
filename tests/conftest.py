@@ -37,6 +37,16 @@ def X() -> pd.DataFrame:
 
 
 @pytest.fixture()
+def X_group_by() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "a": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"],
+            "b": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56],
+        }
+    )
+
+
+@pytest.fixture()
 def X_time_values() -> pd.DataFrame:
     return pd.DataFrame(
         {

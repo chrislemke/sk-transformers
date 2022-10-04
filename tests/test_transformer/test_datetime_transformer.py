@@ -29,7 +29,7 @@ def test_duration_calculator_transformer_in_pipeline_seconds(X_time_values) -> N
             2460672000.0,
         ]
     )
-    assert np.array_equal(X["duration"].values, expected)
+    assert np.array_equal(X["duration"].to_numpy(), expected)
     assert pipeline.steps[0][0] == "durationcalculatortransformer"
     assert pipeline.steps[0][1].unit == "seconds"
 
@@ -42,7 +42,7 @@ def test_duration_calculator_transformer_in_pipeline_days(X_time_values) -> None
     )
     X = pipeline.fit_transform(X_time_values)
     expected = np.array([0, 0, 365, 365, 31, 31, 1, 1, -22654, 28480])
-    assert np.array_equal(X["duration"].values, expected)
+    assert np.array_equal(X["duration"].to_numpy(), expected)
     assert pipeline.steps[0][0] == "durationcalculatortransformer"
     assert pipeline.steps[0][1].unit == "days"
 
@@ -55,9 +55,17 @@ def test_duration_calculator_transformer_exception() -> None:
     assert "Unsupported unit. Should be either `days` or `seconds`!" == str(error.value)
 
 
+def test_duration_calculator_transformer_exception_no_column(X) -> None:
+    with pytest.raises(ValueError) as error:
+        DurationCalculatorTransformer(
+            ("non_existing", "c"), new_column_name="duration", unit="days"
+        ).fit_transform(X)
+    assert "Not all provided `features` could be found in `X`!" == str(error.value)
+
+
 def test_timestamp_transformer_in_pipeline(X_time_values) -> None:
     pipeline = make_pipeline(TimestampTransformer(["b"]))
-    result = pipeline.fit_transform(X_time_values)["b"].values
+    result = pipeline.fit_transform(X_time_values)["b"].to_numpy()
     expected = np.array(
         [
             -3.1561920e08,
