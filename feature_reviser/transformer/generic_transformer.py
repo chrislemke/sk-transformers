@@ -15,33 +15,32 @@ from feature_reviser.utils import check_ready_to_transform
 
 class AggregateTransformer(BaseTransformer):
     """
-    This transformer uses Pandas `groupby` method and `agg` to apply function on certain columns to create new ones.
+    This transformer uses Pandas `groupby` method and `aggregate` to apply function on a column grouped by another column.
     Read more about Pandas [`aggregate`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.aggregate.html) method
     to understand how to use function for aggregation. Other than Pandas function this transformer only support functions and string-names.
 
     Example:
         >>> from feature_reviser import AggregateTransformer
         >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "bar": ["A", "A", "B", "B", "B", "A", "B", "A", "B", "A"]})
+        >>> X = pd.DataFrame({"foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"], "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56]})
         >>> transformer = AggregateTransformer([("foo", "bar", ["mean"])])
         >>> transformer.fit_transform(X).to_numpy()
-        array([['A', 1, 5.4...],
-               ['A', 2, 5.4...],
-               ['B', 3, 5.6...],
-               ['B', 4, 5.6...],
-               ['B', 5, 5.6...],
-               ['A', 6, 5.4...],
-               ['B', 7, 5.6...],
-               ['A', 8, 5.4...],
-               ['B', 9, 5.6...],
-               ['A', 10, 5.4...]], dtype=object)
+        array([["mr", 46, 52.17...],
+               ["mr", 32, 52.17...],
+               ["ms", 78, 68.75],
+               ["ms", 48, 68.75],
+               ["ms", 93, 68.75],
+               ["mr", 68, 52.17...],
+               ["mr", 53, 52.17...],
+               ["mr", 38, 52.17...],
+               ["mr", 76, 52.17...],
+               ["ms", 56, 68.75]],dtype=object)
 
     Args:
         features (List[Tuple[str, str, List[str]]]): List of tuples containing the column identifiers and the aggregation function(s).
                 The first column identifier (features[0]) is the column that will be used to group the data.
                 It can be either numerical or categorical. The second column identifier (features[1]) is the column that will be used
                 for aggregations. This column must be numerical.
-
     """
 
     def __init__(self, features: List[Tuple[str, str, List[str]]]) -> None:
@@ -50,7 +49,7 @@ class AggregateTransformer(BaseTransformer):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Creates new columns by using Pandas `groupby` method and `agg` to apply function on the column.
+        Creates new columns by using Pandas `groupby` method and `aggregate` to apply function on the column.
 
         Args:
             X (pd.DataFrame): Input dataframe.
@@ -67,7 +66,11 @@ class AggregateTransformer(BaseTransformer):
 
         for (groupby_column, agg_column, aggs) in self.features:
 
-            agg_df = X.groupby([groupby_column])[agg_column].agg(aggs).reset_index()
+            agg_df = (
+                X.groupby([groupby_column])[agg_column]
+                .aggregate(aggs, engine="cython")
+                .reset_index()
+            )
 
             agg_df = agg_df.rename(
                 columns={agg: f"{agg.upper()}({groupby_column})" for agg in aggs}

@@ -18,21 +18,21 @@ from feature_reviser.transformer.generic_transformer import (
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
 
-def test_aggregate_transformer_in_pipeline(X) -> None:
-    pipeline = make_pipeline(AggregateTransformer([("e", "a", ["count", "mean"])]))
-    result = pipeline.fit_transform(X)
+def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
+    pipeline = make_pipeline(AggregateTransformer([("a", "b", ["mean"])]))
+    result = pipeline.fit_transform(X_group_by)
     expected = np.array(
         [
-            [1, 1.1, "1", "5", "5", 8.0, 4.5],
-            [2, 2.2, "1", "5", "5", 8.0, 4.5],
-            [3, 3.3, "1", "5", "5", 8.0, 4.5],
-            [4, 4.4, "1", "6", "5", 8.0, 4.5],
-            [5, 5.5, "2", "6", "5", 8.0, 4.5],
-            [6, 6.6, "2", "6", "5", 8.0, 4.5],
-            [7, 7.7, "2", "6", "5", 8.0, 4.5],
-            [8, 8.8, "3", "7", "5", 8.0, 4.5],
-            [9, 9.9, "3", "7", "7", 2.0, 9.5],
-            [10, 10.1, "4", "7", "7", 2.0, 9.5],
+            ["mr", 46, 52.16666793823242],
+            ["mr", 32, 52.16666793823242],
+            ["ms", 78, 68.75],
+            ["ms", 48, 68.75],
+            ["ms", 93, 68.75],
+            ["mr", 68, 52.16666793823242],
+            ["mr", 53, 52.16666793823242],
+            ["mr", 38, 52.16666793823242],
+            ["mr", 76, 52.16666793823242],
+            ["ms", 56, 68.75],
         ],
         dtype=object,
     )
