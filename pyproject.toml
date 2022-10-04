@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.3.82"
+version = "0.3.83"
 description = "A collection of various scikit-learn transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"

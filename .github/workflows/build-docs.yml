@@ -1,7 +1,7 @@
 name: BuildDocs
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 

@@ -34,7 +34,7 @@ class AggregateTransformer(BaseTransformer):
                ["mr", 53, 52.17...],
                ["mr", 38, 52.17...],
                ["mr", 76, 52.17...],
-               ["ms", 56, 68.75]],dtype=object)
+               ["ms", 56, 68.75]], dtype=object)
 
     Args:
         features (List[Tuple[str, str, List[str]]]): List of tuples containing the column identifiers and the aggregation function(s).
