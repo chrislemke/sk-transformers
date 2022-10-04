@@ -48,7 +48,7 @@ from feature_reviser import MathExpressionTransformer
 import pandas as pd
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
 transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
-transformer.fit_transform(X).values
+transformer.fit_transform(X).to_numpy()
 ```
 ```
 array([[1, 4, 5],

@@ -61,7 +61,9 @@ def revise_classifier(
     chi_2, chi2_p_value = chi2(cat_df, y)
     mi = mutual_info_classif(cat_df, y, discrete_features=True)
     f_statistic, f_classif_p_value = f_classif(num_df, y)
-    num_corr = pd.concat([num_df, y], axis=1).corr(method="spearman").values[:-1, -1]
+    num_corr = (
+        pd.concat([num_df, y], axis=1).corr(method="spearman").to_numpy()[:-1, -1]
+    )
 
     result_cat_df = pd.DataFrame(
         [chi_2, chi2_p_value, mi, cat_feature_importances],

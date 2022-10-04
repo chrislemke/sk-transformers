@@ -42,7 +42,7 @@ class DurationCalculatorTransformer(BaseTransformer):
             pandas.DataFrame: The transformed DataFrame.
         """
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(X, list(self.features))
 
         duration_series = pd.to_datetime(
             X[self.features[1]], utc=True, errors="raise"

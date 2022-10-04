@@ -3,6 +3,7 @@
 import re
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
 from sklearn.preprocessing import FunctionTransformer
 
@@ -10,6 +11,39 @@ from feature_reviser.transformer.base_transformer import BaseTransformer
 from feature_reviser.utils import check_ready_to_transform
 
 # pylint: disable=missing-function-docstring, unused-argument
+
+
+class AggregateTransformer(BaseTransformer):
+    """
+    This transformer uses Pandas `groupby` method and `agg` to apply function on certain columns to create new ones.
+    """
+
+    def __init__(self, features: List[Tuple[str, str, List[str]]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+
+        check_ready_to_transform(
+            X,
+            [feature[0] for feature in self.features]
+            + [feature[1] for feature in self.features],
+        )
+
+        for (groupby_column, agg_column, aggs) in self.features:
+
+            agg_df = X.groupby([groupby_column])[agg_column].agg(aggs).reset_index()
+
+            agg_df = agg_df.rename(
+                columns={agg: f"{agg.upper()}({groupby_column})" for agg in aggs}
+            )
+
+            for column in list(agg_df.columns).pop(0):
+                agg_df[column] = agg_df[column].astype(np.float32)
+
+            X = pd.concat([X, agg_df], axis=1)
+
+        return X
 
 
 class FunctionsTransformer(BaseTransformer):
@@ -23,7 +57,7 @@ class FunctionsTransformer(BaseTransformer):
         >>> import pandas as pd
         >>> X = pd.DataFrame([("foo": [1, 2, 3], "bar": [4, 5, 6])])
         >>> transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
-        >>> transformer.fit_transform(X).values
+        >>> transformer.fit_transform(X).to_numpy()
         array([[0.6931..., 2.        ],
                [1.0986..., 2.2360...],
                [1.3862..., 2.4494...]])
@@ -56,7 +90,7 @@ class FunctionsTransformer(BaseTransformer):
         for (column, func, kwargs) in self.features:
             X[column] = FunctionTransformer(
                 func, validate=True, kw_args=kwargs
-            ).transform(X[[column]].values)
+            ).transform(X[[column]].to_numpy())
 
         return X
 
@@ -71,7 +105,7 @@ class MapTransformer(BaseTransformer):
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = MapTransformer([("foo", lambda x: x + 1)])
-        >>> transformer.fit_transform(X).values
+        >>> transformer.fit_transform(X).to_numpy()
         array([[2, 4],
                [3, 5],
                [4, 6]])
@@ -266,7 +300,7 @@ class ValueReplacerTransformer(BaseTransformer):
         ...         ]
         ...     ),
         ... )
-        >>> transformer.fit_transform(X).values
+        >>> transformer.fit_transform(X).to_numpy()
         array([['1900-01-01'],
               ['2022/01/08'],
               ['1900-01-01'],

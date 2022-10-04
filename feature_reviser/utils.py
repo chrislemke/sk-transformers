@@ -59,9 +59,9 @@ def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
     if not isinstance(y, pd.Series):
         raise TypeError("y must be a pandas.Series!")
     if check_nans:
-        if X.isnull().values.any():
+        if X.isnull().to_numpy().any():
             raise ValueError("Features must not contain NaN values!")
-        if y.isnull().values.any():
+        if y.isnull().to_numpy().any():
             raise ValueError("y must not contain NaN values!")
 
 

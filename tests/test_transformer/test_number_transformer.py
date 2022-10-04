@@ -65,18 +65,18 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
     )
 
     assert pipeline.steps[0][0] == "mathexpressiontransformer"
-    assert np.array_equal(result["small_numbers_add_1"].values, expected_add)
-    assert np.array_equal(result["small_numbers_sum_1"].values, expected_add)
+    assert np.array_equal(result["small_numbers_add_1"].to_numpy(), expected_add)
+    assert np.array_equal(result["small_numbers_sum_1"].to_numpy(), expected_add)
     assert np.array_equal(
-        result["small_numbers_mul_small_numbers"].values, expected_mul
+        result["small_numbers_mul_small_numbers"].to_numpy(), expected_mul
     )
     assert np.array_equal(
-        result["small_numbers_sum_small_float_numbers"].values, expected_sum
+        result["small_numbers_sum_small_float_numbers"].to_numpy(), expected_sum
     )
     assert np.array_equal(
-        result["small_numbers_sin"].values.round(3), expected_sin.round(3)
+        result["small_numbers_sin"].to_numpy().round(3), expected_sin.round(3)
     )
-    assert np.array_equal(result["big_numbers_neg"].values, expected_neg)
+    assert np.array_equal(result["big_numbers_neg"].to_numpy(), expected_neg)
 
 
 def test_math_expression_transformer_in_pipeline_with_non_existing_column(
