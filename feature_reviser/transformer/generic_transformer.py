@@ -73,7 +73,10 @@ class AggregateTransformer(BaseTransformer):
             )
 
             agg_df = agg_df.rename(
-                columns={agg: f"{agg.upper()}({groupby_column})" for agg in aggs}
+                columns={
+                    agg: f"{agg.upper()}({groupby_column}__{agg_column})"
+                    for agg in aggs
+                }
             )
 
             for column in list(np.delete(agg_df.columns, 0)):

@@ -37,6 +37,7 @@ def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
         dtype=object,
     )
     assert np.array_equal(result.to_numpy(), expected)
+    assert list(result.columns) == ["a", "b", "MEAN(a__b)"]
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
 
