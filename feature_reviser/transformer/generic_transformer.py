@@ -13,6 +13,44 @@ from feature_reviser.utils import check_ready_to_transform
 # pylint: disable=missing-function-docstring, unused-argument
 
 
+class DtypeTransformer(BaseTransformer):
+    """
+    Transformer that converts a column to a different dtype.
+
+    Example:
+        >>> from feature_reviser import DtypeTransformer
+        >>> import numpy as np
+        >>> import pandas as pd
+        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "a", "b"]})
+        >>> transformer = DtypeTransformer([("foo", np.float32), ("bar", "category")])
+        >>> transformer.fit_transform(X)
+        foo     float32
+        bar    category
+        dtype: object
+
+    Args:
+        features (List[Tuple[str, Union[str, type]]]): List of tuples containing the column name and the dtype (`str` or `type`).
+    """
+
+    def __init__(self, features: List[Tuple[str, Union[str, type]]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Transform the dataframe by converting the columns to the specified dtypes.
+        Args:
+            X (pandas.DataFrame): dataframe to transform.
+        Returns:
+            pandas.DataFrame: Transformed dataframe.
+        """
+        check_ready_to_transform(X, [feature[0] for feature in self.features])
+
+        for (column, dtype) in self.features:
+            X[column] = X[column].astype(dtype)
+        return X
+
+
 class AggregateTransformer(BaseTransformer):
     """
     This transformer uses Pandas `groupby` method and `aggregate` to apply function on a column grouped by another column.
