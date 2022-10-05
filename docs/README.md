@@ -9,6 +9,7 @@
 [![pypi](https://img.shields.io/pypi/v/feature-reviser)](https://pypi.org/project/feature-reviser/)
 ![python version](https://img.shields.io/pypi/pyversions/feature-reviser?logo=python&logoColor=yellow)
 [![downloads](https://img.shields.io/pypi/dm/feature-reviser)](https://pypistats.org/packages/feature-reviser)
+[![docs](https://img.shields.io/badge/docs-mkdoks%20material-blue)](https://chrislemke.github.io/feature-reviser/)
 [![license](https://img.shields.io/github/license/chrislemke/feature-reviser)](https://github.com/chrislemke/feature-reviser/blob/main/LICENSE)
 [![mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](http://mypy-lang.org/)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)

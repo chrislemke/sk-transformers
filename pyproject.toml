@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.3.90"
+version = "0.3.91"
 description = "A collection of various scikit-learn transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
@@ -12,9 +12,9 @@ classifiers = [
     "Intended Audience :: Science/Research",
 ]
 keywords = [
-    "feature selection",
     "feature engineering",
     "preprocessing",
+    "feature selection",
     "scikit-learn",
     "pipelines",
     "pandas",
@@ -24,10 +24,6 @@ keywords = [
 homepage = "https://chrislemke.github.io/feature-reviser/"
 documentation = "https://chrislemke.github.io/feature-reviser/"
 repository = "https://github.com/chrislemke/feature-reviser"
-
-[project.urls]
-issues = "https://github.com/chrislemke/feature-reviser/issues"
-discussions = "https://github.com/chrislemke/feature-reviser/discussions"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"

@@ -60,7 +60,10 @@ def test_duration_calculator_transformer_exception_no_column(X) -> None:
         DurationCalculatorTransformer(
             ("non_existing", "c"), new_column_name="duration", unit="days"
         ).fit_transform(X)
-    assert "Not all provided `features` could be found in `X`!" == str(error.value)
+    assert (
+        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`."
+        == str(error.value)
+    )
 
 
 def test_timestamp_transformer_in_pipeline(X_time_values) -> None:
