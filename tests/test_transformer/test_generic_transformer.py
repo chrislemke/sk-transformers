@@ -7,6 +7,7 @@ from sklearn.pipeline import make_pipeline
 from feature_reviser.transformer.generic_transformer import (
     AggregateTransformer,
     ColumnDropperTransformer,
+    DtypeTransformer,
     FunctionsTransformer,
     MapTransformer,
     NaNTransformer,
@@ -16,6 +17,25 @@ from feature_reviser.transformer.generic_transformer import (
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
+
+
+def test_dtype_transformer_in_pipeline(X) -> None:
+    pipeline = make_pipeline(DtypeTransformer([("a", np.float32), ("e", "category")]))
+    X = pipeline.fit_transform(X)
+
+    assert X["a"].dtype == "float32"
+    assert X["e"].dtype == "category"
+
+    assert pipeline.steps[0][0] == "dtypetransformer"
+
+
+def test_dtype_transformer_raises_error(X) -> None:
+    with pytest.raises(ValueError) as error:
+        DtypeTransformer(
+            [("non_existing", np.float32), ("e", "category")]
+        ).fit_transform(X)
+
+    assert "Not all provided `features` could be found in `X`!" == str(error.value)
 
 
 def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
@@ -37,6 +57,7 @@ def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
         dtype=object,
     )
     assert np.array_equal(result.to_numpy(), expected)
+    assert list(result.columns) == ["a", "b", "MEAN(a__b)"]
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
 

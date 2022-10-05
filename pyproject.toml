@@ -1,12 +1,9 @@
 [tool.poetry]
 name = "feature-reviser"
-version = "0.3.83"
+version = "0.3.90"
 description = "A collection of various scikit-learn transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
-homepage = "https://chrislemke.github.io/feature-reviser/"
-repository = "https://github.com/chrislemke/feature-reviser"
-documentation = "https://chrislemke.github.io/feature-reviser/"
 readme = "docs/README.md"
 packages = [{ include = "feature_reviser" }]
 classifiers = [
@@ -24,6 +21,13 @@ keywords = [
     "machine learning",
     "data science"
 ]
+homepage = "https://chrislemke.github.io/feature-reviser/"
+documentation = "https://chrislemke.github.io/feature-reviser/"
+repository = "https://github.com/chrislemke/feature-reviser"
+
+[project.urls]
+issues = "https://github.com/chrislemke/feature-reviser/issues"
+discussions = "https://github.com/chrislemke/feature-reviser/discussions"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.11"
@@ -34,15 +38,14 @@ pandas = "^1.5.0"
 feature-engine = "^1.4.1"
 phonenumbers = "^8.12.56"
 
-
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.4"
 black = "^22.8.0"
 isort = "^5.10.1"
 mkdocs = "^1.4.0"
-mkdocstrings = "^0.18.1"
-mkdocs-material = "^8.5.3"
-mypy = "^0.981"
+mkdocstrings = "0.18.1"
+mkdocs-material = "^8.5.6"
+mypy = "^0.982"
 pre-commit = "^2.20.0"
 pylint = "^2.15.3"
 pytest = "^7.1.3"
