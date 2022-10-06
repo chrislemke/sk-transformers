@@ -34,7 +34,15 @@ def check_ready_to_transform(
                 raise ValueError(f"Column `{features}` not in dataframe!")
         elif isinstance(features, list):
             if not all(c in X.columns for c in features):
-                raise ValueError("Not all provided `features` could be found in `X`!")
+                not_in_df = (
+                    str([c for c in features if c not in X.columns])
+                    .replace("[", "")
+                    .replace("]", "")
+                    .replace("'", "`")
+                )
+                raise ValueError(
+                    f"Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: {not_in_df}."
+                )
 
     return X.copy()
 

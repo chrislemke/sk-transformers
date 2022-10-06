@@ -38,7 +38,10 @@ def test_check_ready_to_transform_for_wrong_columns() -> None:
     with pytest.raises(ValueError) as error:
         check_ready_to_transform(pd.DataFrame({"a": [1, 2, 3]}), ["b", "c"])
 
-    assert "Not all provided `features` could be found in `X`!" == str(error.value)
+    assert (
+        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `b`, `c`."
+        == str(error.value)
+    )
 
 
 def test_check_data_x_type() -> None:
