@@ -23,7 +23,7 @@ class DtypeTransformer(BaseTransformer):
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "a", "b"]})
         >>> transformer = DtypeTransformer([("foo", np.float32), ("bar", "category")])
-        >>> transformer.fit_transform(X)
+        >>> transformer.fit_transform(X).dtypes
         foo     float32
         bar    category
         dtype: object
