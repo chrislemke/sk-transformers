@@ -547,7 +547,7 @@ python-versions = ">=2.6"
 
 [[package]]
 name = "phonenumbers"
-version = "8.12.56"
+version = "8.12.57"
 description = "Python version of Google's common library for parsing, formatting, storing and validating international phone numbers."
 category = "main"
 optional = false
@@ -973,7 +973,7 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.8,<3.11"
-content-hash = "73bcfec809c5cee2ce9563e9c0e3759b9034ce6492b5af221a168f96ef1f8db8"
+content-hash = "41dee207bb1bfe2d526806e2b7e1c21b41da5734320eea6ffc72ecf1248c697e"
 
 [metadata.files]
 astroid = [
@@ -1361,8 +1361,8 @@ pbr = [
     {file = "pbr-5.10.0.tar.gz", hash = "sha256:cfcc4ff8e698256fc17ea3ff796478b050852585aa5bae79ecd05b2ab7b39b9a"},
 ]
 phonenumbers = [
-    {file = "phonenumbers-8.12.56-py2.py3-none-any.whl", hash = "sha256:80a7422cf0999a6f9b7a2e6cfbdbbfcc56ab5b75414dc3b805bbec91276b64a3"},
-    {file = "phonenumbers-8.12.56.tar.gz", hash = "sha256:82a4f226c930d02dcdf6d4b29e4cfd8678991fe65c2efd5fdd143557186f0868"},
+    {file = "phonenumbers-8.12.57-py2.py3-none-any.whl", hash = "sha256:0b234c4a9519fac18d00b3c542f5b429513ea69372d4f95fbd0f716f5e2a89b5"},
+    {file = "phonenumbers-8.12.57.tar.gz", hash = "sha256:057d1966962fb86b3dc447bfac2c8e25ceed774509e49b180926a13a99910318"},
 ]
 platformdirs = [
     {file = "platformdirs-2.5.2-py3-none-any.whl", hash = "sha256:027d8e83a2d7de06bbac4e5ef7e023c02b863d7ea5d079477e722bb41ab25788"},
