@@ -3,7 +3,7 @@ from feature_reviser.transformer.datetime_transformer import (
     DurationCalculatorTransformer,
     TimestampTransformer,
 )
-from feature_reviser.transformer.encoder_transformer import MeanEncoder
+from feature_reviser.transformer.encoder_transformer import MeanEncoderTransformer
 from feature_reviser.transformer.generic_transformer import (
     AggregateTransformer,
     ColumnDropperTransformer,

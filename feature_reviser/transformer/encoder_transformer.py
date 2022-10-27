@@ -3,13 +3,13 @@
 from typing import Union
 
 import pandas as pd
-from feature_engine.encoding import MeanEncoder as Me
+from feature_engine.encoding import MeanEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
 
 # pylint: disable= missing-function-docstring, unused-argument
 
 
-class MeanEncoder(BaseEstimator, TransformerMixin):
+class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
     """
     Scikit-learn API for the [feature-engine MeanEncoder](https://feature-engine.readthedocs.io/en/latest/api_doc/encoding/MeanEncoder.html).
 
@@ -19,10 +19,10 @@ class MeanEncoder(BaseEstimator, TransformerMixin):
     """
 
     def __init__(self, fill_na_value: Union[int, float] = -999) -> None:
-        self.encoder = Me(ignore_format=False)
+        self.encoder = MeanEncoder(ignore_format=False)
         self.fill_na_value = fill_na_value
 
-    def fit(self, X: pd.DataFrame, y: pd.Series) -> "MeanEncoder":
+    def fit(self, X: pd.DataFrame, y: pd.Series) -> "MeanEncoderTransformer":
         """
         Fit the MeanEncoder to the data.
         Args:
