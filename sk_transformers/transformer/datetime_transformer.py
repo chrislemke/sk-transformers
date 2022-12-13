@@ -1,11 +1,10 @@
-# -*- coding: utf-8 -*-
 from datetime import datetime
 from typing import List, Tuple
 
 import pandas as pd
 
-from src.transformer.base_transformer import BaseTransformer
-from src.utils import check_ready_to_transform
+from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.utils import check_ready_to_transform
 
 # pylint: disable= missing-function-docstring, unused-argument
 

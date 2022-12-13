@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 from sklearn.base import BaseEstimator, TransformerMixin
 
 # pylint: disable= missing-function-docstring, unused-argument

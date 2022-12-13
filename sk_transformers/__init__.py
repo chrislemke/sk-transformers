@@ -1,10 +1,9 @@
-# -*- coding: utf-8 -*-
-from src.transformer.datetime_transformer import (
+from sk_transformers.transformer.datetime_transformer import (
     DurationCalculatorTransformer,
     TimestampTransformer,
 )
-from src.transformer.encoder_transformer import MeanEncoderTransformer
-from src.transformer.generic_transformer import (
+from sk_transformers.transformer.encoder_transformer import MeanEncoderTransformer
+from sk_transformers.transformer.generic_transformer import (
     AggregateTransformer,
     ColumnDropperTransformer,
     DtypeTransformer,
@@ -15,8 +14,8 @@ from src.transformer.generic_transformer import (
     ValueIndicatorTransformer,
     ValueReplacerTransformer,
 )
-from src.transformer.number_transformer import MathExpressionTransformer
-from src.transformer.string_transformer import (
+from sk_transformers.transformer.number_transformer import MathExpressionTransformer
+from sk_transformers.transformer.string_transformer import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     PhoneTransformer,

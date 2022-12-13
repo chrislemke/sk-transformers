@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import re
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
@@ -7,8 +5,8 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import FunctionTransformer
 
-from src.transformer.base_transformer import BaseTransformer
-from src.utils import check_ready_to_transform
+from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.utils import check_ready_to_transform
 
 # pylint: disable=missing-function-docstring, unused-argument
 

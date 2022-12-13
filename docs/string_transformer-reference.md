@@ -1,1 +1,1 @@
-:::src.transformer.string_transformer
+:::sk_transformers.transformer.string_transformer

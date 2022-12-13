@@ -2,7 +2,11 @@ import numpy as np
 import pandas as pd
 import pytest
 
-from src.utils import check_data, check_ready_to_transform, prepare_categorical_data
+from sk_transformers.utils import (
+    check_data,
+    check_ready_to_transform,
+    prepare_categorical_data,
+)
 
 # pylint: disable=missing-function-docstring
 
