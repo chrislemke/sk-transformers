@@ -20,23 +20,23 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - name: Install dependencies and project
         run: |
-          python -m pip install poetry==1.2.1
+          python -m pip install poetry==1.3.1
           poetry install
       - name: Check with isort
         run: |
-          poetry run isort --check-only ./feature_reviser  ./tests
+          poetry run isort --check-only ./src  ./tests
       - name: Check with black
         run: |
-          poetry run black --check ./feature_reviser  ./tests
+          poetry run black --check ./src  ./tests
       - name: Check with mypy
         run: |
           poetry run mypy --config-file=pyproject.toml .
       - name: Check with bandit
         run: |
-          poetry run bandit -r ./feature_reviser/*
+          poetry run bandit -r ./src/*
       - name: Lint with pylint
         run: |
-          poetry run pylint --rcfile=pyproject.toml ./feature_reviser ./tests
+          poetry run pylint --rcfile=pyproject.toml ./src ./tests
       - name: Test with pytest
         run: |
-          poetry run pytest --cov feature_reviser --cov-fail-under=90 --cov-report term-missing
+          poetry run pytest --cov src --cov-fail-under=90 --cov-report term-missing

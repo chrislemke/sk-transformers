@@ -11,8 +11,8 @@ from typing import List, Tuple, Union
 import pandas as pd
 import phonenumbers
 
-from feature_reviser.transformer.base_transformer import BaseTransformer
-from feature_reviser.utils import check_ready_to_transform
+from src.transformer.base_transformer import BaseTransformer
+from src.utils import check_ready_to_transform
 
 # pylint: disable= missing-function-docstring, unused-argument
 
@@ -292,7 +292,7 @@ class StringSlicerTransformer(BaseTransformer):
     the python quirk of writing a tuple with a single argument with the trailing comma.
 
     Example:
-        >>> from feature_reviser import StringSlicerTransformer
+        >>> from sk_transformers import StringSlicerTransformer
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
         >>> transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])

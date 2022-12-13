@@ -1,9 +1,8 @@
-# -*- coding: utf-8 -*-
 import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser import DurationCalculatorTransformer, TimestampTransformer
+from src import DurationCalculatorTransformer, TimestampTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

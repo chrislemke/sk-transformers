@@ -4,8 +4,8 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from feature_reviser.transformer.base_transformer import BaseTransformer
-from feature_reviser.utils import check_ready_to_transform
+from src.transformer.base_transformer import BaseTransformer
+from src.utils import check_ready_to_transform
 
 # pylint: disable= missing-function-docstring, unused-argument
 

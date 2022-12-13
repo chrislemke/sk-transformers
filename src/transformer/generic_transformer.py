@@ -7,8 +7,8 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import FunctionTransformer
 
-from feature_reviser.transformer.base_transformer import BaseTransformer
-from feature_reviser.utils import check_ready_to_transform
+from src.transformer.base_transformer import BaseTransformer
+from src.utils import check_ready_to_transform
 
 # pylint: disable=missing-function-docstring, unused-argument
 
@@ -18,7 +18,7 @@ class DtypeTransformer(BaseTransformer):
     Transformer that converts a column to a different dtype.
 
     Example:
-        >>> from feature_reviser import DtypeTransformer
+        >>> from sk_transformers import DtypeTransformer
         >>> import numpy as np
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "a", "b"]})
@@ -58,7 +58,7 @@ class AggregateTransformer(BaseTransformer):
     to understand how to use function for aggregation. Other than Pandas function this transformer only support functions and string-names.
 
     Example:
-        >>> from feature_reviser import AggregateTransformer
+        >>> from sk_transformers import AggregateTransformer
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"], "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56]})
         >>> transformer = AggregateTransformer([("foo", "bar", ["mean"])])
@@ -132,7 +132,7 @@ class FunctionsTransformer(BaseTransformer):
     this transformer *does not* support the `inverse_func`, `accept_sparse`, `feature_names_out` and, `inv_kw_args` parameters.
 
     Example:
-        >>> from feature_reviser import FunctionsTransformer
+        >>> from sk_transformers import FunctionsTransformer
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
@@ -180,7 +180,7 @@ class MapTransformer(BaseTransformer):
     For this it uses the `pandas.Series.map` method.
 
     Example:
-        >>> from feature_reviser import MapTransformer
+        >>> from sk_transformers import MapTransformer
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = MapTransformer([("foo", lambda x: x + 1)])
@@ -281,7 +281,7 @@ class ValueIndicatorTransformer(BaseTransformer):
     `NaN`, `None` or `np.nan` are **Not** caught by this implementation.
 
     Example:
-        >>> from feature_reviser import ValueIndicatorTransformer
+        >>> from sk_transformers import ValueIndicatorTransformer
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
         >>> transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
@@ -365,7 +365,7 @@ class ValueReplacerTransformer(BaseTransformer):
     original type. It may happen, that this type changing fails if the modified column is not compatible with its original type.
 
     Example:
-        >>> from feature_reviser import ValueReplacerTransformer
+        >>> from sk_transformers import ValueReplacerTransformer
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
         >>> transformer = (

@@ -1,1 +1,1 @@
-:::feature_reviser.transformer.string_transformer
+:::src.transformer.string_transformer

@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser.transformer.generic_transformer import (
+from src.transformer.generic_transformer import (
     AggregateTransformer,
     ColumnDropperTransformer,
     DtypeTransformer,

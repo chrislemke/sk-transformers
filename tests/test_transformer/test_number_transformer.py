@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser import MathExpressionTransformer
+from src import MathExpressionTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

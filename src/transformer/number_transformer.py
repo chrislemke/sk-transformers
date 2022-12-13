@@ -8,8 +8,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
-from feature_reviser.transformer.base_transformer import BaseTransformer
-from feature_reviser.utils import check_ready_to_transform
+from src.transformer.base_transformer import BaseTransformer
+from src.utils import check_ready_to_transform
 
 # pylint: disable= missing-function-docstring, unused-argument
 
@@ -23,7 +23,7 @@ class MathExpressionTransformer(BaseTransformer):
     various NumPy methods return values which are not fitting the size of the source column.
 
     Example:
-        >>> from feature_reviser import MathExpressionTransformer
+        >>> from sk_transformers import MathExpressionTransformer
         >>> import pandas as pd
         >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
         >>> transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])

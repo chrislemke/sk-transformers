@@ -1,14 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import pandas as pd
 import pytest
 
-from feature_reviser.utils import (
-    check_data,
-    check_ready_to_transform,
-    prepare_categorical_data,
-)
+from src.utils import check_data, check_ready_to_transform, prepare_categorical_data
 
 # pylint: disable=missing-function-docstring
 

@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser.transformer.encoder_transformer import MeanEncoderTransformer
+from src.transformer.encoder_transformer import MeanEncoderTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

@@ -66,7 +66,7 @@ print(pipeline.fit_transform(df).head())
 1    Incredible Hulk   Schikaneder
 2      Tom and Jerry  Futuregarden
 ```
-For a non-dummy examples check out the [`MathExpressionTransformer`](number_transformer-reference.md#feature_reviser.transformer.number_transformer.MathExpressionTransformer) or the [`ValueIndicatorTransformer`](generic_transformer-reference.md#feature_reviser.transformer.generic_transformer.ValueIndicatorTransformer) for a simpler example.
+For a non-dummy examples check out the [`MathExpressionTransformer`](number_transformer-reference.md#sk-transformers.transformer.number_transformer.MathExpressionTransformer) or the [`ValueIndicatorTransformer`](generic_transformer-reference.md#sk-transformers.transformer.generic_transformer.ValueIndicatorTransformer) for a simpler example.
 
 ## Poetry
 We are using [Poetry](https://python-poetry.org/) to manage the dependencies and the virtual environment. If you have not used it before please check out the [documentation](https://python-poetry.org/docs/) to get started.
