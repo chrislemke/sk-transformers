@@ -39,4 +39,4 @@ jobs:
           poetry run pylint --rcfile=pyproject.toml ./sk_transformers ./tests
       - name: Test with pytest
         run: |
-          poetry run pytest --cov src --cov-fail-under=90 --cov-report term-missing
+          poetry run pytest --cov sk_transformers --cov-fail-under=90 --cov-report term-missing

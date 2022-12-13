@@ -60,7 +60,7 @@ array([[1, 4, 5],
 Together with [Scikit-learn's pipelines](https://scikit-learn.org/stable/modules/compose.html#combining-estimators) it would look like this:
 ```python
 from sklearn.pipeline import Pipeline
-from sk_transformers import MathExpressionTransformer, MapTransformer
+from sk_transformers import MapTransformer, MathExpressionTransformer
 import pandas as pd
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
 map_step = MapTransformer([("foo", lambda x: x + 100)])
