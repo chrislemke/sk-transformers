@@ -1,6 +1,6 @@
 [tool.poetry]
-name = "sk-transformers"
-version = "0.5.0"
+name = "sk_transformers"
+version = "0.5.1"
 description = "A collection of various scikit-learn transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
