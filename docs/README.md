@@ -56,12 +56,32 @@ array([[1, 4, 5],
        [2, 5, 7],
        [3, 6, 9]])
 ```
+
+Together with [Scikit-learn's pipelines](https://scikit-learn.org/stable/modules/compose.html#combining-estimators) it would look like this:
+```python
+from sklearn.pipeline import Pipeline
+from sk_transformers import MathExpressionTransformer, MapTransformer
+import pandas as pd
+X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+map_step = MapTransformer([("foo", lambda x: x + 100)])
+sum_step = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
+pipeline = Pipeline([("map_step", map_step), ("sum_step", sum_step)])
+pipeline.fit_transform(X)
+```
+
+```
+   foo  bar  foo_sum_bar
+0  101    4          105
+1  102    5          107
+2  103    6          109
+```
+
 Even if we only pass one tuple to the transformer - in this example. Like with most other transformers the idea is to simplify preprocessing by giving the possibility to operate on multiple columns at the same time. In this case, the [`MathExpressionTransformer`](https://chrislemke.github.io/sk-transformers/number_transformer-reference/#sk-transformers.transformer.number_transformer.MathExpressionTransformer) has created an extra column with the name `foo_sum_bar`.
 
 ## Contributing
 We're all kind of in the same boat. Preprocessing/feature engineering in data science is somehow very individual - every feature is different and must be handled and processed differently. But somehow we all have the same problems: sometimes date columns have to be changed. Sometimes strings have to be formatted, sometimes durations have to be calculated, etc. There is a huge number of preprocessing possibilities but we all use the same tools.
 
-[Scikit-learns pipelines](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) help to use formalized functions. So why not also share these so-called transformers with others? This open source project has the goal to collect useful preprocessing pipeline steps. Let us all collect what we used for preprocessing and share it with others. This way we can all benefit from each other's work and save a lot of time. So if you have a preprocessing step that you use regularly, please feel free to contribute it to this project. The idea is that this is not only a toolbox but also an inspiration for what is possible. Maybe you have not thought about this preprocessing step before.
+[Scikit-learns pipelines](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) help to use formalized functions. So why not also share these so-called transformers with others? This open-source project has the goal to collect useful preprocessing pipeline steps. Let us all collect what we used for preprocessing and share it with others. This way we can all benefit from each other's work and save a lot of time. So if you have a preprocessing step that you use regularly, please feel free to contribute it to this project. The idea is that this is not only a toolbox but also an inspiration for what is possible. Maybe you have not thought about this preprocessing step before.
 
 Please check out the [guide](https://chrislemke.github.io/sk-transformers/CONTRIBUTING/) on how to contribute to this project.
 
