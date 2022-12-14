@@ -8,9 +8,11 @@ Check out this dummy example of how to create a custom transformer ready for use
 
 ```python
 import pandas as pd
-from sklearn.base import BaseEstimator, TransformerMixin
 
-class DummyTransformer(BaseEstimator, TransformerMixin):
+from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.utils import check_ready_to_transform
+
+class DummyTransformer(BaseTransformer):
     """
     Replaces all strings in a given column with `dummy`.
 
@@ -22,9 +24,6 @@ class DummyTransformer(BaseEstimator, TransformerMixin):
         self.string_to_replace = string_to_replace
         self.column = column
 
-    def fit(self, X=None, y=None) -> "DummyTransformer":
-        return self
-
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
          Replaces all occurrences of `string_to_replace`
@@ -35,14 +34,14 @@ class DummyTransformer(BaseEstimator, TransformerMixin):
             column where the replacement should happen.
 
         Returns:
-            pd.DataFrame: Dataframe with replaced strings.
+            pandas.DataFrame: Dataframe with replaced strings.
         """
-        X = X.copy()
+        X = check_ready_to_transform(self, X, self.column)
 
         X[self.column] = X[self.column].replace(self.string_to_replace, "DUMMY!")
         return X
 ```
-More documentation than code. You know how it is. 🤷‍♂️
+More documentation than code. You know how it is 🤷‍♂️. This transformer does not need an `fit` method because it does not learn anything from the data. It just replaces a string with another string.
 
 Now you can use it:
 ```python
