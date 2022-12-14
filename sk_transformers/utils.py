@@ -13,6 +13,7 @@ def check_ready_to_transform(
 ) -> pd.DataFrame:
     """
     Args:
+        transformer (Any): The transformer that calls this function. It must be a subclass of `BaseEstimator` from scikit-learn.
         X (pandas.DataFrame): pandas dataframe or NumPy array. The input to check and copy or transform.
         features (Optional[Union[str, List[str]]]): The features to check if they are in the dataframe.
         force_all_finite (Union[bool, str]): Whether to raise an error on np.inf and np.nan in X. The possibilities are:
