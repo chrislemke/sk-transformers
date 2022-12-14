@@ -56,7 +56,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         function = functools.partial(
             IPAddressEncoderTransformer.__to_float,
@@ -111,7 +111,7 @@ class EmailTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
 
@@ -181,7 +181,7 @@ class StringSimilarityTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, list(self.features))
+        X = check_ready_to_transform(self, X, list(self.features))
 
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
             [self.features[0], self.features[1]]
@@ -246,7 +246,7 @@ class PhoneTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
 
@@ -326,7 +326,7 @@ class StringSlicerTransformer(BaseTransformer):
             pandas.DataFrame: Original dataframe with sliced strings in specified features.
         """
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for feature, slice_args in self.features:
             X[feature] = [x[slice(*slice_args)] for x in X[feature]]

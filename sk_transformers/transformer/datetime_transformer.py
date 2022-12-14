@@ -41,7 +41,7 @@ class DurationCalculatorTransformer(BaseTransformer):
             pandas.DataFrame: The transformed DataFrame.
         """
 
-        X = check_ready_to_transform(X, list(self.features))
+        X = check_ready_to_transform(self, X, list(self.features))
 
         duration_series = pd.to_datetime(
             X[self.features[1]], utc=True, errors="raise"
@@ -87,7 +87,7 @@ class TimestampTransformer(BaseTransformer):
         if not all(f in X.columns for f in self.features):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
         for column in self.features:
             X[column] = pd.to_datetime(
                 X[column], format=self.date_format, errors="raise"

@@ -59,7 +59,7 @@ class MathExpressionTransformer(BaseTransformer):
         if not all(f in X.columns for f in [f[0] for f in self.features]):
             raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (feature, operation, value, kwargs) in self.features:
             is_np_op, op = self.__verify_operation(operation)

@@ -42,7 +42,7 @@ class DtypeTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        check_ready_to_transform(X, [feature[0] for feature in self.features])
+        check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (column, dtype) in self.features:
             X[column] = X[column].astype(dtype)
@@ -95,6 +95,7 @@ class AggregateTransformer(BaseTransformer):
         """
 
         check_ready_to_transform(
+            self,
             X,
             [feature[0] for feature in self.features]
             + [feature[1] for feature in self.features],
@@ -162,7 +163,7 @@ class FunctionsTransformer(BaseTransformer):
             pandas.DataFrame: The original dataframe with the modified columns.
         """
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (column, func, kwargs) in self.features:
             X[column] = FunctionTransformer(
@@ -207,7 +208,7 @@ class MapTransformer(BaseTransformer):
                 the new column together with the non-transformed original columns.
         """
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (feature, callback) in self.features:
             X[feature] = X[feature].map(callback)
@@ -237,7 +238,7 @@ class ColumnDropperTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with columns dropped.
         """
-        X = check_ready_to_transform(X, self.columns)
+        X = check_ready_to_transform(self, X, self.columns)
         return X.drop(self.columns, axis=1)
 
 
@@ -264,7 +265,7 @@ class NaNTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        X = check_ready_to_transform(X)
+        X = check_ready_to_transform(self, X, force_all_finite="allow-nan")
         return X.fillna(self.values)
 
 
@@ -312,7 +313,12 @@ class ValueIndicatorTransformer(BaseTransformer):
             pandas.DataFrame: Transformed dataframe containing columns indicating if a certain value was found.
                 Format of the new columns: `"column_name"_nan_indicator`.
         """
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(
+            self,
+            X,
+            [feature[0] for feature in self.features],
+            force_all_finite="allow-nan",
+        )
 
         for (column, indicator) in self.features:
             X[f"{column}_found_indicator"] = (X[column] == indicator).astype(
@@ -349,7 +355,7 @@ class QueryTransformer(BaseTransformer):
             pd.DataFrame: Dataframe with the queries applied.
         """
 
-        Xy = check_ready_to_transform(Xy)
+        Xy = check_ready_to_transform(self, Xy)
         for query in self.queries:
             Xy = Xy.query(query, inplace=False)
         return Xy
@@ -403,7 +409,9 @@ class ValueReplacerTransformer(BaseTransformer):
             pd.DataFrame: Dataframe with replaced values.
         """
 
-        X = check_ready_to_transform(X, [feature[0][0] for feature in self.features])
+        X = check_ready_to_transform(
+            self, X, [feature[0][0] for feature in self.features]
+        )
 
         for (columns, value, replacement) in self.features:
             for column in columns:

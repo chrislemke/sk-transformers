@@ -1,17 +1,27 @@
-from typing import List, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import pandas as pd
+from sklearn.base import BaseEstimator
+from sklearn.utils.validation import check_array, check_is_fitted
 
 
 def check_ready_to_transform(
-    X: pd.DataFrame, features: Optional[Union[str, List[str]]] = None
+    transformer: Any,
+    X: pd.DataFrame,
+    features: Optional[Union[str, List[str]]] = None,
+    force_all_finite: Union[bool, str] = True,
 ) -> pd.DataFrame:
     """
     Args:
         X (pandas.DataFrame): pandas dataframe or NumPy array. The input to check and copy or transform.
         features (Optional[Union[str, List[str]]]): The features to check if they are in the dataframe.
+        force_all_finite (Union[bool, str]): Whether to raise an error on np.inf and np.nan in X. The possibilities are:
+            - True: Force all values of array to be finite.
+            - False: accepts np.inf, np.nan, pd.NA in array.
+            - "allow-nan": accepts only np.nan and pd.NA values in array. Values cannot be infinite.
 
     Raises:
+        TypeError: If the input `transformer` is not a subclass of `BaseEstimator`.
         ValueError: If the input `X` is not a Pandas dataframe.
         ValueError: If the input is an empty Pandas dataframe.
         ValueError: If the input `X` does not contain the feature.
@@ -19,7 +29,7 @@ def check_ready_to_transform(
 
 
     Returns:
-        pandas.DataFrame: A copy of original dataframe.
+        pandas.DataFrame: A checked copy of original dataframe.
     """
 
     if not isinstance(X, pd.DataFrame):
@@ -42,7 +52,24 @@ def check_ready_to_transform(
                     f"Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: {not_in_df}."
                 )
 
-    return X.copy()
+    if issubclass(transformer.__class__, BaseEstimator) is False:
+        raise TypeError(
+            f"""
+            `transformer` from type (`{transformer.__class__.__name__}`) is not a subclass of `BaseEstimator`!
+            See https://github.com/scikit-learn-contrib/project-template/blob/master/skltemplate/_template.py#L146 for an example/template.
+            """
+        )
+
+    check_is_fitted(transformer, "fitted_")
+    X_tmp = check_array(
+        X, dtype=None, accept_sparse=True, force_all_finite=force_all_finite
+    )
+    X_tmp = pd.DataFrame(X_tmp, columns=X.columns, index=X.index)
+
+    for column in X.columns:
+        X_tmp[column] = X_tmp[column].astype(X[column].dtype)
+
+    return X_tmp.copy()
 
 
 def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
