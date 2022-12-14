@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sk-transformers"
-version = "0.5.3"
+version = "0.5.4"
 description = "A collection of various scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
@@ -15,10 +15,12 @@ keywords = [
     "feature engineering",
     "preprocessing",
     "scikit-learn",
+    "transformer",
     "pipelines",
     "pandas",
     "machine learning",
-    "data science"
+    "data science",
+    "artificial intelligence"
 ]
 homepage = "https://chrislemke.github.io/sk-transformers/"
 documentation = "https://chrislemke.github.io/sk-transformers/"
