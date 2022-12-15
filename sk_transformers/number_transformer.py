@@ -1,6 +1,3 @@
-# -*- coding: utf-8 -*-
-
-
 import operator
 import warnings
 from typing import Any, Dict, List, Optional, Tuple, Union
@@ -8,10 +5,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
-from feature_reviser.transformer.base_transformer import BaseTransformer
-from feature_reviser.utils import check_ready_to_transform
-
-# pylint: disable= missing-function-docstring, unused-argument
+from sk_transformers.base_transformer import BaseTransformer
+from sk_transformers.utils import check_ready_to_transform
 
 
 class MathExpressionTransformer(BaseTransformer):
@@ -23,14 +18,19 @@ class MathExpressionTransformer(BaseTransformer):
     various NumPy methods return values which are not fitting the size of the source column.
 
     Example:
-        >>> from feature_reviser import MathExpressionTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        >>> transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
-        >>> transformer.fit_transform(X).to_numpy()
-        array([[1, 4, 5],
-               [2, 5, 7],
-               [3, 6, 9]])
+    ```python
+    from sk_transformers import MathExpressionTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+    transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([[1, 4, 5],
+            [2, 5, 7],
+            [3, 6, 9]])
+    ```
 
     Args:
         features (List[str, str, Union[int, float]]): List of tuples containing the name of the column to apply the operation on,
@@ -59,10 +59,8 @@ class MathExpressionTransformer(BaseTransformer):
             pandas.DataFrame: The original dataframe with the new columns. The new columns are named as follows:
             '`column_name`_`operation`_`value`' or '`column_name`_`operation`' if `value` is `None`.
         """
-        if not all(f in X.columns for f in [f[0] for f in self.features]):
-            raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (feature, operation, value, kwargs) in self.features:
             is_np_op, op = self.__verify_operation(operation)

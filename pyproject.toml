@@ -1,11 +1,11 @@
 [tool.poetry]
-name = "feature-reviser"
-version = "0.3.94"
-description = "A collection of various scikit-learn transformers for all kinds of preprocessing and feature engineering"
+name = "sk-transformers"
+version = "0.5.5"
+description = "A collection of various scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
 readme = "docs/README.md"
-packages = [{ include = "feature_reviser" }]
+packages = [{ include = "sk_transformers" }]
 classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
@@ -14,41 +14,46 @@ classifiers = [
 keywords = [
     "feature engineering",
     "preprocessing",
-    "feature selection",
     "scikit-learn",
+    "transformer",
     "pipelines",
     "pandas",
     "machine learning",
-    "data science"
+    "data science",
+    "artificial intelligence"
 ]
-homepage = "https://chrislemke.github.io/feature-reviser/"
-documentation = "https://chrislemke.github.io/feature-reviser/"
-repository = "https://github.com/chrislemke/feature-reviser"
+homepage = "https://chrislemke.github.io/sk-transformers/"
+documentation = "https://chrislemke.github.io/sk-transformers/"
+repository = "https://github.com/chrislemke/sk-transformers/"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.8,<3.12"
 joblib = "1.2.0"
-numpy = ">=1.20.3,<=1.23.4"
-scikit-learn = ">=1.0.2,<=1.1.2"
-pandas = ">=1.1.3,<=1.5.0"
-feature-engine = "1.4.1"
-phonenumbers = "8.12.57"
+numpy = "1.23.5"
+scikit-learn = "1.2.0"
+pandas = "1.5.2"
+feature-engine = "1.5.2"
+phonenumbers = "8.13.2"
+
 
 [tool.poetry.group.dev.dependencies]
 bandit = "^1.7.4"
-black = "^22.10.0"
-isort = "^5.10.1"
-mkdocs = "1.4.0"
-mkdocstrings = "0.18.1"
-mkdocs-material = "8.5.6"
-mypy = "^0.982"
+black = "^22.12.0"
+isort = "^5.11.1"
+mypy = "^0.991"
 pre-commit = "^2.20.0"
-pylint = "^2.15.3"
-pytest = "^7.1.3"
-pytest-cov = "^3.0.0"
+pylint = "^2.15.8"
+pytest = "^7.2.0"
+pytest-cov = "4.0.0"
+
+
+[tool.poetry.group.docs.dependencies]
+mkdocs = "1.4.2"
+mkdocstrings = {extras = ["python"], version = "0.19.1"}
+mkdocs-material = "8.5.11"
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
+requires = ["poetry-core>=1.4.0"]
 build-backend = "poetry.core.masonry.api"
 
 [tool.isort]
@@ -63,7 +68,7 @@ warn_return_any = false
 exclude = ["tests/*", "docs/*"]
 
 [tool.pytest.ini_options]
-minversion = "7.1.3"
+minversion = "7.2.0"
 testpaths = ["tests"]
 
 [tool.pylint.messages_control]

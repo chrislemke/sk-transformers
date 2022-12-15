@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import numpy as np
 import pandas as pd
 from sklearn.pipeline import make_pipeline
 
-from feature_reviser import (
+from sk_transformers import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     PhoneTransformer,

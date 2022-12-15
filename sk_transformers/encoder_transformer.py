@@ -1,12 +1,8 @@
-# -*- coding: utf-8 -*-
-
 from typing import Union
 
 import pandas as pd
 from feature_engine.encoding import MeanEncoder
 from sklearn.base import BaseEstimator, TransformerMixin
-
-# pylint: disable= missing-function-docstring, unused-argument
 
 
 class MeanEncoderTransformer(BaseEstimator, TransformerMixin):

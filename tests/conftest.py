@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import pandas as pd
 import pytest
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler

@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import functools
 import ipaddress
 import itertools
@@ -11,22 +9,20 @@ from typing import List, Tuple, Union
 import pandas as pd
 import phonenumbers
 
-from feature_reviser.transformer.base_transformer import BaseTransformer
-from feature_reviser.utils import check_ready_to_transform
-
-# pylint: disable= missing-function-docstring, unused-argument
+from sk_transformers.base_transformer import BaseTransformer
+from sk_transformers.utils import check_ready_to_transform
 
 
 class IPAddressEncoderTransformer(BaseTransformer):
     """
     Encodes IPv4 and IPv6 strings addresses to a float representation.
     To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
-    Those values can be changed using the `ipv4_divider` and `ipv6_divider` parameters.
+    Those values can be changed using the `ip4_divisor` and `ip6_divisor` parameters.
 
     Args:
         features (List[str]): List of features which should be transformed.
-        ipv4_divider (float): Divider for IPv4 addresses.
-        ipv6_divider (float): Divider for IPv6 addresses.
+        ip4_divisor (float): Divisor for IPv4 addresses.
+        ip6_divisor (float): Divisor for IPv6 addresses.
         error_value (Union[int, float]): Value if parsing fails.
     """
 
@@ -49,16 +45,12 @@ class IPAddressEncoderTransformer(BaseTransformer):
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.
-            error_value (Union[int, float]): Value if parsing fails.
 
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         function = functools.partial(
             IPAddressEncoderTransformer.__to_float,
@@ -80,10 +72,10 @@ class IPAddressEncoderTransformer(BaseTransformer):
     ) -> float:
         try:
             return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
-        except:  # pylint: disable=W0702
+        except:  # pylint: disable=bare-except
             try:
                 return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
-            except:  # pylint: disable=W0702
+            except:  # pylint: disable=bare-except
                 return error_value
 
 
@@ -110,10 +102,7 @@ class EmailTransformer(BaseTransformer):
             pandas.DataFrame: Transformed dataframe containing the extra columns.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
 
@@ -180,10 +169,8 @@ class StringSimilarityTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, list(self.features))
+        X = check_ready_to_transform(self, X, list(self.features))
 
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
             [self.features[0], self.features[1]]
@@ -245,10 +232,7 @@ class PhoneTransformer(BaseTransformer):
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
 
@@ -292,14 +276,19 @@ class StringSlicerTransformer(BaseTransformer):
     the python quirk of writing a tuple with a single argument with the trailing comma.
 
     Example:
-        >>> from feature_reviser import StringSlicerTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
-        >>> transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
-        >>> transformer.fit_transform(X).to_numpy()
-        array([['ac', 'jk'],
-               ['df', 'mn'],
-               ['gi', 'pq']], dtype=object)
+    ```python
+    from sk_transformers import StringSlicerTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
+    transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([['ac', 'jk'],
+            ['df', 'mn'],
+            ['gi', 'pq']], dtype=object)
+    ```
 
     Args:
         features (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
@@ -328,7 +317,7 @@ class StringSlicerTransformer(BaseTransformer):
             pandas.DataFrame: Original dataframe with sliced strings in specified features.
         """
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for feature, slice_args in self.features:
             X[feature] = [x[slice(*slice_args)] for x in X[feature]]
