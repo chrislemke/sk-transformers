@@ -8,8 +8,6 @@ import pandas as pd
 from sk_transformers.transformer.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
-# pylint: disable= missing-function-docstring, unused-argument
-
 
 class MathExpressionTransformer(BaseTransformer):
     """
@@ -56,8 +54,6 @@ class MathExpressionTransformer(BaseTransformer):
             pandas.DataFrame: The original dataframe with the new columns. The new columns are named as follows:
             '`column_name`_`operation`_`value`' or '`column_name`_`operation`' if `value` is `None`.
         """
-        if not all(f in X.columns for f in [f[0] for f in self.features]):
-            raise ValueError("Not all provided `features` could be found in `X`!")
 
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 

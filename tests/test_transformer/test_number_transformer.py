@@ -86,4 +86,7 @@ def test_math_expression_transformer_in_pipeline_with_non_existing_column(
         )
         _ = pipeline.fit_transform(X_numbers)
 
-    assert "Not all provided `features` could be found in `X`!" == str(error.value)
+    assert (
+        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`."
+        == str(error.value)
+    )

@@ -8,8 +8,6 @@ from sklearn.preprocessing import FunctionTransformer
 from sk_transformers.transformer.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
-# pylint: disable=missing-function-docstring, unused-argument
-
 
 class DtypeTransformer(BaseTransformer):
     """
