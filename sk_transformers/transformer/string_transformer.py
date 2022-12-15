@@ -12,8 +12,6 @@ import phonenumbers
 from sk_transformers.transformer.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
-# pylint: disable= missing-function-docstring, unused-argument
-
 
 class IPAddressEncoderTransformer(BaseTransformer):
     """
@@ -53,10 +51,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
             pandas.DataFrame: Transformed dataframe.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         function = functools.partial(
             IPAddressEncoderTransformer.__to_float,
@@ -78,10 +73,10 @@ class IPAddressEncoderTransformer(BaseTransformer):
     ) -> float:
         try:
             return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
-        except:  # pylint: disable=W0702
+        except:  # pylint: disable=bare-except
             try:
                 return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
-            except:  # pylint: disable=W0702
+            except:  # pylint: disable=bare-except
                 return error_value
 
 
@@ -108,10 +103,7 @@ class EmailTransformer(BaseTransformer):
             pandas.DataFrame: Transformed dataframe containing the extra columns.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
 
@@ -178,10 +170,8 @@ class StringSimilarityTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
 
-        X = check_ready_to_transform(X, list(self.features))
+        X = check_ready_to_transform(self, X, list(self.features))
 
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
             [self.features[0], self.features[1]]
@@ -243,10 +233,7 @@ class PhoneTransformer(BaseTransformer):
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
-
-        X = check_ready_to_transform(X, self.features)
+        X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
 
@@ -326,7 +313,7 @@ class StringSlicerTransformer(BaseTransformer):
             pandas.DataFrame: Original dataframe with sliced strings in specified features.
         """
 
-        X = check_ready_to_transform(X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for feature, slice_args in self.features:
             X[feature] = [x[slice(*slice_args)] for x in X[feature]]

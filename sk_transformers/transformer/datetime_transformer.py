@@ -6,8 +6,6 @@ import pandas as pd
 from sk_transformers.transformer.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
-# pylint: disable= missing-function-docstring, unused-argument
-
 
 class DurationCalculatorTransformer(BaseTransformer):
     """
@@ -41,7 +39,7 @@ class DurationCalculatorTransformer(BaseTransformer):
             pandas.DataFrame: The transformed DataFrame.
         """
 
-        X = check_ready_to_transform(X, list(self.features))
+        X = check_ready_to_transform(self, X, list(self.features))
 
         duration_series = pd.to_datetime(
             X[self.features[1]], utc=True, errors="raise"
@@ -84,10 +82,8 @@ class TimestampTransformer(BaseTransformer):
             pandas.DataFrame: Dataframe with transformed columns.
         """
 
-        if not all(f in X.columns for f in self.features):
-            raise ValueError("Not all provided `features` could be found in `X`!")
+        X = check_ready_to_transform(self, X, self.features)
 
-        X = check_ready_to_transform(X, self.features)
         for column in self.features:
             X[column] = pd.to_datetime(
                 X[column], format=self.date_format, errors="raise"
