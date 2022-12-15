@@ -9,7 +9,7 @@ Check out this dummy example of how to create a custom transformer ready for use
 ```python
 import pandas as pd
 
-from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
 class DummyTransformer(BaseTransformer):
@@ -65,7 +65,7 @@ print(pipeline.fit_transform(df).head())
 1    Incredible Hulk   Schikaneder
 2      Tom and Jerry  Futuregarden
 ```
-For a non-dummy examples check out the [`MathExpressionTransformer`](number_transformer-reference.md#sk-transformers.transformer.number_transformer.MathExpressionTransformer) or the [`ValueIndicatorTransformer`](generic_transformer-reference.md#sk-transformers.transformer.generic_transformer.ValueIndicatorTransformer) for a simpler example.
+For a non-dummy examples check out the [`MathExpressionTransformer`](number_transformer.md#sk-transformers.transformer.number_transformer.MathExpressionTransformer) or the [`ValueIndicatorTransformer`](generic_transformer.md#sk-transformers.transformer.generic_transformer.ValueIndicatorTransformer) for a simpler example.
 
 ## Poetry
 We are using [Poetry](https://python-poetry.org/) to manage the dependencies and the virtual environment. If you have not used it before please check out the [documentation](https://python-poetry.org/docs/) to get started.

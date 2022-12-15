@@ -1,7 +1,7 @@
 import numpy as np
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers.transformer.encoder_transformer import MeanEncoderTransformer
+from sk_transformers.encoder_transformer import MeanEncoderTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

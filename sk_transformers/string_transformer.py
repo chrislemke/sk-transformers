@@ -9,7 +9,7 @@ from typing import List, Tuple, Union
 import pandas as pd
 import phonenumbers
 
-from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
 
@@ -17,12 +17,12 @@ class IPAddressEncoderTransformer(BaseTransformer):
     """
     Encodes IPv4 and IPv6 strings addresses to a float representation.
     To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
-    Those values can be changed using the `ipv4_divider` and `ipv6_divider` parameters.
+    Those values can be changed using the `ip4_divisor` and `ip6_divisor` parameters.
 
     Args:
         features (List[str]): List of features which should be transformed.
-        ipv4_divider (float): Divider for IPv4 addresses.
-        ipv6_divider (float): Divider for IPv6 addresses.
+        ip4_divisor (float): Divisor for IPv4 addresses.
+        ip6_divisor (float): Divisor for IPv6 addresses.
         error_value (Union[int, float]): Value if parsing fails.
     """
 
@@ -45,7 +45,6 @@ class IPAddressEncoderTransformer(BaseTransformer):
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.
-            error_value (Union[int, float]): Value if parsing fails.
 
         Returns:
             pandas.DataFrame: Transformed dataframe.
@@ -277,14 +276,19 @@ class StringSlicerTransformer(BaseTransformer):
     the python quirk of writing a tuple with a single argument with the trailing comma.
 
     Example:
-        >>> from sk_transformers import StringSlicerTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
-        >>> transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
-        >>> transformer.fit_transform(X).to_numpy()
-        array([['ac', 'jk'],
-               ['df', 'mn'],
-               ['gi', 'pq']], dtype=object)
+    ```python
+    from sk_transformers import StringSlicerTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
+    transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([['ac', 'jk'],
+            ['df', 'mn'],
+            ['gi', 'pq']], dtype=object)
+    ```
 
     Args:
         features (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.

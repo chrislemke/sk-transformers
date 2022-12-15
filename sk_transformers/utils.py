@@ -78,8 +78,9 @@ def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
     Checks if the data has the correct types, shapes and does not contain any missing values.
 
     Args:
-        features (pandas.DataFrame): The dataframe containing the features.
+        X (pandas.DataFrame): The features.
         y (pandas.Series): The target variable.
+        check_nans (bool): Whether to check for missing values. Defaults to `True`.
 
     Raises:
         TypeError: If the features are not a `pandas.DataFrame` or the target variable is not a `pandas.Series` or `numpy.ndarray`.

@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers.transformer.generic_transformer import (
+from sk_transformers.generic_transformer import (
     AggregateTransformer,
     ColumnDropperTransformer,
     DtypeTransformer,

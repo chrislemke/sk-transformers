@@ -5,7 +5,7 @@ import numpy as np
 import pandas as pd
 from sklearn.preprocessing import FunctionTransformer
 
-from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
 
@@ -14,15 +14,20 @@ class DtypeTransformer(BaseTransformer):
     Transformer that converts a column to a different dtype.
 
     Example:
-        >>> from sk_transformers import DtypeTransformer
-        >>> import numpy as np
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "a", "b"]})
-        >>> transformer = DtypeTransformer([("foo", np.float32), ("bar", "category")])
-        >>> transformer.fit_transform(X).dtypes
-        foo     float32
-        bar    category
-        dtype: object
+    ```python
+    from sk_transformers import DtypeTransformer
+    import numpy as np
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "a", "b"]})
+    transformer = DtypeTransformer([("foo", np.float32), ("bar", "category")])
+    transformer.fit_transform(X).dtypes
+    ```
+    ```
+    foo     float32
+    bar    category
+    dtype: object
+    ```
 
     Args:
         features (List[Tuple[str, Union[str, type]]]): List of tuples containing the column name and the dtype (`str` or `type`).
@@ -54,21 +59,26 @@ class AggregateTransformer(BaseTransformer):
     to understand how to use function for aggregation. Other than Pandas function this transformer only support functions and string-names.
 
     Example:
-        >>> from sk_transformers import AggregateTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"], "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56]})
-        >>> transformer = AggregateTransformer([("foo", "bar", ["mean"])])
-        >>> transformer.fit_transform(X).to_numpy()
-        array([["mr", 46, 52.17...],
-               ["mr", 32, 52.17...],
-               ["ms", 78, 68.75],
-               ["ms", 48, 68.75],
-               ["ms", 93, 68.75],
-               ["mr", 68, 52.17...],
-               ["mr", 53, 52.17...],
-               ["mr", 38, 52.17...],
-               ["mr", 76, 52.17...],
-               ["ms", 56, 68.75]], dtype=object)
+    ```python
+    from sk_transformers import AggregateTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"], "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56]})
+    transformer = AggregateTransformer([("foo", "bar", ["mean"])])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([["mr", 46, 52.17...],
+            ["mr", 32, 52.17...],
+            ["ms", 78, 68.75],
+            ["ms", 48, 68.75],
+            ["ms", 93, 68.75],
+            ["mr", 68, 52.17...],
+            ["mr", 53, 52.17...],
+            ["mr", 38, 52.17...],
+            ["mr", 76, 52.17...],
+            ["ms", 56, 68.75]], dtype=object)
+    ```
 
     Args:
         features (List[Tuple[str, str, List[str]]]): List of tuples containing the column identifiers and the aggregation function(s).
@@ -129,14 +139,19 @@ class FunctionsTransformer(BaseTransformer):
     this transformer *does not* support the `inverse_func`, `accept_sparse`, `feature_names_out` and, `inv_kw_args` parameters.
 
     Example:
-        >>> from sk_transformers import FunctionsTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        >>> transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
-        >>> transformer.fit_transform(X).to_numpy()
-        array([[0.6931..., 2.        ],
-               [1.0986..., 2.2360...],
-               [1.3862..., 2.4494...]])
+    ```python
+    from sk_transformers import FunctionsTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+    transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([[0.6931..., 2.        ],
+            [1.0986..., 2.2360...],
+            [1.3862..., 2.4494...]])
+    ```
 
     Args:
         features (List[str, Callable, Optional[Dict[str, Any]]]): List of tuples containing the name of the
@@ -177,14 +192,19 @@ class MapTransformer(BaseTransformer):
     For this it uses the `pandas.Series.map` method.
 
     Example:
-        >>> from sk_transformers import MapTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        >>> transformer = MapTransformer([("foo", lambda x: x + 1)])
-        >>> transformer.fit_transform(X).to_numpy()
-        array([[2, 4],
-               [3, 5],
-               [4, 6]])
+    ```python
+    from sk_transformers import MapTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+    transformer = MapTransformer([("foo", lambda x: x + 1)])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([[2, 4],
+            [3, 5],
+            [4, 6]])
+    ```
 
     Args:
         features (List[str, Callable]): List of tuples containing the name of the
@@ -245,7 +265,6 @@ class NaNTransformer(BaseTransformer):
     Replace NaN values with a specified value. Internally Pandas `fillna` method is used.
 
     Args:
-        X (pandas.DataFrame): Dataframe to transform.
         values (Dict[str, Any]): Dictionary with column names as keys and values to replace NaN with as values.
     """
 
@@ -278,17 +297,21 @@ class ValueIndicatorTransformer(BaseTransformer):
     `NaN`, `None` or `np.nan` are **Not** caught by this implementation.
 
     Example:
-        >>> from sk_transformers import ValueIndicatorTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
-        >>> transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
-        >>> transformer.fit_transform(X).to_dict()
-        {
-            'foo': {0: 1, 1: -999, 2: 3},
-            'bar': {0: 'a', 1: '-999', 2: 'c'},
-            'foo_found_indicator': {0: False, 1: True, 2: False},
-            'bar_found_indicator': {0: False, 1: True, 2: False}
-        }
+    ```python
+    from sk_transformers import ValueIndicatorTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
+    transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
+    transformer.fit_transform(X).to_dict()
+    ```
+    ```
+    {
+        'foo': {0: 1, 1: -999, 2: 3},
+        'bar': {0: 'a', 1: '-999', 2: 'c'},
+        'foo_found_indicator': {0: False, 1: True, 2: False},
+        'bar_found_indicator': {0: False, 1: True, 2: False}
+    }
 
     Args:
         features (List[Tuple[str, Any]]): A list of tuples where the first value in represents the column
@@ -367,26 +390,31 @@ class ValueReplacerTransformer(BaseTransformer):
     original type. It may happen, that this type changing fails if the modified column is not compatible with its original type.
 
     Example:
-        >>> from sk_transformers import ValueReplacerTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
-        >>> transformer = (
-        ...     ValueReplacerTransformer(
-        ...         [
-        ...             (
-        ...                 ["foo"],
-        ...                 r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
-        ...                 "1900-01-01",
-        ...             )
-        ...         ]
-        ...     ),
-        ... )
-        >>> transformer.fit_transform(X).to_numpy()
-        array([['1900-01-01'],
-              ['2022/01/08'],
-              ['1900-01-01'],
-              ['1982-12-7'],
-              ['1900-01-01']], dtype=object)
+    ```python
+    from sk_transformers import ValueReplacerTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
+    transformer = (
+        ValueReplacerTransformer(
+            [
+                (
+                    ["foo"],
+                    r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
+                    "1900-01-01",
+                )
+            ]
+        ),
+    )
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([['1900-01-01'],
+            ['2022/01/08'],
+            ['1900-01-01'],
+            ['1982-12-7'],
+            ['1900-01-01']], dtype=object)
+    ```
 
 
     Args:

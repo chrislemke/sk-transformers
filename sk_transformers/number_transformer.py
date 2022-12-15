@@ -5,7 +5,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 
-from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
 
@@ -18,14 +18,19 @@ class MathExpressionTransformer(BaseTransformer):
     various NumPy methods return values which are not fitting the size of the source column.
 
     Example:
-        >>> from sk_transformers import MathExpressionTransformer
-        >>> import pandas as pd
-        >>> X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-        >>> transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
-        >>> transformer.fit_transform(X).to_numpy()
-        array([[1, 4, 5],
-               [2, 5, 7],
-               [3, 6, 9]])
+    ```python
+    from sk_transformers import MathExpressionTransformer
+    import pandas as pd
+
+    X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+    transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([[1, 4, 5],
+            [2, 5, 7],
+            [3, 6, 9]])
+    ```
 
     Args:
         features (List[str, str, Union[int, float]]): List of tuples containing the name of the column to apply the operation on,

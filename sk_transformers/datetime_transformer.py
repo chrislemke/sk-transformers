@@ -3,7 +3,7 @@ from typing import List, Tuple
 
 import pandas as pd
 
-from sk_transformers.transformer.base_transformer import BaseTransformer
+from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
 
@@ -59,7 +59,7 @@ class TimestampTransformer(BaseTransformer):
 
     Args:
         features (List[str]): List of features which should be transformed.
-        format (str): Format of the date column. Defaults to "%Y-%m-%d".
+        date_format (str): Format of the date column. Defaults to "%Y-%m-%d".
     """
 
     def __init__(
