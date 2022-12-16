@@ -1,9 +1,9 @@
 [tool.poetry]
 name = "sk-transformers"
-version = "0.5.7"
-description = "A collection of various scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
+version = "0.5.8"
+description = "A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
-license = "BSD"
+license = "BSD 3-Clause"
 readme = "docs/README.md"
 packages = [{ include = "sk_transformers" }]
 classifiers = [
@@ -14,10 +14,10 @@ classifiers = [
 keywords = [
     "feature engineering",
     "preprocessing",
+    "pandas",
     "scikit-learn",
     "transformer",
     "pipelines",
-    "pandas",
     "machine learning",
     "data science",
     "artificial intelligence"
