@@ -1,7 +1,7 @@
 ![The Transformer](https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/image.png)
 
 # sk-transformers
-### A collection of various scikit-learn transformers for all kinds of preprocessing and feature engineering steps 🛠
+### A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps 🛠
 
 [![testing](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml/badge.svg?branch=main)](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/github/chrislemke/sk-transformers/branch/main/graph/badge.svg?token=LJLXQXX6M8)](https://codecov.io/github/chrislemke/sk-transformers)
@@ -16,7 +16,7 @@
 [![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://github.com/PyCQA/isort)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 ## Introduction
-Every tabular data is different. Every column needs to be treated differently. [scikit-learn](https://scikit-learn.org/stable/index.html) has already a nice [collection of dataset transformers](https://scikit-learn.org/stable/data_transforms.html). But the possibilities of data transformation are infinite. This project tries to provide a brought collection of data transformers that can be easily used together with [scikit-learn](https://scikit-learn.org/stable/index.html) - either in a [pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) or just by its own. See the [usage chapter](#usage) for some examples.
+Every tabular data is different. Every column needs to be treated differently. Pandas is already great! And [scikit-learn](https://scikit-learn.org/stable/index.html) has a nice [collection of dataset transformers](https://scikit-learn.org/stable/data_transforms.html). But the possibilities of data transformation are infinite. This project tries to provide a brought collection of data transformers that can be easily used together with [scikit-learn](https://scikit-learn.org/stable/index.html) - either in a [pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) or just on its own. See the [usage chapter](#usage) for some examples.
 
 The idea is simple. It is like a well-equipped toolbox 🧰: You always find the tool you need and sometimes you get inspired by seeing a tool you did not know before. Please feel free to [contribute](https://chrislemke.github.io/sk-transformers/CONTRIBUTING/) your tools and ideas.
 
