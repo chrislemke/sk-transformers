@@ -6,17 +6,16 @@ repos:
         stages: [commit-msg]
         args:
           [
-            "build",
+            "add",
             "ci",
             "docs",
             "feat",
             "fix",
-            "perf",
             "refactor",
             "revert",
-            "style",
             "test",
             "security",
+            "perf",
           ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
