@@ -1,7 +1,7 @@
 ![The Transformer](https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/icon.png)
 
 # sk-transformers
-*** A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps *** 🛠
+***A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps*** 🛠
 
 [![testing](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml/badge.svg?branch=main)](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/github/chrislemke/sk-transformers/branch/main/graph/badge.svg?token=LJLXQXX6M8)](https://codecov.io/github/chrislemke/sk-transformers)
