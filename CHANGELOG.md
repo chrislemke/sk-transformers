@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.2](https://github.com/chrislemke/sk-transformers/compare/v0.6.1...v0.6.2) (2022-12-22)
+
+
+### Documentation
+
+* improve contributing file ([3b5287b](https://github.com/chrislemke/sk-transformers/commit/3b5287b1cd326b65331b086b4d2c8275a3dd170a))
+
+
+### CI/CD
+
+* improve the release process ([096f3b2](https://github.com/chrislemke/sk-transformers/commit/096f3b2482688ab561bf3afa4b6d8b98e1736186))
+
 ## [0.6.1](https://github.com/chrislemke/sk-transformers/compare/v0.6.0...v0.6.1) (2022-12-22)
 
 
