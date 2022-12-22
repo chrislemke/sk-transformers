@@ -88,29 +88,36 @@ pipeline.fit_transform(df).head()
 ```
 For a non-dummy examples check out the [`MathExpressionTransformer`](API-reference/transformer/number_transformer.md#sk-transformers.transformer.number_transformer.MathExpressionTransformer) or the [`ValueIndicatorTransformer`](API-reference/transformer/generic_transformer.md#sk-transformers.transformer.generic_transformer.ValueIndicatorTransformer) for a simpler example.
 
+## Poetry
+We are using [Poetry](https://python-poetry.org/) to manage the dependencies, for deployment, and the virtual environment. If you have not used it before please check out the [documentation](https://python-poetry.org/docs/) to get started.
+
+If you want to start working on the project. The first thing you have to do is:
+```bash
+poetry install --with test
+```
+This installs all needed dependencies for development and testing.
+
 ## Pre-commit hooks
 We are using [pre-commit](https://pre-commit.com/) to ensure a consistent code style and to avoid common mistakes. Please install the [pre-commit](https://pre-commit.com/#installation) and install the hook with:
-
- ```bash
- pre-commit install --hook-type commit-msg
- ```
+```bash
+pre-commit install --hook-type commit-msg
+```
 
 ## Homebrew
-We are using [Homebrew](https://brew.sh/) to manage the dependencies for the development environment. Please install Homebrew and run:
+We are using [Homebrew](https://brew.sh/) to manage the dependencies for the development environment. Please install Homebrew and run
 ```bash
-brew bundle
+ brew bundle
 ```
 to install the dependencies. If you don't want/can't use Homebrew, you can also install the dependencies manually.
 
 ## Conventional Commits
-We are using [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/) to ensure a consistent commit message style. Please use the following commit message format:
+We are using [Conventional Commits](https://www.conventionalcommits.org) to ensure a consistent commit message style. Please use the following commit message format:
 ```bash
 <type>[optional scope]: <description>
 ```
-
 E.g.:
 ```bash
-feat: add a new fantastic plot
+feat: add a new fantastic transformer 🤖
 ```
 
 ## How to contribute
