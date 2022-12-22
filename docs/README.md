@@ -1,7 +1,7 @@
-![The Transformer](https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/image.png)
+![The Transformer](https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/icon.png)
 
 # sk-transformers
-### A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps 🛠
+*** A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps *** 🛠
 
 [![testing](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml/badge.svg?branch=main)](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml)
 [![codecov](https://codecov.io/github/chrislemke/sk-transformers/branch/main/graph/badge.svg?token=LJLXQXX6M8)](https://codecov.io/github/chrislemke/sk-transformers)
@@ -11,10 +11,11 @@
 [![downloads](https://img.shields.io/pypi/dm/sk-transformers)](https://pypistats.org/packages/sk-transformers)
 [![docs](https://img.shields.io/badge/docs-mkdoks%20material-blue)](https://chrislemke.github.io/sk-transformers/)
 [![license](https://img.shields.io/github/license/chrislemke/sk-transformers)](https://github.com/chrislemke/sk-transformers/blob/main/LICENSE)
-[![mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](https://github.com/python/mypy)
-[![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
-[![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://github.com/PyCQA/isort)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
+[![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://github.com/PyCQA/isort)
+[![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+[![mypy](http://www.mypy-lang.org/static/mypy_badge.svg)](https://github.com/python/mypy)
+[![linting: pylint](https://img.shields.io/badge/linting-pylint-yellowgreen)](https://github.com/PyCQA/pylint)
 ## Introduction
 Every tabular data is different. Every column needs to be treated differently. Pandas is already great! And [scikit-learn](https://scikit-learn.org/stable/index.html) has a nice [collection of dataset transformers](https://scikit-learn.org/stable/data_transforms.html). But the possibilities of data transformation are infinite. This project tries to provide a brought collection of data transformers that can be easily used together with [scikit-learn](https://scikit-learn.org/stable/index.html) - either in a [pipeline](https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html) or just on its own. See the [usage chapter](#usage) for some examples.
 
@@ -47,7 +48,7 @@ Let's assume you want to use some method from [NumPy's mathematical functions, t
 use the [`MathExpressionTransformer`](https://chrislemke.github.io/sk-transformers/number_transformer-reference/#sk-transformers.transformer.number_transformer.MathExpressionTransformer).
 ```python
 import pandas as pd
-from sk_transformers import MathExpressionTransformer
+from sk_transformers.number_transformer import MathExpressionTransformer
 
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
 transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
@@ -64,7 +65,8 @@ In the next example, we additionally add the [`MapTransformer`](https://chrislem
 Together with [scikit-learn's pipelines](https://scikit-learn.org/stable/modules/compose.html#combining-estimators) it would look like this:
 ```python
 import pandas as pd
-from sk_transformers import MapTransformer, MathExpressionTransformer
+from sk_transformers.number_transformer import MathExpressionTransformer
+from sk_transformers.generic_transformer import MapTransformer
 from sklearn.pipeline import Pipeline
 
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
