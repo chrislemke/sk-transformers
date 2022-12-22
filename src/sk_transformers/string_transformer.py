@@ -277,8 +277,8 @@ class StringSlicerTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers import StringSlicerTransformer
     import pandas as pd
+    from sk_transformers.string_transformer import StringSlicerTransformer
 
     X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
     transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])

@@ -15,9 +15,9 @@ class DtypeTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers import DtypeTransformer
     import numpy as np
     import pandas as pd
+    from sk_transformers.generic_transformer import DtypeTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "a", "b"]})
     transformer = DtypeTransformer([("foo", np.float32), ("bar", "category")])
@@ -60,10 +60,15 @@ class AggregateTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers import AggregateTransformer
     import pandas as pd
+    from sk_transformers.generic_transformer import AggregateTransformer
 
-    X = pd.DataFrame({"foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"], "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56]})
+    X = pd.DataFrame(
+    {
+        "foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"],
+        "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56],
+    }
+
     transformer = AggregateTransformer([("foo", "bar", ["mean"])])
     transformer.fit_transform(X).to_numpy()
     ```
@@ -140,8 +145,8 @@ class FunctionsTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers import FunctionsTransformer
     import pandas as pd
+    from sk_transformers.generic_transformer import FunctionsTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
@@ -193,8 +198,8 @@ class MapTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers import MapTransformer
     import pandas as pd
+    from sk_transformers.generic_transformer import MapTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = MapTransformer([("foo", lambda x: x + 1)])
@@ -298,7 +303,7 @@ class ValueIndicatorTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers import ValueIndicatorTransformer
+    from sk_transformers.generic_transformer import ValueIndicatorTransformer
     import pandas as pd
 
     X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
@@ -391,8 +396,8 @@ class ValueReplacerTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers import ValueReplacerTransformer
     import pandas as pd
+    from sk_transformers.generic_transformer import ValueReplacerTransformer
 
     X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
     transformer = (

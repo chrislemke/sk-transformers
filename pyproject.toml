@@ -3,9 +3,9 @@ name = "sk-transformers"
 version = "0.5.8"
 description = "A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
-license = "BSD 3-Clause"
+license = "MIT"
 readme = "docs/README.md"
-packages = [{ include = "sk_transformers" }]
+packages = [{ include = "sk_transformers", from = "src" }]
 classifiers = [
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
     "Topic :: Scientific/Engineering :: Information Analysis",
@@ -28,36 +28,62 @@ repository = "https://github.com/chrislemke/sk-transformers/"
 
 [tool.poetry.dependencies]
 python = ">=3.8,<3.12"
+
 joblib = "1.2.0"
 numpy = "1.23.5"
-scikit-learn = "1.2.0"
-pandas = "1.5.2"
-feature-engine = "1.5.2"
-phonenumbers = "8.13.2"
+pandas = "^1.5.2"
+scikit-learn = "^1.2.0"
+feature-engine = "^1.5.2"
+phonenumbers = "^8.13.2"
 
-
-[tool.poetry.group.dev.dependencies]
-bandit = "^1.7.4"
-black = "^22.12.0"
-isort = "^5.11.2"
-mypy = "^0.991"
-pre-commit = "^2.20.0"
-pylint = "^2.15.8"
+[tool.poetry.group.test.dependencies]
 pytest = "^7.2.0"
 pytest-cov = "4.0.0"
 
+[tool.poetry.group.dev.dependencies]
+black = {extras = ["jupyter"], version = "^22.12.0"}
+bandit = "^1.7.4"
+isort = "^5.11.4"
+mypy = "^0.991"
+pylint = "^2.15.9"
+pre-commit = "^2.20.0"
 
 [tool.poetry.group.docs.dependencies]
 mkdocs = "1.4.2"
 mkdocstrings = {extras = ["python"], version = "0.19.1"}
 mkdocs-material = "8.5.11"
 
+[tool.poetry.group.dev]
+optional = false
+
+[tool.poetry.group.test]
+optional = true
+
+[tool.poetry.group.docs]
+optional = true
+
 [build-system]
 requires = ["poetry-core>=1.4.0"]
 build-backend = "poetry.core.masonry.api"
 
-[tool.isort]
-profile = "black"
+[tool.pytest.ini_options]
+testpaths = [
+    "tests"
+]
+
+[tool.pylint.messages_control]
+disable = [
+    "C0301",
+    "C0103",
+    "C0114",
+    "E0401",
+    "R0903",
+    "R0913",
+    "R0914",
+    ]
+
+[tool.pylint.format]
+max-line-length = 88
 
 [tool.mypy]
 strict = true
@@ -65,25 +91,15 @@ disallow_subclassing_any = false
 ignore_missing_imports = true
 disallow_any_generics = false
 warn_return_any = false
-exclude = ["tests/*", "docs/*"]
+no_namespace_packages = true
+exclude = ["tests", "docs"]
 
-[tool.pytest.ini_options]
-minversion = "7.2.0"
-testpaths = ["tests"]
+[tool.black]
+target-version = ['py311']
 
-[tool.pylint.messages_control]
-disable = [
-    "C0301",
-    "C0114",
-    "C0103",
-    "E0401",
-    "R0801",
-    "R0902",
-    "R0903",
-    "R0913",
-    "R0914",
-    "R0915",
-]
 
-[tool.pylint.format]
-max-line-length = 88
+[tool.isort]
+profile = "black"
+skip_glob = ["docs/*"]
+src_paths = ["src/sk_transformers", "tests"]
+extend_skip = [".md", ".yml", ".yaml"]
