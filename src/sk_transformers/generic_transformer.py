@@ -270,12 +270,12 @@ class NaNTransformer(BaseTransformer):
     Replace NaN values with a specified value. Internally Pandas `fillna` method is used.
 
     Args:
-        values (Dict[str, Any]): Dictionary with column names as keys and values to replace NaN with as values.
+        values (List[Tuple[str, Any]]): List of tuples where the first element is the column name, and the second is the value to replace NaN with.
     """
 
-    def __init__(self, values: Dict[str, Any]) -> None:
+    def __init__(self, features: List[Tuple[str, Any]]) -> None:
         super().__init__()
-        self.values = values
+        self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
@@ -287,8 +287,13 @@ class NaNTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        X = check_ready_to_transform(self, X, force_all_finite="allow-nan")
-        return X.fillna(self.values)
+        X = check_ready_to_transform(
+            self,
+            X,
+            [feature[0] for feature in self.features],
+            force_all_finite="allow-nan",
+        )
+        return X.fillna(dict(self.features))
 
 
 class ValueIndicatorTransformer(BaseTransformer):

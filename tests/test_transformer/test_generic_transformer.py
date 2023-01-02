@@ -232,7 +232,7 @@ def test_column_dropper_transformer_in_pipeline(X) -> None:
 
 
 def test_nan_transform_in_pipeline(X_nan_values) -> None:
-    pipeline = make_pipeline(NaNTransformer({"a": -1, "b": -1, "c": "missing"}))
+    pipeline = make_pipeline(NaNTransformer([("a", -1), ("b", -1), ("c", "missing")]))
     X = pipeline.fit_transform(X_nan_values)
 
     assert X.isnull().sum().sum() == 0
@@ -240,4 +240,4 @@ def test_nan_transform_in_pipeline(X_nan_values) -> None:
     assert X["b"][2] == -1
     assert X["c"][6] == "missing"
     assert pipeline.steps[0][0] == "nantransformer"
-    assert pipeline.steps[0][1].values["a"] == -1
+    assert pipeline.steps[0][1].features[0][1] == -1
