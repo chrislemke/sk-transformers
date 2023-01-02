@@ -1,0 +1,17 @@
+name: Release
+on:
+  push:
+    branches:
+      - main
+jobs:
+  release-please:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: google-github-actions/release-please-action@v3
+        with:
+          release-type: python
+          package-name: sk-transformers
+          prerelease: true
+          default-branch: main
+          pull-request-header: ":robot: I have created a release *beep* *boop*. This was predictable."
+          changelog-types: '[{"type":"merge","section":"Miscellaneous","hidden":true},{"type":"resolve","section":"Miscellaneous","hidden":true},{"type":"add","section":"Features","hidden":false},{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"bug","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":true},{"type":"test","section":"Tests","hidden":false},{"type":"ci","section":"CI/CD","hidden":false},{"type":"refactor","section":"Maintenance","hidden":false},{"type":"perf","section":"Maintenance","hidden":false},{"type":"revert","section":"Maintenance","hidden":false},{"type":"docs","section":"Documentation","hidden":false},{"type":"security","section":"Security","hidden":false}]'
