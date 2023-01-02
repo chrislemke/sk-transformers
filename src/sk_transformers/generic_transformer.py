@@ -269,6 +269,23 @@ class NaNTransformer(BaseTransformer):
     """
     Replace NaN values with a specified value. Internally Pandas `fillna` method is used.
 
+    Example:
+    ```python
+    from sk_transformers.generic_transformer import NaNTransformer
+    import pandas as pd
+    import numpy as np
+
+    X = pd.DataFrame({"foo": [1, np.NaN, 3], "bar": ["a", np.NaN, "c"]})
+    transformer = NaNTransformer([("foo", -999), ("bar", "-999")])
+    transformer.fit_transform(X).to_dict()
+    ```
+    ```
+    {
+        'foo': {0: 1.0, 1: -999.0, 2: 3.0},
+        'bar': {0: 'a', 1: '-999', 2: 'c'}
+    }
+    ```
+
     Args:
         values (List[Tuple[str, Any]]): List of tuples where the first element is the column name, and the second is the value to replace NaN with.
     """
