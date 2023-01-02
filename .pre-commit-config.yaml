@@ -84,7 +84,8 @@ repos:
       - id: poetry-export
         args:
           [
-            "--dev",
+            "--with",
+            "dev",
             "--format",
             "requirements.txt",
             "--output",
