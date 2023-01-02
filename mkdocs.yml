@@ -26,12 +26,11 @@ theme:
     repo: fontawesome/brands/github
   name: material
   language: en
-  favicon: assets/images/logo.png
-  logo: assets/images/logo.png
+  favicon: assets/images/icon.png
+  logo: assets/images/icon.png
   features:
     - navigation.tracking
     - navigation.top
-    - navigation.expand
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -45,6 +44,8 @@ theme:
         name: Switch to light mode
 extra:
   generator: false
+extra_css:
+  - stylesheets/extra.css
 plugins:
   - search
   - autorefs
@@ -54,13 +55,9 @@ plugins:
           rendering:
             show_root_heading: false
 
-nav:
-  - Transformer:
-      - Generic transformer: generic_transformer.md
-      - Encoder transformer: encoder_transformer.md
-      - Datetime transformer: datetime_transformer.md
-      - Number Transformer: number_transformer.md
-      - String transformer: string_transformer.md
-      - Base transformer: base_transformer.md
-  - Utils: utils.md
-  - How to contribute: CONTRIBUTING.md
+extra_javascript:
+  - javascripts/mathjax.js
+  - https://polyfill.io/v3/polyfill.min.js?features=es6
+  - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js
+  - javascripts/tablesort.js
