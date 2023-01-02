@@ -247,6 +247,22 @@ class ColumnDropperTransformer(BaseTransformer):
     """
     Drops columns from a dataframe using Pandas `drop` method.
 
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import ColumnDropperTransformer
+
+    X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+    transformer = ColumnDropperTransformer(["foo"])
+    transformer.fit_transform(X)
+    ```
+    ```
+       bar
+    0    4
+    1    5
+    2    6
+    ```
+
     Args:
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
     """
@@ -387,6 +403,19 @@ class QueryTransformer(BaseTransformer):
     be applied on the dataframe containing `X` and `y`. So removing of columns by queries
     also removes the corresponding `y` value.
     Read more about queries [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html).
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import QueryTransformer
+
+    X = pd.DataFrame({"foo": [1, 8, 3, 6, 5, 4, 7, 2]})
+    transformer = QueryTransformer(["foo > 4"])
+    transformer.fit_transform(X).to_dict()
+    ```
+    ```
+    {'foo': {1: 8, 3: 6, 4: 5, 6: 7}}
+    ```
 
     Args:
         queries (List[str]): List of query string to evaluate to the dataframe.
