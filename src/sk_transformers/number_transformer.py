@@ -28,15 +28,15 @@ class MathExpressionTransformer(BaseTransformer):
     ```
     ```
     array([[1, 4, 5],
-            [2, 5, 7],
-            [3, 6, 9]])
+           [2, 5, 7],
+           [3, 6, 9]])
     ```
 
     Args:
         features (List[str, str, Union[int, float]]): List of tuples containing the name of the column to apply the operation on,
             a string representation of the operation (see list above) and the value to apply the operation on. The value can be
             an number (int or float) or the name of another column in the dataframe. If the value is `None`, it it expected that
-            the operation only takes one argument. The forth entry of the tuple is a dictionary passed as `kwargs` to the operation.
+            the operation only takes one argument. The fourth entry of the tuple is a dictionary passed as `kwargs` to the operation.
     """
 
     def __init__(

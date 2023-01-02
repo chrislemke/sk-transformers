@@ -151,6 +151,7 @@ class EmailTransformer(BaseTransformer):
 class StringSimilarityTransformer(BaseTransformer):
     """
     Calculates the similarity between two strings using the `gestalt pattern matching` algorithm from the `SequenceMatcher` class.
+
     Args:
         features (Tuple[str, str]): The two columns that contain the strings for which the similarity should be calculated.
     """
@@ -291,7 +292,7 @@ class StringSlicerTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
+        features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]]]]): The arguments to the `slice` function, for each feature.
     """
 
     def __init__(
