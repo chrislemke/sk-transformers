@@ -36,6 +36,7 @@ scikit-learn = "^1.2.0"
 feature-engine = "^1.5.2"
 phonenumbers = "^8.13.3"
 pytorch-widedeep = "1.2.1"
+statsmodels = {git = "https://github.com/statsmodels/statsmodels.git", rev = "main"}
 
 [tool.poetry.group.test.dependencies]
 pytest = "^7.2.0"
@@ -78,6 +79,7 @@ disable = [
     "C0103",
     "C0114",
     "E0401",
+    "R0902",
     "R0903",
     "R0913",
     "R0914",
