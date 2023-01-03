@@ -40,8 +40,10 @@ class DtypeTransformer(BaseTransformer):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transform the dataframe by converting the columns to the specified dtypes.
+
         Args:
             X (pandas.DataFrame): dataframe to transform.
+
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
@@ -64,10 +66,11 @@ class AggregateTransformer(BaseTransformer):
     from sk_transformers.generic_transformer import AggregateTransformer
 
     X = pd.DataFrame(
-    {
-        "foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"],
-        "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56],
-    }
+        {
+            "foo": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"],
+            "bar": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56],
+        }
+    )
 
     transformer = AggregateTransformer([("foo", "bar", ["mean"])])
     transformer.fit_transform(X).to_numpy()
@@ -172,7 +175,7 @@ class FunctionsTransformer(BaseTransformer):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
-        Applies the functions to the columns. And returns the dataframe with the modified columns.
+        Applies the functions to the columns, and returns the dataframe with the modified columns.
 
         Args:
             X (pandas.DataFrame): DataFrame containing the columns to apply the functions on.
@@ -212,7 +215,7 @@ class MapTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[str, Callable]): List of tuples containing the name of the
+        features (List[Tuple[str, Callable]]): List of tuples containing the name of the
             column to apply the callback on and the callback itself.
     """
 
@@ -226,6 +229,7 @@ class MapTransformer(BaseTransformer):
 
         Args:
             X (pandas.DataFrame): Dataframe containing the the columns to apply the callback on.
+
         Returns:
             pandas.DataFrame: The dataframe containing
                 the new column together with the non-transformed original columns.
@@ -242,6 +246,22 @@ class MapTransformer(BaseTransformer):
 class ColumnDropperTransformer(BaseTransformer):
     """
     Drops columns from a dataframe using Pandas `drop` method.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import ColumnDropperTransformer
+
+    X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
+    transformer = ColumnDropperTransformer(["foo"])
+    transformer.fit_transform(X)
+    ```
+    ```
+       bar
+    0    4
+    1    5
+    2    6
+    ```
 
     Args:
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
@@ -268,6 +288,23 @@ class ColumnDropperTransformer(BaseTransformer):
 class NaNTransformer(BaseTransformer):
     """
     Replace NaN values with a specified value. Internally Pandas `fillna` method is used.
+
+    Example:
+    ```python
+    from sk_transformers.generic_transformer import NaNTransformer
+    import pandas as pd
+    import numpy as np
+
+    X = pd.DataFrame({"foo": [1, np.NaN, 3], "bar": ["a", np.NaN, "c"]})
+    transformer = NaNTransformer([("foo", -999), ("bar", "-999")])
+    transformer.fit_transform(X).to_dict()
+    ```
+    ```
+    {
+        'foo': {0: 1.0, 1: -999.0, 2: 3.0},
+        'bar': {0: 'a', 1: '-999', 2: 'c'}
+    }
+    ```
 
     Args:
         values (List[Tuple[str, Any]]): List of tuples where the first element is the column name, and the second is the value to replace NaN with.
@@ -312,7 +349,7 @@ class ValueIndicatorTransformer(BaseTransformer):
     import pandas as pd
 
     X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
-    transformer = NaNIndicatorTransformer([("foo", -999), ("bar", "-999")])
+    transformer = ValueIndicatorTransformer([("foo", -999), ("bar", "-999")])
     transformer.fit_transform(X).to_dict()
     ```
     ```
@@ -322,6 +359,7 @@ class ValueIndicatorTransformer(BaseTransformer):
         'foo_found_indicator': {0: False, 1: True, 2: False},
         'bar_found_indicator': {0: False, 1: True, 2: False}
     }
+    ```
 
     Args:
         features (List[Tuple[str, Any]]): A list of tuples where the first value in represents the column
@@ -365,6 +403,19 @@ class QueryTransformer(BaseTransformer):
     be applied on the dataframe containing `X` and `y`. So removing of columns by queries
     also removes the corresponding `y` value.
     Read more about queries [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html).
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import QueryTransformer
+
+    X = pd.DataFrame({"foo": [1, 8, 3, 6, 5, 4, 7, 2]})
+    transformer = QueryTransformer(["foo > 4"])
+    transformer.fit_transform(X).to_dict()
+    ```
+    ```
+    {'foo': {1: 8, 3: 6, 4: 5, 6: 7}}
+    ```
 
     Args:
         queries (List[str]): List of query string to evaluate to the dataframe.
@@ -438,6 +489,8 @@ class ValueReplacerTransformer(BaseTransformer):
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
+        Replaces a value or regular expression with another value.
+
         Args:
             X (pd.DataFrame): Dataframe containing the columns where values should be replaced.
 

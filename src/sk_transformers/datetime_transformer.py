@@ -11,6 +11,24 @@ class DurationCalculatorTransformer(BaseTransformer):
     """
     Calculates the duration between to given dates.
 
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.datetime_transformer import DurationCalculatorTransformer
+
+    X = pd.DataFrame(
+        {
+            "foo": ["1960-01-01", "1970-01-01", "1990-01-01"],
+            "bar": ["1960-01-01", "1971-01-01", "1988-01-01"],
+        }
+    )
+    transformer = DurationCalculatorTransformer(("foo", "bar"), "days", "foo_bar_duration")
+    transformer.fit_transform(X)["foo_bar_duration"].to_numpy()
+    ```
+    ```
+    array([   0,  365, -731])
+    ```
+
     Args:
         features (Tuple[str, str]): The two columns that contain the dates which should be used to calculate the duration.
         unit (str): The unit in which the duration should be returned. Should be either `days` or `seconds`.
@@ -56,6 +74,21 @@ class DurationCalculatorTransformer(BaseTransformer):
 class TimestampTransformer(BaseTransformer):
     """
     Transforms a date column with a specified format into a timestamp column.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.datetime_transformer import TimestampTransformer
+
+    X = pd.DataFrame({"foo": ["1960-01-01", "1970-01-01", "1990-01-01"]})
+    transformer = TimestampTransformer(["foo"])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([[-3.156192e+08],
+           [ 0.000000e+00],
+           [ 6.311520e+08]])
+    ```
 
     Args:
         features (List[str]): List of features which should be transformed.

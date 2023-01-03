@@ -81,13 +81,3 @@ repos:
     hooks:
       - id: poetry-check
       - id: poetry-lock
-      - id: poetry-export
-        args:
-          [
-            "--with",
-            "dev",
-            "--format",
-            "requirements.txt",
-            "--output",
-            "requirements.txt",
-          ]
