@@ -89,7 +89,6 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         self.training_kwargs = model_kwargs
         self.training_kwargs = training_kwargs
         self.tab_vec_: Optional[Tab2Vec] = None
-        self.fitted_ = False
 
     def fit(self, X: pd.DataFrame, y: NDArray) -> "ToVecTransformer":
         """
@@ -155,12 +154,9 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
             pd.DataFrame: The embeddings.
         """
 
-        if self.tab_vec_ is None:
-            raise ValueError("Transformer must be fitted first!")
-
         X = check_ready_to_transform(
             self,
             X,
             self.cat_embed_columns + self.continuous_columns,
         )
-        return self.tab_vec_.transform(X)
+        return self.tab_vec_.transform(X)  # type: ignore

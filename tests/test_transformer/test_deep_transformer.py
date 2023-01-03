@@ -31,7 +31,6 @@ def test_to_vec_transformer_in_pipeline(adult_dataframe):
             n_heads=1,
         )
     )
-
     assert pipeline.fit_transform(df, target).shape == (1000, 26)
     assert pipeline.steps[0][0] == "tovectransformer"
     assert pipeline.steps[0][1].tab_vec_.__class__.__name__ == "Tab2Vec"
