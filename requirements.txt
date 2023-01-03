@@ -251,17 +251,17 @@ gitdb==4.0.10 ; python_version >= "3.8" and python_version < "3.11" \
 gitpython==3.1.30 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:769c2d83e13f5d938b7688479da374c4e3d49f71549aaf462b646db9602ea6f8 \
     --hash=sha256:cd455b0000615c60e286208ba540271af9fe531fa6a87cc590a7298785ab2882
-identify==2.5.11 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:14b7076b29c99b1b0b8b08e96d448c7b877a9b07683cd8cfda2ea06af85ffa1c \
-    --hash=sha256:e7db36b772b188099616aaf2accbee122949d1c6a1bac4f38196720d6f9f06db
+identify==2.5.12 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:0bc96b09c838310b6fcfcc61f78a981ea07f94836ef6ef553da5bb5d4745d662 \
+    --hash=sha256:e8a400c3062d980243d27ce10455a52832205649bbcaf27ffddb3dfaaf477bad
 idna==3.4 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:814f528e8dead7d329833b91c5faa87d60bf71824cd12a7530b5526063d02cb4 \
     --hash=sha256:90b77e79eaa3eba6de819a0c442c0b4ceefc341a7a2ab77d7562bf49f425c5c2
 imutils==0.5.4 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:03827a9fca8b5c540305c0844a62591cf35a0caec199cb0f2f0a4a0fb15d8f24
-ipython==8.7.0 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:352042ddcb019f7c04e48171b4dd78e4c4bb67bf97030d170e154aac42b656d9 \
-    --hash=sha256:882899fe78d5417a0aa07f995db298fa28b58faeba2112d2e3a4c95fe14bb738
+ipython==8.8.0 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:da01e6df1501e6e7c32b5084212ddadd4ee2471602e2cf3e0190f4de6b0ea481 \
+    --hash=sha256:f3bf2c08505ad2c3f4ed5c46ae0331a8547d36bf4b21a451e8ae80c0791db95b
 isort==5.11.4 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:6db30c5ded9815d813932c04c2f85a360bcdd35fed496f4d8f35495ef0a261b6 \
     --hash=sha256:c033fd0edb91000a7f09527fe5c75321878f98322a77ddcc81adbd83724afb7b
