@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.3](https://github.com/chrislemke/sk-transformers/compare/v0.6.2...v0.6.3) (2023-01-04)
+
+
+### Features
+
+* deep transformer module ([#24](https://github.com/chrislemke/sk-transformers/issues/24)) ([fd266cf](https://github.com/chrislemke/sk-transformers/commit/fd266cf10c629cc5c5d33528006480fd5094cc96))
+
 ## [0.6.2](https://github.com/chrislemke/sk-transformers/compare/v0.6.1...v0.6.2) (2022-12-22)
 
 
