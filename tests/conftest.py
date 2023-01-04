@@ -1,9 +1,15 @@
 import pandas as pd
 import pytest
+from pytorch_widedeep.datasets import load_adult
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
 # pylint: disable=missing-function-docstring
+
+
+@pytest.fixture()
+def adult_dataframe() -> pd.DataFrame:
+    return load_adult(as_frame=True)
 
 
 @pytest.fixture()

@@ -307,7 +307,7 @@ class NaNTransformer(BaseTransformer):
     ```
 
     Args:
-        values (List[Tuple[str, Any]]): List of tuples where the first element is the column name, and the second is the value to replace NaN with.
+        features (List[Tuple[str, Any]]): List of tuples where the first element is the column name, and the second is the value to replace NaN with.
     """
 
     def __init__(self, features: List[Tuple[str, Any]]) -> None:
