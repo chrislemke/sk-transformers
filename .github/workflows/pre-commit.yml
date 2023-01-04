@@ -18,4 +18,4 @@ jobs:
           poetry install
       - uses: pre-commit/action@v3.0.0
         env:
-          SKIP: poetry-check,poetry-lock,poetry-export
+          SKIP: poetry-lock,poetry-export
