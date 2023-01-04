@@ -21,6 +21,7 @@ class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
     def fit(self, X: pd.DataFrame, y: pd.Series) -> "MeanEncoderTransformer":
         """
         Fit the MeanEncoder to the data.
+
         Args:
             X (pandas.DataFrame): DataFrame to fit the MeanEncoder to.
             y (pandas.Series): Target variable.
@@ -34,10 +35,11 @@ class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Transform the data using the fitted MeanEncoder.
+
         Args:
             X (pandas.DataFrame): DataFrame to transform.
 
         Returns:
-            pandas.DataFrame: Transformed data.
+            pandas.DataFrame: Transformed DataFrame.
         """
         return self.encoder.transform(X).fillna(self.fill_na_value)

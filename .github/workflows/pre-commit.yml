@@ -1,16 +1,14 @@
-name: BuildDocs
+name: PreCommit
 
 on:
-  push:
-    branches:
-      - "main"
+  pull_request:
+    branches: [develop]
 
 jobs:
-  deploy:
-    if: ${{ startsWith(github.event.head_commit.message, 'chore(main)') }}
+  pre-commit:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
       - name: Install poetry
         run: |
           curl -O -sSL https://install.python-poetry.org/install-poetry.py
@@ -21,6 +19,10 @@ jobs:
         with:
           python-version: "3.10"
           cache: "poetry"
-      - run: poetry env use python3.10
-      - run: poetry install --with docs
-      - run: poetry run mkdocs gh-deploy --force --clean --verbose
+      - name: Install dependencies and project
+        run: |
+          poetry env use python3.10
+          poetry install
+      - uses: pre-commit/action@v3.0.0
+        env:
+          SKIP: poetry-lock,poetry-export

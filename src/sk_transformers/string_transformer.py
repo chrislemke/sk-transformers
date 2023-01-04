@@ -19,6 +19,20 @@ class IPAddressEncoderTransformer(BaseTransformer):
     To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
     Those values can be changed using the `ip4_divisor` and `ip6_divisor` parameters.
 
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.string_transformer import IPAddressEncoderTransformer
+
+    X = pd.DataFrame({"foo": ["192.168.1.1", "2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b"]})
+    transformer = IPAddressEncoderTransformer(["foo"])
+    transformer.fit_transform(X).to_numpy()
+    ```
+    ```
+    array([[3.23223578e-01],
+           [4.25407664e-11]])
+    ```
+
     Args:
         features (List[str]): List of features which should be transformed.
         ip4_divisor (float): Divisor for IPv4 addresses.
@@ -82,6 +96,27 @@ class IPAddressEncoderTransformer(BaseTransformer):
 class EmailTransformer(BaseTransformer):
     """
     Transforms an email address into multiple features.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.string_transformer import EmailTransformer
+
+    X = pd.DataFrame({"foo": ["person-123@test.com"]})
+    transformer = EmailTransformer(["foo"])
+    transformer.fit_transform(X).to_dict()
+    ```
+    ```
+    {
+        'foo': {0: 'person-123'},
+        'foo_domain': {0: 'test'},
+        'foo_num_of_digits': {0: 3},
+        'foo_num_of_letters': {0: 6},
+        'foo_num_of_special_chars': {0: 1},
+        'foo_num_of_repeated_chars': {0: 1},
+        'foo_num_of_words': {0: 2}
+    }
+    ```
 
     Args:
         features (List[str]): List of features which should be transformed.
@@ -151,6 +186,25 @@ class EmailTransformer(BaseTransformer):
 class StringSimilarityTransformer(BaseTransformer):
     """
     Calculates the similarity between two strings using the `gestalt pattern matching` algorithm from the `SequenceMatcher` class.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.string_transformer import StringSimilarityTransformer
+
+    X = pd.DataFrame(
+        {
+            "foo": ["abcdefgh", "ijklmnop", "qrstuvwx"],
+            "bar": ["ghabcdef", "ijklmnop", "qr000000"],
+        }
+    )
+    transformer = StringSimilarityTransformer(("foo", "bar"))
+    transformer.fit_transform(X)["foo_bar_similarity"].to_numpy()
+    ```
+    ```
+    array([0.75, 1.  , 0.25])
+    ```
+
     Args:
         features (Tuple[str, str]): The two columns that contain the strings for which the similarity should be calculated.
     """
@@ -200,6 +254,23 @@ class StringSimilarityTransformer(BaseTransformer):
 class PhoneTransformer(BaseTransformer):
     """
     Transforms a phone number into multiple features.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.string_transformer import PhoneTransformer
+
+    X = pd.DataFrame({"foo": ["+49123456789", "0044987654321", "3167891234"]})
+    transformer = PhoneTransformer(["foo"])
+    transformer.fit_transform(X).to_dict()
+    ```
+    ```
+    {
+        'foo': {0: '+49123456789', 1: '0044987654321', 2: '3167891234'},
+        'foo_national_number': {0: 0.123456789, 1: 0.987654321, 2: -999.0},
+        'foo_country_code': {0: 0.49, 1: 0.44, 2: -999.0}
+    }
+    ```
 
     Args:
         features (List[str]): List of features which should be transformed.
@@ -291,7 +362,7 @@ class StringSlicerTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, Tuple[int, int, int]]]): The arguments to the `slice` function, for each feature.
+        features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]]]]): The arguments to the `slice` function, for each feature.
     """
 
     def __init__(
