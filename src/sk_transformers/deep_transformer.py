@@ -57,6 +57,7 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
             Is the number of embeddings used to encode the categorical and/or continuous columns.
         n_blocks (int): Number of FT-Transformer blocks.
         n_heads (int): Number of attention heads per FT-Transformer block.
+        verbose (int): Verbosity level.
         preprocessing_kwargs (Optional[Dict[str, Any]]): Keyword arguments to pass to the [`TabPreprocessor`](https://pytorch-widedeep.readthedocs.io/en/latest/pytorch-widedeep/preprocessing.html#pytorch_widedeep.preprocessing.tab_preprocessor.TabPreprocessor).
         model_kwargs (Optional[Dict[str, Any]]): Keyword arguments to pass to the [`FTTransformer`](https://pytorch-widedeep.readthedocs.io/en/latest/pytorch-widedeep/model_components.html#pytorch_widedeep.models.tabular.transformers.ft_transformer.FTTransformer).
         training_kwargs (Optional[Dict[str, Any]]): Keyword arguments to pass to the [`Trainer`](https://pytorch-widedeep.readthedocs.io/en/latest/pytorch-widedeep/trainer.html#pytorch_widedeep.training.Trainer).
