@@ -571,7 +571,7 @@ class LeftJoinTransformer(BaseTransformer):
         df: Union[pd.Series, pd.DataFrame], prefix: str
     ) -> Union[pd.Series, pd.DataFrame]:
         if isinstance(df, pd.Series):
-            df.name = prefix + "_" + df.name
+            df.name = prefix + "_" + (df.name if df.name else "lookup")
         elif isinstance(df, pd.DataFrame):
             df.columns = [prefix + "_" + column for column in df.columns]
         return df
