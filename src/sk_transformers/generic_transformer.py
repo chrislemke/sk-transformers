@@ -533,7 +533,26 @@ class LeftJoinTransformer(BaseTransformer):
     """
     Performs a database-style left-join using `pd.merge`. This transformer is suitable for
     replacing values in a column of a dataframe by looking-up another `pd.DataFrame`
-    or `pd.Series`.
+    or `pd.Series`. Note that, the join is based on the index of the right dataframe.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import LeftJoinTransformer
+
+    X = pd.DataFrame({"foo": ["A", "B", "C", "A", "C"]})
+    lookup_df = pd.Series([1, 2, 3], index=["A", "B", "C"], name="values")
+    transformer = LeftJoinTransformer([("foo", lookup_df)])
+    transformer.fit_transform(X)
+    ```
+    ```
+      foo  foo_values
+    0   A           1
+    1   B           2
+    2   C           3
+    3   A           1
+    4   C           3
+    ```
 
     Args:
         features (List[Tuple[str, Union[pd.Series, pd.DataFrame]]]): A list of tuples
