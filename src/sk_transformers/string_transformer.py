@@ -8,6 +8,7 @@ from typing import List, Tuple, Union
 
 import pandas as pd
 import phonenumbers
+import swifter  # pylint: disable=unused-import
 
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
@@ -228,7 +229,7 @@ class StringSimilarityTransformer(BaseTransformer):
 
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
             [self.features[0], self.features[1]]
-        ].apply(
+        ].swifter.apply(
             lambda x: StringSimilarityTransformer.__similar(
                 StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
                 StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
@@ -307,7 +308,7 @@ class PhoneTransformer(BaseTransformer):
 
         for column in self.features:
 
-            X[f"{column}_national_number"] = X[column].apply(
+            X[f"{column}_national_number"] = X[column].swifter.apply(
                 lambda x: PhoneTransformer.__phone_to_float(
                     "national_number",
                     x,
@@ -315,7 +316,7 @@ class PhoneTransformer(BaseTransformer):
                     self.error_value,
                 )
             )
-            X[f"{column}_country_code"] = X[column].apply(
+            X[f"{column}_country_code"] = X[column].swifter.apply(
                 lambda x: PhoneTransformer.__phone_to_float(
                     "country_code", x, int(self.country_code_divisor), self.error_value
                 )
