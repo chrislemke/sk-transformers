@@ -527,3 +527,70 @@ class ValueReplacerTransformer(BaseTransformer):
         except re.error:
             is_valid = False
         return is_valid
+
+
+class LeftJoinTransformer(BaseTransformer):
+    """
+    Performs a database-style left-join using `pd.merge`. This transformer is suitable for
+    replacing values in a column of a dataframe by looking-up another `pd.DataFrame`
+    or `pd.Series`. Note that, the join is based on the index of the right dataframe.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import LeftJoinTransformer
+
+    X = pd.DataFrame({"foo": ["A", "B", "C", "A", "C"]})
+    lookup_df = pd.Series([1, 2, 3], index=["A", "B", "C"], name="values")
+    transformer = LeftJoinTransformer([("foo", lookup_df)])
+    transformer.fit_transform(X)
+    ```
+    ```
+      foo  foo_values
+    0   A           1
+    1   B           2
+    2   C           3
+    3   A           1
+    4   C           3
+    ```
+
+    Args:
+        features (List[Tuple[str, Union[pd.Series, pd.DataFrame]]]): A list of tuples
+            where the first element is the name of the column
+            and the second element is the look-up dataframe or series.
+    """
+
+    def __init__(
+        self, features: List[Tuple[str, Union[pd.Series, pd.DataFrame]]]
+    ) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Perform a left-join on the given columns of a dataframe with another cooresponding dataframe.
+
+        Args:
+            X (pd.DataFrame): Dataframe containing the columns to be joined on.
+
+        Returns:
+            pd.DataFrame: Dataframe joined on the given columns.
+        """
+
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
+
+        for (column, lookup_df) in self.features:
+            lookup_df = LeftJoinTransformer.__prefix_df_column_names(lookup_df, column)
+            X = pd.merge(X, lookup_df, how="left", left_on=column, right_index=True)
+
+        return X
+
+    @staticmethod
+    def __prefix_df_column_names(
+        df: Union[pd.Series, pd.DataFrame], prefix: str
+    ) -> Union[pd.Series, pd.DataFrame]:
+        if isinstance(df, pd.Series):
+            df.name = prefix + "_" + (df.name if df.name else "lookup")
+        elif isinstance(df, pd.DataFrame):
+            df.columns = [prefix + "_" + column for column in df.columns]
+        return df
