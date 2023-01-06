@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.1](https://github.com/chrislemke/sk-transformers/compare/v0.7.0...v0.7.1) (2023-01-06)
+
+
+### Documentation
+
+* fix icon issue in readme.md ([2371493](https://github.com/chrislemke/sk-transformers/commit/237149335a1a7cc7453609ee4784a6cfbf606da9))
+
 ## [0.7.0](https://github.com/chrislemke/sk-transformers/compare/v0.6.3...v0.7.0) (2023-01-06)
 
 
