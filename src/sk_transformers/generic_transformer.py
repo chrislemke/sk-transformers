@@ -73,19 +73,20 @@ class AggregateTransformer(BaseTransformer):
     )
 
     transformer = AggregateTransformer([("foo", "bar", ["mean"])])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([["mr", 46, 52.17...],
-           ["mr", 32, 52.17...],
-           ["ms", 78, 68.75],
-           ["ms", 48, 68.75],
-           ["ms", 93, 68.75],
-           ["mr", 68, 52.17...],
-           ["mr", 53, 52.17...],
-           ["mr", 38, 52.17...],
-           ["mr", 76, 52.17...],
-           ["ms", 56, 68.75]], dtype=object)
+      foo  bar  MEAN(foo__bar)
+    0  mr   46       52.166668
+    1  mr   32       52.166668
+    2  ms   78       68.750000
+    3  ms   48       68.750000
+    4  ms   93       68.750000
+    5  mr   68       52.166668
+    6  mr   53       52.166668
+    7  mr   38       52.166668
+    8  mr   76       52.166668
+    9  ms   56       68.750000
     ```
 
     Args:
@@ -148,17 +149,19 @@ class FunctionsTransformer(BaseTransformer):
 
     Example:
     ```python
+    import numpy as np
     import pandas as pd
     from sk_transformers.generic_transformer import FunctionsTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[0.69314718, 2.        ],
-           [1.09861229, 2.23606798],
-           [1.38629436, 2.44948974]])
+            foo       bar
+    0  0.693147  2.000000
+    1  1.098612  2.236068
+    2  1.386294  2.449490
     ```
 
     Args:
@@ -206,12 +209,13 @@ class MapTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = MapTransformer([("foo", lambda x: x + 1)])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[2, 4],
-           [3, 5],
-           [4, 6]])
+       foo  bar
+    0    2    4
+    1    3    5
+    2    4    6
     ```
 
     Args:
@@ -300,10 +304,10 @@ class NaNTransformer(BaseTransformer):
     transformer.fit_transform(X)
     ```
     ```
-         foo   bar
-    0    1.0     a
-    1   -999.0  -999
-    2    3.0     c
+          foo   bar
+    0     1.0     a
+    1  -999.0  -999
+    2     3.0     c
     ```
 
     Args:
@@ -470,14 +474,15 @@ class ValueReplacerTransformer(BaseTransformer):
         ]
     )
 
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([['1900-01-01'],
-           ['2022/01/08'],
-           ['1900-01-01'],
-           ['1982-12-7'],
-           ['1900-01-01']], dtype=object)
+              foo
+    0  1900-01-01
+    1  2022/01/08
+    2  1900-01-01
+    3   1982-12-7
+    4  1900-01-01
     ```
 
 
