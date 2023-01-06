@@ -23,10 +23,13 @@ class DurationCalculatorTransformer(BaseTransformer):
         }
     )
     transformer = DurationCalculatorTransformer(("foo", "bar"), "days", "foo_bar_duration")
-    transformer.fit_transform(X)["foo_bar_duration"].to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([   0,  365, -731])
+              foo         bar  foo_bar_duration
+    0  1960-01-01  1960-01-01                 0
+    1  1970-01-01  1971-01-01               365
+    2  1990-01-01  1988-01-01              -731
     ```
 
     Args:
@@ -82,12 +85,13 @@ class TimestampTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["1960-01-01", "1970-01-01", "1990-01-01"]})
     transformer = TimestampTransformer(["foo"])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[-3.156192e+08],
-           [ 0.000000e+00],
-           [ 6.311520e+08]])
+               foo
+    0 -315619200.0
+    1          0.0
+    2  631152000.0
     ```
 
     Args:

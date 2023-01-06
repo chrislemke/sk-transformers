@@ -27,11 +27,12 @@ class IPAddressEncoderTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["192.168.1.1", "2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b"]})
     transformer = IPAddressEncoderTransformer(["foo"])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[3.23223578e-01],
-           [4.25407664e-11]])
+                foo
+    0  3.232236e-01
+    1  4.254077e-11
     ```
 
     Args:
@@ -196,10 +197,13 @@ class StringSimilarityTransformer(BaseTransformer):
         }
     )
     transformer = StringSimilarityTransformer(("foo", "bar"))
-    transformer.fit_transform(X)["foo_bar_similarity"].to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([0.75, 1.  , 0.25])
+            foo       bar  foo_bar_similarity
+    0  abcdefgh  ghabcdef                0.75
+    1  ijklmnop  ijklmnop                1.00
+    2  qrstuvwx  qr000000                0.25
     ```
 
     Args:

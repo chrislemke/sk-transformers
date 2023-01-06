@@ -24,12 +24,13 @@ class MathExpressionTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[1, 4, 5],
-           [2, 5, 7],
-           [3, 6, 9]])
+       foo  bar  foo_sum_bar
+    0    1    4            5
+    1    2    5            7
+    2    3    6            9
     ```
 
     Args:
