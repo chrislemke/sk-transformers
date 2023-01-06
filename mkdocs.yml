@@ -26,8 +26,8 @@ theme:
     repo: fontawesome/brands/github
   name: material
   language: en
-  favicon: assets/images/robot.png
-  logo: assets/images/robot.png
+  favicon: assets/images/icon_new.png
+  logo: assets/images/icon_new.png
   features:
     - navigation.tracking
     - navigation.top
