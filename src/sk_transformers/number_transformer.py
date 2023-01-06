@@ -71,6 +71,21 @@ class MathExpressionTransformer(BaseTransformer):
 
         return is_np_op, op
 
+    def __abbreviate_numpy_in_operation(self, operation: str) -> str:
+        """
+        Replaces `numpy` at the start of a string with `np`.
+
+        Args:
+            operation (str): The operation as a string.
+
+        Returns:
+            str: The operation as a string with numpy replaced with np.
+        """
+
+        if operation.startswith("numpy"):
+            operation = "np" + operation[5:]
+        return operation
+
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Applies the operation to the column and the value.
@@ -86,6 +101,7 @@ class MathExpressionTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (feature, operation, value, kwargs) in self.features:
+            operation = self.__abbreviate_numpy_in_operation(operation)
             is_np_op, op = self.__verify_operation(operation)
 
             new_column = f"{feature}_{operation}".replace("np.", "")
