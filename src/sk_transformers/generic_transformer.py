@@ -77,15 +77,15 @@ class AggregateTransformer(BaseTransformer):
     ```
     ```
     array([["mr", 46, 52.17...],
-            ["mr", 32, 52.17...],
-            ["ms", 78, 68.75],
-            ["ms", 48, 68.75],
-            ["ms", 93, 68.75],
-            ["mr", 68, 52.17...],
-            ["mr", 53, 52.17...],
-            ["mr", 38, 52.17...],
-            ["mr", 76, 52.17...],
-            ["ms", 56, 68.75]], dtype=object)
+           ["mr", 32, 52.17...],
+           ["ms", 78, 68.75],
+           ["ms", 48, 68.75],
+           ["ms", 93, 68.75],
+           ["mr", 68, 52.17...],
+           ["mr", 53, 52.17...],
+           ["mr", 38, 52.17...],
+           ["mr", 76, 52.17...],
+           ["ms", 56, 68.75]], dtype=object)
     ```
 
     Args:
@@ -156,9 +156,9 @@ class FunctionsTransformer(BaseTransformer):
     transformer.fit_transform(X).to_numpy()
     ```
     ```
-    array([[0.6931..., 2.        ],
-            [1.0986..., 2.2360...],
-            [1.3862..., 2.4494...]])
+    array([[0.69314718, 2.        ],
+           [1.09861229, 2.23606798],
+           [1.38629436, 2.44948974]])
     ```
 
     Args:
@@ -197,7 +197,7 @@ class FunctionsTransformer(BaseTransformer):
 class MapTransformer(BaseTransformer):
     """
     This transformer iterates over all columns in the `features` list and applies the given callback to the column.
-    For this it uses the `pandas.Series.map` method.
+    For this it uses the [`pandas.Series.map`](https://pandas.pydata.org/docs/reference/api/pandas.Series.map.html) method.
 
     Example:
     ```python
@@ -210,8 +210,8 @@ class MapTransformer(BaseTransformer):
     ```
     ```
     array([[2, 4],
-            [3, 5],
-            [4, 6]])
+           [3, 5],
+           [4, 6]])
     ```
 
     Args:
@@ -287,7 +287,7 @@ class ColumnDropperTransformer(BaseTransformer):
 
 class NaNTransformer(BaseTransformer):
     """
-    Replace NaN values with a specified value. Internally Pandas `fillna` method is used.
+    Replace NaN values with a specified value. Internally Pandas [`fillna`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html) method is used.
 
     Example:
     ```python
@@ -297,13 +297,13 @@ class NaNTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, np.NaN, 3], "bar": ["a", np.NaN, "c"]})
     transformer = NaNTransformer([("foo", -999), ("bar", "-999")])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {
-        'foo': {0: 1.0, 1: -999.0, 2: 3.0},
-        'bar': {0: 'a', 1: '-999', 2: 'c'}
-    }
+         foo   bar
+    0    1.0     a
+    1   -999.0  -999
+    2    3.0     c
     ```
 
     Args:
@@ -353,12 +353,10 @@ class ValueIndicatorTransformer(BaseTransformer):
     transformer.fit_transform(X).to_dict()
     ```
     ```
-    {
-        'foo': {0: 1, 1: -999, 2: 3},
-        'bar': {0: 'a', 1: '-999', 2: 'c'},
-        'foo_found_indicator': {0: False, 1: True, 2: False},
-        'bar_found_indicator': {0: False, 1: True, 2: False}
-    }
+       foo   bar  foo_found_indicator  bar_found_indicator
+    0    1     a                False                False
+    1 -999  -999                 True                 True
+    2    3     c                False                False
     ```
 
     Args:
@@ -411,10 +409,14 @@ class QueryTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, 8, 3, 6, 5, 4, 7, 2]})
     transformer = QueryTransformer(["foo > 4"])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {'foo': {1: 8, 3: 6, 4: 5, 6: 7}}
+       foo
+    1    8
+    3    6
+    4    5
+    6    7
     ```
 
     Args:
@@ -455,26 +457,27 @@ class ValueReplacerTransformer(BaseTransformer):
     import pandas as pd
     from sk_transformers.generic_transformer import ValueReplacerTransformer
 
-    X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
-    transformer = (
-        ValueReplacerTransformer(
-            [
-                (
-                    ["foo"],
-                    r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
-                    "1900-01-01",
-                )
-            ]
-        ),
+    X = pd.DataFrame(
+        {"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]}
     )
+    transformer = ValueReplacerTransformer(
+        [
+            (
+                ["foo"],
+                r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
+                "1900-01-01",
+            )
+        ]
+    )
+
     transformer.fit_transform(X).to_numpy()
     ```
     ```
     array([['1900-01-01'],
-            ['2022/01/08'],
-            ['1900-01-01'],
-            ['1982-12-7'],
-            ['1900-01-01']], dtype=object)
+           ['2022/01/08'],
+           ['1900-01-01'],
+           ['1982-12-7'],
+           ['1900-01-01']], dtype=object)
     ```
 
 

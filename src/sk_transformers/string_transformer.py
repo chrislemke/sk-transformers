@@ -105,18 +105,14 @@ class EmailTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["person-123@test.com"]})
     transformer = EmailTransformer(["foo"])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {
-        'foo': {0: 'person-123'},
-        'foo_domain': {0: 'test'},
-        'foo_num_of_digits': {0: 3},
-        'foo_num_of_letters': {0: 6},
-        'foo_num_of_special_chars': {0: 1},
-        'foo_num_of_repeated_chars': {0: 1},
-        'foo_num_of_words': {0: 2}
-    }
+              foo foo_domain  foo_num_of_digits  foo_num_of_letters  \
+    0  person-123       test                  3                   6
+
+    foo_num_of_special_chars  foo_num_of_repeated_chars  foo_num_of_words
+    0                         1                          1                 2
     ```
 
     Args:
@@ -263,14 +259,13 @@ class PhoneTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["+49123456789", "0044987654321", "3167891234"]})
     transformer = PhoneTransformer(["foo"])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {
-        'foo': {0: '+49123456789', 1: '0044987654321', 2: '3167891234'},
-        'foo_national_number': {0: 0.123456789, 1: 0.987654321, 2: -999.0},
-        'foo_country_code': {0: 0.49, 1: 0.44, 2: -999.0}
-    }
+                 foo  foo_national_number  foo_country_code
+    0   +49123456789             0.123457              0.49
+    1  0044987654321             0.987654              0.44
+    2     3167891234          -999.000000           -999.00
     ```
 
     Args:
@@ -354,12 +349,13 @@ class StringSlicerTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
     transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([['ac', 'jk'],
-            ['df', 'mn'],
-            ['gi', 'pq']], dtype=object)
+      foo bar
+    0  ac  jk
+    1  df  mn
+    2  gi  pq
     ```
 
     Args:
