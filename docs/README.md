@@ -1,4 +1,4 @@
-<img src="https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/icon.png" width="400", height="400"/>
+![The Transformer](https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/icon.png)
 
 # sk-transformers
 ***A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps*** 🛠
