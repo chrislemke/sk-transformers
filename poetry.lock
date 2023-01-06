@@ -3240,6 +3240,20 @@ files = [
 catalogue = ">=2.0.3,<2.1.0"
 
 [[package]]
+name = "ssort"
+version = "0.11.6"
+description = "The python statement sorter"
+category = "dev"
+optional = false
+python-versions = ">=3.8"
+files = [
+    {file = "ssort-0.11.6.tar.gz", hash = "sha256:21fec493487f32dff50d30efa5b6aad18286e9817600b64bfe686ae062bae7ae"},
+]
+
+[package.dependencies]
+pathspec = ">=0.9.0"
+
+[[package]]
 name = "stack-data"
 version = "0.6.2"
 description = "Extract data from python stack frames and tracebacks for informative displays"
@@ -4058,4 +4072,4 @@ testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools"
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "e1526ad2eb062fc24de4cae4e3b9f4b8202012a7cdf08e61e4cd76e3925b73b5"
+content-hash = "9bf9c838e061367deb98e427b13398d72670541056f220f41f751e84402c5b02"
