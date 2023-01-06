@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sk-transformers"
-version = "0.6.3"
+version = "0.7.0"
 description = "A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
 authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
 license = "MIT"
