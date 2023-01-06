@@ -31,7 +31,7 @@ class DummyTransformer(BaseTransformer):
     })
 
     transformer = DummyTransformer("foo", "bar")
-    transformer.fit_transform(df).head()
+    transformer.fit_transform(df)
     ```
     ```
                 cocktail           bar
