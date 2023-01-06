@@ -1,4 +1,4 @@
-![The Transformer](https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/icon.png)
+<img src="https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/icon.png" width="400", height="400"/>
 
 # sk-transformers
 ***A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps*** 🛠
@@ -11,7 +11,6 @@
 [![downloads](https://img.shields.io/pypi/dm/sk-transformers)](https://pypistats.org/packages/sk-transformers)
 [![docs](https://img.shields.io/badge/docs-mkdoks%20material-blue)](https://chrislemke.github.io/sk-transformers/)
 [![license](https://img.shields.io/github/license/chrislemke/sk-transformers)](https://github.com/chrislemke/sk-transformers/blob/main/LICENSE)
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/chrislemke/sk-transformers/blob/main/examples/playground.ipynb)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![isort](https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&labelColor=ef8336)](https://github.com/PyCQA/isort)
 [![black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
