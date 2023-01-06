@@ -15,7 +15,7 @@ jobs:
           echo "PATH=${HOME}/.poetry/bin:${PATH}" >> $GITHUB_ENV
           rm install-poetry.py
       - name: Set up Python 3.10
-      - uses: actions/setup-python@v4
+        uses: actions/setup-python@v4
         with:
           python-version: "3.10"
           cache: "poetry"

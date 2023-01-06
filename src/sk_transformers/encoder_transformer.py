@@ -9,6 +9,31 @@ class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
     """
     Scikit-learn API for the [feature-engine MeanEncoder](https://feature-engine.readthedocs.io/en/latest/api_doc/encoding/MeanEncoder.html).
 
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.encoder_transformer import MeanEncoderTransformer
+
+    X = pd.DataFrame({"foo": ["a", "b", "a", "c", "b", "a", "c", "a", "b", "c"]})
+    y = pd.Series([1, 0, 1, 0, 1, 0, 1, 0, 1, 0])
+
+    encoder = MeanEncoderTransformer()
+    encoder.fit_transform(X, y)
+    ```
+    ```
+            foo
+    0  0.500000
+    1  0.666667
+    2  0.500000
+    3  0.333333
+    4  0.666667
+    5  0.500000
+    6  0.333333
+    7  0.500000
+    8  0.666667
+    9  0.333333
+    ```
+
     Args:
         fill_na_value (Union[int, float]): Value to fill NaN values with.
             Those may appear if a category is not present in the set the encoder was not fitted on.

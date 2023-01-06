@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import pytest
 from sklearn.pipeline import make_pipeline
 
@@ -7,6 +8,7 @@ from sk_transformers.generic_transformer import (
     ColumnDropperTransformer,
     DtypeTransformer,
     FunctionsTransformer,
+    LeftJoinTransformer,
     MapTransformer,
     NaNTransformer,
     QueryTransformer,
@@ -241,3 +243,25 @@ def test_nan_transform_in_pipeline(X_nan_values) -> None:
     assert X["c"][6] == "missing"
     assert pipeline.steps[0][0] == "nantransformer"
     assert pipeline.steps[0][1].features[0][1] == -1
+
+
+def test_left_join_transformer_in_pipeline_for_series(X_categorical) -> None:
+    lookup_df = pd.Series([1, 2], index=["A1", "A2"], name="values")
+    pipeline = make_pipeline(LeftJoinTransformer([("a", lookup_df)]))
+    result = pipeline.fit_transform(X_categorical)
+    expected = np.array([1, 2, 2, 1, 1, 2, 1, 1])
+
+    assert "a_values" in result.columns
+    assert np.array_equal(result["a_values"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "leftjointransformer"
+
+
+def test_left_join_transformer_in_pipeline_for_dataframe(X_categorical) -> None:
+    lookup_df = pd.DataFrame({"values": [1, 2]}, index=["A1", "A2"])
+    pipeline = make_pipeline(LeftJoinTransformer([("a", lookup_df)]))
+    result = pipeline.fit_transform(X_categorical)
+    expected = np.array([1, 2, 2, 1, 1, 2, 1, 1])
+
+    assert "a_values" in result.columns
+    assert np.array_equal(result["a_values"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "leftjointransformer"

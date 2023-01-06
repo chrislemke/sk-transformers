@@ -11,10 +11,10 @@ from sk_transformers.utils import check_ready_to_transform
 
 class MathExpressionTransformer(BaseTransformer):
     """
-    Applies an operation to a column and a given value or column.
-    The operation can be any operation from the `numpy` or `operator` package.
+    Applies an function/operation to a column and a given value or column.
+    The operation can be a function from NumPy's [mathematical functions](https://numpy.org/doc/stable/reference/routines.math.html#mathematical-functions)  or [`operator`](https://docs.python.org/3/library/operator.html#module-operator) package.
 
-    **Warning!** Some operators may not work as expected. Especially not all NumPy methods are supported. For example:
+    **Warning!** Some functions/operators may not work as expected. Especially not all NumPy methods are supported. For example:
     various NumPy methods return values which are not fitting the size of the source column.
 
     Example:
@@ -24,12 +24,13 @@ class MathExpressionTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[1, 4, 5],
-           [2, 5, 7],
-           [3, 6, 9]])
+       foo  bar  foo_sum_bar
+    0    1    4            5
+    1    2    5            7
+    2    3    6            9
     ```
 
     Args:
@@ -48,6 +49,44 @@ class MathExpressionTransformer(BaseTransformer):
         super().__init__()
         self.features = features
 
+    def __verify_operation(self, operation: str) -> Tuple[bool, Any]:
+        if operation.startswith("np"):
+            if hasattr(np, operation[3:]):
+                op = getattr(np, operation[3:])
+                is_np_op = True
+            else:
+                raise AttributeError(f"Operation {operation[3:]} not found in NumPy!")
+
+        elif hasattr(operator, operation) and operation not in [
+            "attrgetter",
+            "itemgetter",
+            "methodcaller",
+        ]:
+            op = getattr(operator, operation)
+            is_np_op = False
+
+        else:
+            raise AttributeError(
+                f"Invalid operation! `{operation}` is not a valid operation! Please refer to the `numpy` and `operator` package."
+            )
+
+        return is_np_op, op
+
+    def __abbreviate_numpy_in_operation(self, operation: str) -> str:
+        """
+        Replaces `numpy` at the start of a string with `np`.
+
+        Args:
+            operation (str): The operation as a string.
+
+        Returns:
+            str: The operation as a string with numpy replaced with np.
+        """
+
+        if operation.startswith("numpy"):
+            operation = "np" + operation[5:]
+        return operation
+
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """
         Applies the operation to the column and the value.
@@ -63,6 +102,7 @@ class MathExpressionTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (feature, operation, value, kwargs) in self.features:
+            operation = self.__abbreviate_numpy_in_operation(operation)
             is_np_op, op = self.__verify_operation(operation)
 
             new_column = f"{feature}_{operation}".replace("np.", "")
@@ -88,26 +128,3 @@ class MathExpressionTransformer(BaseTransformer):
                         X[feature], value
                     )  # This created a ragged array in will be deprecated in future.
         return X
-
-    def __verify_operation(self, operation: str) -> Tuple[bool, Any]:
-        if operation.startswith("np"):
-            if hasattr(np, operation[3:]):
-                op = getattr(np, operation[3:])
-                is_np_op = True
-            else:
-                raise AttributeError(f"Operation {operation[3:]} not found in NumPy!")
-
-        elif hasattr(operator, operation) and operation not in [
-            "attrgetter",
-            "itemgetter",
-            "methodcaller",
-        ]:
-            op = getattr(operator, operation)
-            is_np_op = False
-
-        else:
-            raise AttributeError(
-                f"Invalid operation! `{operation}` is not a valid operation! Please refer to the `numpy` and `operator` package."
-            )
-
-        return is_np_op, op

@@ -33,7 +33,7 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
                 ("small_numbers", "add", 1, None),
                 ("small_numbers", "mul", "small_numbers", None),
                 ("small_numbers", "np.sum", "small_float_numbers", {"axis": 0}),
-                ("small_numbers", "np.sin", None, None),
+                ("small_numbers", "numpy.sin", None, None),
                 ("small_numbers", "np.sum", 1, None),
                 ("big_numbers", "neg", None, None),
             ]

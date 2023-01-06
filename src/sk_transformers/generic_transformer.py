@@ -73,19 +73,20 @@ class AggregateTransformer(BaseTransformer):
     )
 
     transformer = AggregateTransformer([("foo", "bar", ["mean"])])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([["mr", 46, 52.17...],
-            ["mr", 32, 52.17...],
-            ["ms", 78, 68.75],
-            ["ms", 48, 68.75],
-            ["ms", 93, 68.75],
-            ["mr", 68, 52.17...],
-            ["mr", 53, 52.17...],
-            ["mr", 38, 52.17...],
-            ["mr", 76, 52.17...],
-            ["ms", 56, 68.75]], dtype=object)
+      foo  bar  MEAN(foo__bar)
+    0  mr   46       52.166668
+    1  mr   32       52.166668
+    2  ms   78       68.750000
+    3  ms   48       68.750000
+    4  ms   93       68.750000
+    5  mr   68       52.166668
+    6  mr   53       52.166668
+    7  mr   38       52.166668
+    8  mr   76       52.166668
+    9  ms   56       68.750000
     ```
 
     Args:
@@ -148,17 +149,19 @@ class FunctionsTransformer(BaseTransformer):
 
     Example:
     ```python
+    import numpy as np
     import pandas as pd
     from sk_transformers.generic_transformer import FunctionsTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[0.6931..., 2.        ],
-            [1.0986..., 2.2360...],
-            [1.3862..., 2.4494...]])
+            foo       bar
+    0  0.693147  2.000000
+    1  1.098612  2.236068
+    2  1.386294  2.449490
     ```
 
     Args:
@@ -197,7 +200,7 @@ class FunctionsTransformer(BaseTransformer):
 class MapTransformer(BaseTransformer):
     """
     This transformer iterates over all columns in the `features` list and applies the given callback to the column.
-    For this it uses the `pandas.Series.map` method.
+    For this it uses the [`pandas.Series.map`](https://pandas.pydata.org/docs/reference/api/pandas.Series.map.html) method.
 
     Example:
     ```python
@@ -206,12 +209,13 @@ class MapTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = MapTransformer([("foo", lambda x: x + 1)])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[2, 4],
-            [3, 5],
-            [4, 6]])
+       foo  bar
+    0    2    4
+    1    3    5
+    2    4    6
     ```
 
     Args:
@@ -287,7 +291,7 @@ class ColumnDropperTransformer(BaseTransformer):
 
 class NaNTransformer(BaseTransformer):
     """
-    Replace NaN values with a specified value. Internally Pandas `fillna` method is used.
+    Replace NaN values with a specified value. Internally Pandas [`fillna`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html) method is used.
 
     Example:
     ```python
@@ -297,13 +301,13 @@ class NaNTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, np.NaN, 3], "bar": ["a", np.NaN, "c"]})
     transformer = NaNTransformer([("foo", -999), ("bar", "-999")])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {
-        'foo': {0: 1.0, 1: -999.0, 2: 3.0},
-        'bar': {0: 'a', 1: '-999', 2: 'c'}
-    }
+          foo   bar
+    0     1.0     a
+    1  -999.0  -999
+    2     3.0     c
     ```
 
     Args:
@@ -353,12 +357,10 @@ class ValueIndicatorTransformer(BaseTransformer):
     transformer.fit_transform(X).to_dict()
     ```
     ```
-    {
-        'foo': {0: 1, 1: -999, 2: 3},
-        'bar': {0: 'a', 1: '-999', 2: 'c'},
-        'foo_found_indicator': {0: False, 1: True, 2: False},
-        'bar_found_indicator': {0: False, 1: True, 2: False}
-    }
+       foo   bar  foo_found_indicator  bar_found_indicator
+    0    1     a                False                False
+    1 -999  -999                 True                 True
+    2    3     c                False                False
     ```
 
     Args:
@@ -411,10 +413,14 @@ class QueryTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": [1, 8, 3, 6, 5, 4, 7, 2]})
     transformer = QueryTransformer(["foo > 4"])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {'foo': {1: 8, 3: 6, 4: 5, 6: 7}}
+       foo
+    1    8
+    3    6
+    4    5
+    6    7
     ```
 
     Args:
@@ -455,26 +461,28 @@ class ValueReplacerTransformer(BaseTransformer):
     import pandas as pd
     from sk_transformers.generic_transformer import ValueReplacerTransformer
 
-    X = pd.DataFrame({"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]})
-    transformer = (
-        ValueReplacerTransformer(
-            [
-                (
-                    ["foo"],
-                    r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
-                    "1900-01-01",
-                )
-            ]
-        ),
+    X = pd.DataFrame(
+        {"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]}
     )
-    transformer.fit_transform(X).to_numpy()
+    transformer = ValueReplacerTransformer(
+        [
+            (
+                ["foo"],
+                r"^(?!(19|20)\d\d[-\/.](0[1-9]|1[012]|[1-9])[-\/.](0[1-9]|[12][0-9]|3[01]|[1-9])$).*",
+                "1900-01-01",
+            )
+        ]
+    )
+
+    transformer.fit_transform(X)
     ```
     ```
-    array([['1900-01-01'],
-            ['2022/01/08'],
-            ['1900-01-01'],
-            ['1982-12-7'],
-            ['1900-01-01']], dtype=object)
+              foo
+    0  1900-01-01
+    1  2022/01/08
+    2  1900-01-01
+    3   1982-12-7
+    4  1900-01-01
     ```
 
 
@@ -527,3 +535,70 @@ class ValueReplacerTransformer(BaseTransformer):
         except re.error:
             is_valid = False
         return is_valid
+
+
+class LeftJoinTransformer(BaseTransformer):
+    """
+    Performs a database-style left-join using `pd.merge`. This transformer is suitable for
+    replacing values in a column of a dataframe by looking-up another `pd.DataFrame`
+    or `pd.Series`. Note that, the join is based on the index of the right dataframe.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import LeftJoinTransformer
+
+    X = pd.DataFrame({"foo": ["A", "B", "C", "A", "C"]})
+    lookup_df = pd.Series([1, 2, 3], index=["A", "B", "C"], name="values")
+    transformer = LeftJoinTransformer([("foo", lookup_df)])
+    transformer.fit_transform(X)
+    ```
+    ```
+      foo  foo_values
+    0   A           1
+    1   B           2
+    2   C           3
+    3   A           1
+    4   C           3
+    ```
+
+    Args:
+        features (List[Tuple[str, Union[pd.Series, pd.DataFrame]]]): A list of tuples
+            where the first element is the name of the column
+            and the second element is the look-up dataframe or series.
+    """
+
+    def __init__(
+        self, features: List[Tuple[str, Union[pd.Series, pd.DataFrame]]]
+    ) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Perform a left-join on the given columns of a dataframe with another cooresponding dataframe.
+
+        Args:
+            X (pd.DataFrame): Dataframe containing the columns to be joined on.
+
+        Returns:
+            pd.DataFrame: Dataframe joined on the given columns.
+        """
+
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
+
+        for (column, lookup_df) in self.features:
+            lookup_df = LeftJoinTransformer.__prefix_df_column_names(lookup_df, column)
+            X = pd.merge(X, lookup_df, how="left", left_on=column, right_index=True)
+
+        return X
+
+    @staticmethod
+    def __prefix_df_column_names(
+        df: Union[pd.Series, pd.DataFrame], prefix: str
+    ) -> Union[pd.Series, pd.DataFrame]:
+        if isinstance(df, pd.Series):
+            df.name = prefix + "_" + (df.name if df.name else "lookup")
+        elif isinstance(df, pd.DataFrame):
+            df.columns = [prefix + "_" + column for column in df.columns]
+        return df

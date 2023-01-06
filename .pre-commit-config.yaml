@@ -13,6 +13,7 @@ repos:
             "ci",
             "docs",
             "feat",
+            "bug",
             "fix",
             "refactor",
             "revert",
@@ -21,6 +22,7 @@ repos:
             "perf",
             "resolve",
             "merge",
+            "maintain",
           ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
@@ -45,6 +47,11 @@ repos:
     rev: v3.3.1
     hooks:
       - id: pyupgrade
+
+  - repo: https://github.com/bwhmather/ssort
+    rev: v0.11.6
+    hooks:
+      - id: ssort
 
   - repo: https://github.com/psf/black
     rev: 22.12.0
@@ -87,7 +94,8 @@ repos:
       - id: poetry-export
         args:
           [
-            "--dev",
+            "--with",
+            "dev",
             "--format",
             "requirements.txt",
             "--output",

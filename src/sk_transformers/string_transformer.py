@@ -8,6 +8,7 @@ from typing import List, Tuple, Union
 
 import pandas as pd
 import phonenumbers
+import swifter  # pylint: disable=unused-import
 
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
@@ -26,11 +27,12 @@ class IPAddressEncoderTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["192.168.1.1", "2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b"]})
     transformer = IPAddressEncoderTransformer(["foo"])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([[3.23223578e-01],
-           [4.25407664e-11]])
+                foo
+    0  3.232236e-01
+    1  4.254077e-11
     ```
 
     Args:
@@ -104,18 +106,14 @@ class EmailTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["person-123@test.com"]})
     transformer = EmailTransformer(["foo"])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {
-        'foo': {0: 'person-123'},
-        'foo_domain': {0: 'test'},
-        'foo_num_of_digits': {0: 3},
-        'foo_num_of_letters': {0: 6},
-        'foo_num_of_special_chars': {0: 1},
-        'foo_num_of_repeated_chars': {0: 1},
-        'foo_num_of_words': {0: 2}
-    }
+              foo foo_domain  foo_num_of_digits  foo_num_of_letters  \
+    0  person-123       test                  3                   6
+
+    foo_num_of_special_chars  foo_num_of_repeated_chars  foo_num_of_words
+    0                         1                          1                 2
     ```
 
     Args:
@@ -199,10 +197,13 @@ class StringSimilarityTransformer(BaseTransformer):
         }
     )
     transformer = StringSimilarityTransformer(("foo", "bar"))
-    transformer.fit_transform(X)["foo_bar_similarity"].to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([0.75, 1.  , 0.25])
+            foo       bar  foo_bar_similarity
+    0  abcdefgh  ghabcdef                0.75
+    1  ijklmnop  ijklmnop                1.00
+    2  qrstuvwx  qr000000                0.25
     ```
 
     Args:
@@ -228,7 +229,7 @@ class StringSimilarityTransformer(BaseTransformer):
 
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
             [self.features[0], self.features[1]]
-        ].apply(
+        ].swifter.apply(
             lambda x: StringSimilarityTransformer.__similar(
                 StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
                 StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
@@ -262,14 +263,13 @@ class PhoneTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["+49123456789", "0044987654321", "3167891234"]})
     transformer = PhoneTransformer(["foo"])
-    transformer.fit_transform(X).to_dict()
+    transformer.fit_transform(X)
     ```
     ```
-    {
-        'foo': {0: '+49123456789', 1: '0044987654321', 2: '3167891234'},
-        'foo_national_number': {0: 0.123456789, 1: 0.987654321, 2: -999.0},
-        'foo_country_code': {0: 0.49, 1: 0.44, 2: -999.0}
-    }
+                 foo  foo_national_number  foo_country_code
+    0   +49123456789             0.123457              0.49
+    1  0044987654321             0.987654              0.44
+    2     3167891234          -999.000000           -999.00
     ```
 
     Args:
@@ -307,7 +307,7 @@ class PhoneTransformer(BaseTransformer):
 
         for column in self.features:
 
-            X[f"{column}_national_number"] = X[column].apply(
+            X[f"{column}_national_number"] = X[column].swifter.apply(
                 lambda x: PhoneTransformer.__phone_to_float(
                     "national_number",
                     x,
@@ -315,7 +315,7 @@ class PhoneTransformer(BaseTransformer):
                     self.error_value,
                 )
             )
-            X[f"{column}_country_code"] = X[column].apply(
+            X[f"{column}_country_code"] = X[column].swifter.apply(
                 lambda x: PhoneTransformer.__phone_to_float(
                     "country_code", x, int(self.country_code_divisor), self.error_value
                 )
@@ -353,12 +353,13 @@ class StringSlicerTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
     transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
-    transformer.fit_transform(X).to_numpy()
+    transformer.fit_transform(X)
     ```
     ```
-    array([['ac', 'jk'],
-            ['df', 'mn'],
-            ['gi', 'pq']], dtype=object)
+      foo bar
+    0  ac  jk
+    1  df  mn
+    2  gi  pq
     ```
 
     Args:
