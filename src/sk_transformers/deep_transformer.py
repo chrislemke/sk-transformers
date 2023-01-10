@@ -41,7 +41,7 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
     target_col = "target"
     target = df[target_col].to_numpy()
 
-    transformer = ToVecTransformer(cat_cols, cont_cols, verbose=0)
+    transformer = ToVecTransformer(cat_cols, cont_cols, training_objective="binary")
     transformer.fit_transform(df, target).shape
     ```
     ```
@@ -51,6 +51,12 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
     Args:
         cat_embed_columns (List[str]): List of categorical columns to be embedded.
         continuous_columns (List[str]): List of continuous columns.
+        training_objective (str): The training objective. Possible values are:
+            Possible values are: binary, binary_focal_loss, multiclass, multiclass_focal_loss,
+            regression, mean_absolute_error, mean_squared_log_error, root_mean_squared_error,
+            root_mean_squared_log_error, zero_inflated_lognormal, quantile, tweedie.
+            Read more here: https://pytorch-widedeep.readthedocs.io/en/latest/pytorch-widedeep/trainer.html#pytorch_widedeep.training.Trainer
+
         n_epochs (int): Number of epochs to train the model.
         batch_size (int): Batch size to train the model.
         input_dim (int): The so-called *dimension of the model*.
@@ -67,6 +73,7 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         self,
         cat_embed_columns: List[str],
         continuous_columns: List[str],
+        training_objective: str,
         n_epochs: int = 1,
         batch_size: int = 32,
         input_dim: int = 32,
@@ -80,6 +87,7 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         super().__init__()
         self.cat_embed_columns = cat_embed_columns
         self.continuous_columns = continuous_columns
+        self.training_objective = training_objective
         self.n_epochs = n_epochs
         self.batch_size = batch_size
         self.input_dim = input_dim
@@ -128,7 +136,7 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
 
         trainer = Trainer(
             model,
-            "binary" if len(np.unique(y)) == 2 else "multiclass",
+            self.training_objective,
             seed=42,
             verbose=self.verbose,
             **self.training_kwargs or {},

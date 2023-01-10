@@ -24,6 +24,7 @@ def test_to_vec_transformer_in_pipeline(adult_dataframe):
         ToVecTransformer(
             cat_cols,
             cont_cols,
+            training_objective="binary",
             verbose=0,
             n_epochs=1,
             input_dim=2,
