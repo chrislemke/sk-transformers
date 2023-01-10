@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.2](https://github.com/chrislemke/sk-transformers/compare/v0.7.1...v0.7.2) (2023-01-10)
+
+
+### Maintenance
+
+* add training_objective argument to tovectransformer ([#36](https://github.com/chrislemke/sk-transformers/issues/36)) ([041f11f](https://github.com/chrislemke/sk-transformers/commit/041f11fd42437cae058c018b84b00455a705f175))
+
 ## [0.7.1](https://github.com/chrislemke/sk-transformers/compare/v0.7.0...v0.7.1) (2023-01-06)
 
 
