@@ -165,6 +165,6 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         X = check_ready_to_transform(
             self,
             X,
-            self.cat_embed_columns + self.continuous_columns,
+            list(self.cat_embed_columns) + list(self.continuous_columns),
         )
         return self.tab_vec_.transform(X)  # type: ignore
