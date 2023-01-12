@@ -15,10 +15,10 @@ from sk_transformers.utils import check_ready_to_transform
 
 
 class IPAddressEncoderTransformer(BaseTransformer):
-    """
-    Encodes IPv4 and IPv6 strings addresses to a float representation.
-    To shrink the values to a reasonable size IPv4 addresses are divided by 2^10 and IPv6 addresses are divided by 2^48.
-    Those values can be changed using the `ip4_divisor` and `ip6_divisor` parameters.
+    """Encodes IPv4 and IPv6 strings addresses to a float representation. To
+    shrink the values to a reasonable size IPv4 addresses are divided by 2^10
+    and IPv6 addresses are divided by 2^48. Those values can be changed using
+    the `ip4_divisor` and `ip6_divisor` parameters.
 
     Example:
     ```python
@@ -56,8 +56,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         self.error_value = error_value
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transforms the column containing the IP addresses to float column.
+        """Transforms the column containing the IP addresses to float column.
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.
@@ -96,8 +95,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
 
 
 class EmailTransformer(BaseTransformer):
-    """
-    Transforms an email address into multiple features.
+    """Transforms an email address into multiple features.
 
     Example:
     ```python
@@ -125,8 +123,8 @@ class EmailTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transforms the one column from X, containing the email addresses, into multiple columns.
+        """Transforms the one column from X, containing the email addresses,
+        into multiple columns.
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.
@@ -182,8 +180,8 @@ class EmailTransformer(BaseTransformer):
 
 
 class StringSimilarityTransformer(BaseTransformer):
-    """
-    Calculates the similarity between two strings using the `gestalt pattern matching` algorithm from the `SequenceMatcher` class.
+    """Calculates the similarity between two strings using the `gestalt pattern
+    matching` algorithm from the `SequenceMatcher` class.
 
     Example:
     ```python
@@ -215,8 +213,7 @@ class StringSimilarityTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Calculates the similarity of two strings provided in `features`.
+        """Calculates the similarity of two strings provided in `features`.
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.
@@ -253,8 +250,7 @@ class StringSimilarityTransformer(BaseTransformer):
 
 
 class PhoneTransformer(BaseTransformer):
-    """
-    Transforms a phone number into multiple features.
+    """Transforms a phone number into multiple features.
 
     Example:
     ```python
@@ -293,8 +289,7 @@ class PhoneTransformer(BaseTransformer):
         self.error_value = error_value
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Calculates the similarity of two strings provided in `features`.
+        """Calculates the similarity of two strings provided in `features`.
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.
@@ -340,8 +335,8 @@ class PhoneTransformer(BaseTransformer):
 
 
 class StringSlicerTransformer(BaseTransformer):
-    """
-    Slices all entries of specified string features using the `slice()` function.
+    """Slices all entries of specified string features using the `slice()`
+    function.
 
     Note: The arguments for the `slice()` function are passed as a tuple. This shares
     the python quirk of writing a tuple with a single argument with the trailing comma.
@@ -379,8 +374,7 @@ class StringSlicerTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Slices the strings of specified features in the dataframe.
+        """Slices the strings of specified features in the dataframe.
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.

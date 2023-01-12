@@ -82,8 +82,8 @@ def check_ready_to_transform(
 
 
 def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
-    """
-    Checks if the data has the correct types, shapes and does not contain any missing values.
+    """Checks if the data has the correct types, shapes and does not contain
+    any missing values.
 
     Args:
         X (pandas.DataFrame): The features.
@@ -111,9 +111,9 @@ def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
 def prepare_categorical_data(
     X: pd.DataFrame, categories: List[Tuple[str, int]]
 ) -> pd.DataFrame:
-    """
-    Checks for the validity of the categorical features inside the dataframe.
-    And prepares the data for further processing by changing the `dtypes`.
+    """Checks for the validity of the categorical features inside the
+    dataframe. And prepares the data for further processing by changing the
+    `dtypes`.
 
     Args:
         X (pandas.DataFrame): The dataframe containing the categorical features.
