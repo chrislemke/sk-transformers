@@ -10,6 +10,7 @@ def check_ready_to_transform(
     X: pd.DataFrame,
     features: Optional[Union[str, List[str]]] = None,
     force_all_finite: Union[bool, str] = True,
+    dtype: Optional[Union[str, List[str]]] = None,
 ) -> pd.DataFrame:
     """
     Args:
@@ -20,6 +21,10 @@ def check_ready_to_transform(
             - True: Force all values of array to be finite.
             - False: accepts np.inf, np.nan, pd.NA in array.
             - "allow-nan": accepts only np.nan and pd.NA values in array. Values cannot be infinite.
+        dtype (Optional[Union[str, List[str]]]): Data type of result. If None, the `dtype` of the input is preserved.
+            If "numeric", `dtype` is preserved unless `array.dtype` is object.
+            If dtype is a list of types, conversion on the first type is only performed if the dtype of the input
+            is not in the list.
 
     Raises:
         TypeError: If the input `transformer` is not a subclass of `BaseEstimator`.
@@ -60,10 +65,13 @@ def check_ready_to_transform(
             See https://github.com/scikit-learn-contrib/project-template/blob/master/skltemplate/_template.py#L146 for an example/template.
             """
         )
-
     check_is_fitted(transformer, "fitted_")
+
     X_tmp = check_array(
-        X, dtype=None, accept_sparse=True, force_all_finite=force_all_finite
+        X.to_numpy(),
+        dtype=dtype,
+        accept_large_sparse=False,
+        force_all_finite=force_all_finite,
     )
     X_tmp = pd.DataFrame(X_tmp, columns=X.columns, index=X.index)
 
