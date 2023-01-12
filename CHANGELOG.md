@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.7.3](https://github.com/chrislemke/sk-transformers/compare/v0.7.2...v0.7.3) (2023-01-12)
+
+
+### Bug Fixes
+
+* deep transformer check ready to transform fails ([91f9712](https://github.com/chrislemke/sk-transformers/commit/91f97120d04f724c0df9b6a9fb42b16d9bda5a28))
+* issue with failing check_array if dataframe contains objects and nan ([b99a734](https://github.com/chrislemke/sk-transformers/commit/b99a7345d9fd2ac875e0576961cdb4f024b755b1))
+
 ## [0.7.2](https://github.com/chrislemke/sk-transformers/compare/v0.7.1...v0.7.2) (2023-01-10)
 
 
