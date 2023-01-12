@@ -45,7 +45,6 @@ repos:
       - id: fix-byte-order-marker
       - id: forbid-new-submodules
       - id: forbid-submodules
-      - id: detect-aws-credentials
       - id: detect-private-key
       - id: no-commit-to-branch
         args: ["--branch=main", "--branch=develop"]
