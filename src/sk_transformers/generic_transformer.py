@@ -10,8 +10,7 @@ from sk_transformers.utils import check_ready_to_transform
 
 
 class DtypeTransformer(BaseTransformer):
-    """
-    Transformer that converts a column to a different dtype.
+    """Transformer that converts a column to a different dtype.
 
     Example:
     ```python
@@ -38,8 +37,8 @@ class DtypeTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transform the dataframe by converting the columns to the specified dtypes.
+        """Transform the dataframe by converting the columns to the specified
+        dtypes.
 
         Args:
             X (pandas.DataFrame): dataframe to transform.
@@ -55,10 +54,12 @@ class DtypeTransformer(BaseTransformer):
 
 
 class AggregateTransformer(BaseTransformer):
-    """
-    This transformer uses Pandas `groupby` method and `aggregate` to apply function on a column grouped by another column.
-    Read more about Pandas [`aggregate`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.aggregate.html) method
-    to understand how to use function for aggregation. Other than Pandas function this transformer only support functions and string-names.
+    """This transformer uses Pandas `groupby` method and `aggregate` to apply
+    function on a column grouped by another column. Read more about Pandas [`ag
+    gregate`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.agg
+    regate.html) method to understand how to use function for aggregation.
+    Other than Pandas function this transformer only support functions and
+    string-names.
 
     Example:
     ```python
@@ -101,8 +102,8 @@ class AggregateTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Creates new columns by using Pandas `groupby` method and `aggregate` to apply function on the column.
+        """Creates new columns by using Pandas `groupby` method and `aggregate`
+        to apply function on the column.
 
         Args:
             X (pd.DataFrame): Input dataframe.
@@ -142,10 +143,14 @@ class AggregateTransformer(BaseTransformer):
 
 
 class FunctionsTransformer(BaseTransformer):
-    """
-    This transformer is a plain wrapper around the [`sklearn.preprocessing.FunctionTransformer`](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.FunctionTransformer.html).
-    Its main function is to apply multiple functions to different columns. Other than the scikit-learn transformer,
-    this transformer *does not* support the `inverse_func`, `accept_sparse`, `feature_names_out` and, `inv_kw_args` parameters.
+    """This transformer is a plain wrapper around the.
+
+    [`sklearn.preprocessing.FunctionTransformer`](https://scikit-learn.org/stab
+    le/modules/generated/sklearn.preprocessing.FunctionTransformer.html). Its
+    main function is to apply multiple functions to different columns. Other
+    than the scikit-learn transformer, this transformer *does not* support the
+    `inverse_func`, `accept_sparse`, `feature_names_out` and, `inv_kw_args`
+    parameters.
 
     Example:
     ```python
@@ -177,8 +182,8 @@ class FunctionsTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Applies the functions to the columns, and returns the dataframe with the modified columns.
+        """Applies the functions to the columns, and returns the dataframe with
+        the modified columns.
 
         Args:
             X (pandas.DataFrame): DataFrame containing the columns to apply the functions on.
@@ -198,9 +203,10 @@ class FunctionsTransformer(BaseTransformer):
 
 
 class MapTransformer(BaseTransformer):
-    """
-    This transformer iterates over all columns in the `features` list and applies the given callback to the column.
-    For this it uses the [`pandas.Series.map`](https://pandas.pydata.org/docs/reference/api/pandas.Series.map.html) method.
+    """This transformer iterates over all columns in the `features` list and
+    applies the given callback to the column. For this it uses the [`pandas.Ser
+    ies.map`](https://pandas.pydata.org/docs/reference/api/pandas.Series.map.ht
+    ml) method.
 
     Example:
     ```python
@@ -228,8 +234,7 @@ class MapTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Applies the callback to the column.
+        """Applies the callback to the column.
 
         Args:
             X (pandas.DataFrame): Dataframe containing the the columns to apply the callback on.
@@ -248,8 +253,7 @@ class MapTransformer(BaseTransformer):
 
 
 class ColumnDropperTransformer(BaseTransformer):
-    """
-    Drops columns from a dataframe using Pandas `drop` method.
+    """Drops columns from a dataframe using Pandas `drop` method.
 
     Example:
     ```python
@@ -276,8 +280,7 @@ class ColumnDropperTransformer(BaseTransformer):
         self.columns = columns
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Returns the dataframe with the `columns` dropped.
+        """Returns the dataframe with the `columns` dropped.
 
         Args:
             X (pd.DataFrame): Dataframe to drop columns from.
@@ -290,8 +293,9 @@ class ColumnDropperTransformer(BaseTransformer):
 
 
 class NaNTransformer(BaseTransformer):
-    """
-    Replace NaN values with a specified value. Internally Pandas [`fillna`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html) method is used.
+    """Replace NaN values with a specified value. Internally Pandas [`fillna`](
+    https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.fillna.html)
+    method is used.
 
     Example:
     ```python
@@ -319,8 +323,7 @@ class NaNTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Replace NaN values with a specified value.
+        """Replace NaN values with a specified value.
 
         Args:
             X (pandas.DataFrame): Dataframe to transform.
@@ -338,12 +341,12 @@ class NaNTransformer(BaseTransformer):
 
 
 class ValueIndicatorTransformer(BaseTransformer):
-    """
-    Adds a column to a dataframe indicating if a value is equal to a specified value.
-    The idea behind this method is, that it is often useful to know if a `NaN` value was
-    present in the original data and has been changed by some imputation step.
-    Sometimes the present of a `NaN` value is actually important information.
-    But obviously this method works with any kind of data.
+    """Adds a column to a dataframe indicating if a value is equal to a
+    specified value. The idea behind this method is, that it is often useful to
+    know if a `NaN` value was present in the original data and has been changed
+    by some imputation step. Sometimes the present of a `NaN` value is actually
+    important information. But obviously this method works with any kind of
+    data.
 
     `NaN`, `None` or `np.nan` are **Not** caught by this implementation.
 
@@ -374,8 +377,8 @@ class ValueIndicatorTransformer(BaseTransformer):
         self.as_int = as_int
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Add a column to a dataframe indicating if a value is equal to a specified value.
+        """Add a column to a dataframe indicating if a value is equal to a
+        specified value.
 
         Args:
             X (pandas.DataFrame): Dataframe to transform.
@@ -399,12 +402,12 @@ class ValueIndicatorTransformer(BaseTransformer):
 
 
 class QueryTransformer(BaseTransformer):
-    """
-    Applies a list of queries to a dataframe.
-    If it operates on a dataset used for supervised learning this transformer should
-    be applied on the dataframe containing `X` and `y`. So removing of columns by queries
-    also removes the corresponding `y` value.
-    Read more about queries [here](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html).
+    """Applies a list of queries to a dataframe. If it operates on a dataset
+    used for supervised learning this transformer should be applied on the
+    dataframe containing `X` and `y`. So removing of columns by queries also
+    removes the corresponding `y` value. Read more about queries [here](https:/
+
+    /pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html).
 
     Example:
     ```python
@@ -432,8 +435,7 @@ class QueryTransformer(BaseTransformer):
         self.queries = queries
 
     def transform(self, Xy: pd.DataFrame) -> pd.DataFrame:
-        """
-        Applies the list of queries to the dataframe.
+        """Applies the list of queries to the dataframe.
 
         Args:
             Xy (pd.DataFrame): Dataframe to apply the queries to. For also operating on the target column `y` - if needed.
@@ -450,11 +452,13 @@ class QueryTransformer(BaseTransformer):
 
 
 class ValueReplacerTransformer(BaseTransformer):
-    r"""
-    Uses Pandas `replace` method to replace values in a column. This transformer loops over the `features` and applies
-    `replace` to the according columns. If the column is not from type string but a valid regular expression is provided
-    the column will be temporarily changed to a string column and after the manipulation by `replace` changed back to its
-    original type. It may happen, that this type changing fails if the modified column is not compatible with its original type.
+    r"""Uses Pandas `replace` method to replace values in a column. This
+    transformer loops over the `features` and applies `replace` to the
+    according columns. If the column is not from type string but a valid
+    regular expression is provided the column will be temporarily changed to a
+    string column and after the manipulation by `replace` changed back to its
+    original type. It may happen, that this type changing fails if the modified
+    column is not compatible with its original type.
 
     Example:
     ```python
@@ -496,8 +500,7 @@ class ValueReplacerTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Replaces a value or regular expression with another value.
+        """Replaces a value or regular expression with another value.
 
         Args:
             X (pd.DataFrame): Dataframe containing the columns where values should be replaced.
@@ -538,10 +541,10 @@ class ValueReplacerTransformer(BaseTransformer):
 
 
 class LeftJoinTransformer(BaseTransformer):
-    """
-    Performs a database-style left-join using `pd.merge`. This transformer is suitable for
-    replacing values in a column of a dataframe by looking-up another `pd.DataFrame`
-    or `pd.Series`. Note that, the join is based on the index of the right dataframe.
+    """Performs a database-style left-join using `pd.merge`. This transformer
+    is suitable for replacing values in a column of a dataframe by looking-up
+    another `pd.DataFrame` or `pd.Series`. Note that, the join is based on the
+    index of the right dataframe.
 
     Example:
     ```python
@@ -575,8 +578,8 @@ class LeftJoinTransformer(BaseTransformer):
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Perform a left-join on the given columns of a dataframe with another cooresponding dataframe.
+        """Perform a left-join on the given columns of a dataframe with another
+        cooresponding dataframe.
 
         Args:
             X (pd.DataFrame): Dataframe containing the columns to be joined on.

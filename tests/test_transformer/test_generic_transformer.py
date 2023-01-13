@@ -127,7 +127,6 @@ def test_functions_transformer_raises_error(X) -> None:
 
 
 def test_map_transformer_in_pipeline(X) -> None:
-
     pipeline = make_pipeline(MapTransformer([("a", lambda x: x**2)]))
     result = pipeline.fit_transform(X)
     expected = np.array([1, 4, 9, 16, 25, 36, 49, 64, 81, 100])

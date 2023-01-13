@@ -8,8 +8,7 @@ from sk_transformers.utils import check_ready_to_transform
 
 
 class DurationCalculatorTransformer(BaseTransformer):
-    """
-    Calculates the duration between to given dates.
+    """Calculates the duration between to given dates.
 
     Example:
     ```python
@@ -50,8 +49,7 @@ class DurationCalculatorTransformer(BaseTransformer):
         self.new_column_name = new_column_name
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transform method that calculates the duration between two dates.
+        """Transform method that calculates the duration between two dates.
 
         Args:
             X (pandas.DataFrame): The input DataFrame.
@@ -75,8 +73,8 @@ class DurationCalculatorTransformer(BaseTransformer):
 
 
 class TimestampTransformer(BaseTransformer):
-    """
-    Transforms a date column with a specified format into a timestamp column.
+    """Transforms a date column with a specified format into a timestamp
+    column.
 
     Example:
     ```python
@@ -109,8 +107,7 @@ class TimestampTransformer(BaseTransformer):
         self.date_format = date_format
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transforms columns from the provided dataframe.
+        """Transforms columns from the provided dataframe.
 
         Args:
             X (pandas.DataFrame): Dataframe with columns to transform.
