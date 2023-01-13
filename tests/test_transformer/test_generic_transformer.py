@@ -232,6 +232,16 @@ def test_column_dropper_transformer_in_pipeline(X) -> None:
     assert pipeline.steps[0][0] == "columndroppertransformer"
 
 
+def test_column_dropper_transformer_in_pipeline_with_nan(X_nan_values) -> None:
+    drop_columns = ["a", "d"]
+    pipeline = make_pipeline(ColumnDropperTransformer(columns=drop_columns))
+
+    result = pipeline.fit_transform(X_nan_values)
+    expected = X_nan_values.drop(columns=drop_columns)
+    assert result.equals(expected)
+    assert pipeline.steps[0][0] == "columndroppertransformer"
+
+
 def test_nan_transformer_in_pipeline(X_nan_values) -> None:
     pipeline = make_pipeline(NaNTransformer([("a", -1), ("b", -1), ("c", "missing")]))
     X = pipeline.fit_transform(X_nan_values)

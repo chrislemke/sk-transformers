@@ -288,7 +288,7 @@ class ColumnDropperTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with columns dropped.
         """
-        X = check_ready_to_transform(self, X, self.columns)
+        X = check_ready_to_transform(self, X, self.columns, force_all_finite=False)
         return X.drop(self.columns, axis=1)
 
 
