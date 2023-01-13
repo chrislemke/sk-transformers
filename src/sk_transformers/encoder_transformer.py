@@ -6,8 +6,8 @@ from sklearn.base import BaseEstimator, TransformerMixin
 
 
 class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
-    """
-    Scikit-learn API for the [feature-engine MeanEncoder](https://feature-engine.readthedocs.io/en/latest/api_doc/encoding/MeanEncoder.html).
+    """Scikit-learn API for the [feature-engine MeanEncoder](https://feature-
+    engine.readthedocs.io/en/latest/api_doc/encoding/MeanEncoder.html).
 
     Example:
     ```python
@@ -44,8 +44,7 @@ class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
         self.fill_na_value = fill_na_value
 
     def fit(self, X: pd.DataFrame, y: pd.Series) -> "MeanEncoderTransformer":
-        """
-        Fit the MeanEncoder to the data.
+        """Fit the MeanEncoder to the data.
 
         Args:
             X (pandas.DataFrame): DataFrame to fit the MeanEncoder to.
@@ -58,8 +57,7 @@ class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transform the data using the fitted MeanEncoder.
+        """Transform the data using the fitted MeanEncoder.
 
         Args:
             X (pandas.DataFrame): DataFrame to transform.

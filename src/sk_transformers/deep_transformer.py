@@ -12,9 +12,12 @@ from sk_transformers.utils import check_ready_to_transform
 
 
 class ToVecTransformer(BaseEstimator, TransformerMixin):
-    """
-    This transformer trains an [FT-Transformer](https://paperswithcode.com/method/ft-transformer)
-    using the [pytorch-widedeep package](https://github.com/jrzaurin/pytorch-widedeep) and extracts the embeddings
+    """This transformer trains an [FT-
+    Transformer](https://paperswithcode.com/method/ft-transformer) using the.
+
+    [pytorch-widedeep package](https://github.com/jrzaurin/pytorch-widedeep)
+    and extracts the embeddings.
+
     from its embedding layer. The output shape of the transformer is (number of rows,(`input_dim` * number of columns)).
     Please refer to [this example](https://pytorch-widedeep.readthedocs.io/en/latest/examples/09_extracting_embeddings.html)
     for pytorch_widedeep example on how to extract embeddings.
@@ -99,8 +102,8 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         self.tab_vec_: Optional[Tab2Vec] = None
 
     def fit(self, X: pd.DataFrame, y: NDArray) -> "ToVecTransformer":
-        """
-        Fits the `ToVecTransformer`. The `TabPreprocessor` is fitted and the `FTTransformer` is trained.
+        """Fits the `ToVecTransformer`. The `TabPreprocessor` is fitted and the
+        `FTTransformer` is trained.
 
         Args:
             X (pd.DataFrame): The input data.
@@ -151,8 +154,8 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         return self
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-        """
-        Transforms the input data and returns the embeddings.
+        """Transforms the input data and returns the embeddings.
+
         The output shape is (number of rows,(`input_dim` * number of columns)).
 
         Args:
