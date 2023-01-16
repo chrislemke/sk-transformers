@@ -46,7 +46,12 @@ class DtypeTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        check_ready_to_transform(self, X, [feature[0] for feature in self.features])
+        check_ready_to_transform(
+            self,
+            X,
+            [feature[0] for feature in self.features],
+            force_all_finite="allow-nan",
+        )
 
         for (column, dtype) in self.features:
             X[column] = X[column].astype(dtype)
@@ -588,7 +593,12 @@ class LeftJoinTransformer(BaseTransformer):
             pd.DataFrame: Dataframe joined on the given columns.
         """
 
-        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(
+            self,
+            X,
+            [feature[0] for feature in self.features],
+            force_all_finite="allow-nan",
+        )
 
         for (column, lookup_df) in self.features:
             lookup_df = LeftJoinTransformer.__prefix_df_column_names(lookup_df, column)

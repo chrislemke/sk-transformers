@@ -29,6 +29,15 @@ def test_dtype_transformer_in_pipeline(X) -> None:
     assert pipeline.steps[0][0] == "dtypetransformer"
 
 
+def test_dtype_transformer_in_pipeline_with_nan(X_nan_values) -> None:
+    pipeline = make_pipeline(DtypeTransformer([("a", np.float32), ("d", "category")]))
+    X = pipeline.fit_transform(X_nan_values)
+
+    assert X["a"].dtype == "float32"
+    assert X["d"].dtype == "category"
+    assert pipeline.steps[0][0] == "dtypetransformer"
+
+
 def test_dtype_transformer_raises_error(X) -> None:
     with pytest.raises(ValueError) as error:
         DtypeTransformer(
@@ -273,4 +282,15 @@ def test_left_join_transformer_in_pipeline_for_dataframe(X_categorical) -> None:
 
     assert "a_values" in result.columns
     assert np.array_equal(result["a_values"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "leftjointransformer"
+
+
+def test_left_join_transformer_in_pipeline_with_nan(X_categorical) -> None:
+    X_categorical["a"].iloc[5] = np.nan
+    lookup_df = pd.Series([1, 2], index=["A1", "A2"], name="values")
+    pipeline = make_pipeline(LeftJoinTransformer([("a", lookup_df)]))
+    result = pipeline.fit_transform(X_categorical)
+
+    assert "a_values" in result.columns
+    assert np.isclose(result["a_values"].iloc[5], np.nan, equal_nan=True)
     assert pipeline.steps[0][0] == "leftjointransformer"
