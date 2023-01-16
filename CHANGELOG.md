@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.7.4](https://github.com/chrislemke/sk-transformers/compare/v0.7.3...v0.7.4) (2023-01-16)
+
+
+### Bug Fixes
+
+* allow nan in some transformers ([#41](https://github.com/chrislemke/sk-transformers/issues/41)) ([d2a4fbf](https://github.com/chrislemke/sk-transformers/commit/d2a4fbff12bba82c0cc0077673f8ee5d3a6fcca9))
+
+
+### Maintenance
+
+* add more pre-commit hooks ([#40](https://github.com/chrislemke/sk-transformers/issues/40)) ([b716c44](https://github.com/chrislemke/sk-transformers/commit/b716c44693666fc64d30a1d15f861de6ab66d8d3))
+
+
+### CI/CD
+
+* add fast-forward merge action to pull requests ([#42](https://github.com/chrislemke/sk-transformers/issues/42)) ([41036b9](https://github.com/chrislemke/sk-transformers/commit/41036b95ec4f6af29844409b467deb17f597b92c))
+
 ## [0.7.3](https://github.com/chrislemke/sk-transformers/compare/v0.7.2...v0.7.3) (2023-01-12)
 
 
