@@ -74,7 +74,7 @@ Let's assume you want to use some method from [NumPy's mathematical functions, t
 use the [`MathExpressionTransformer`](https://chrislemke.github.io/sk-transformers/number_transformer-reference/#sk-transformers.transformer.number_transformer.MathExpressionTransformer).
 ```python
 import pandas as pd
-from sk_transformers.number_transformer import MathExpressionTransformer
+from sk_transformers import MathExpressionTransformer
 
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
 transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
@@ -91,8 +91,8 @@ In the next example, we additionally add the [`MapTransformer`](https://chrislem
 Together with [scikit-learn's pipelines](https://scikit-learn.org/stable/modules/compose.html#combining-estimators) it would look like this:
 ```python
 import pandas as pd
-from sk_transformers.number_transformer import MathExpressionTransformer
-from sk_transformers.generic_transformer import MapTransformer
+from sk_transformers import MathExpressionTransformer
+from sk_transformers import MapTransformer
 from sklearn.pipeline import Pipeline
 
 X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})

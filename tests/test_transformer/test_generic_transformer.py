@@ -3,7 +3,7 @@ import pandas as pd
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers.generic_transformer import (
+from sk_transformers import (
     AggregateTransformer,
     ColumnDropperTransformer,
     DtypeTransformer,

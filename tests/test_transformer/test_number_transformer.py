@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers.number_transformer import MathExpressionTransformer
+from sk_transformers import MathExpressionTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

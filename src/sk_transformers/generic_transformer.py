@@ -16,7 +16,7 @@ class DtypeTransformer(BaseTransformer):
     ```python
     import numpy as np
     import pandas as pd
-    from sk_transformers.generic_transformer import DtypeTransformer
+    from sk_transformers import DtypeTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": ["a", "a", "b"]})
     transformer = DtypeTransformer([("foo", np.float32), ("bar", "category")])
@@ -69,7 +69,7 @@ class AggregateTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.generic_transformer import AggregateTransformer
+    from sk_transformers import AggregateTransformer
 
     X = pd.DataFrame(
         {
@@ -161,7 +161,7 @@ class FunctionsTransformer(BaseTransformer):
     ```python
     import numpy as np
     import pandas as pd
-    from sk_transformers.generic_transformer import FunctionsTransformer
+    from sk_transformers import FunctionsTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = FunctionsTransformer([("foo", np.log1p, None), ("bar", np.sqrt, None)])
@@ -216,7 +216,7 @@ class MapTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.generic_transformer import MapTransformer
+    from sk_transformers import MapTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = MapTransformer([("foo", lambda x: x + 1)])
@@ -263,7 +263,7 @@ class ColumnDropperTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.generic_transformer import ColumnDropperTransformer
+    from sk_transformers import ColumnDropperTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = ColumnDropperTransformer(["foo"])
@@ -304,7 +304,7 @@ class NaNTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers.generic_transformer import NaNTransformer
+    from sk_transformers import NaNTransformer
     import pandas as pd
     import numpy as np
 
@@ -357,7 +357,7 @@ class ValueIndicatorTransformer(BaseTransformer):
 
     Example:
     ```python
-    from sk_transformers.generic_transformer import ValueIndicatorTransformer
+    from sk_transformers import ValueIndicatorTransformer
     import pandas as pd
 
     X = pd.DataFrame({"foo": [1, -999, 3], "bar": ["a", "-999", "c"]})
@@ -410,14 +410,12 @@ class QueryTransformer(BaseTransformer):
     """Applies a list of queries to a dataframe. If it operates on a dataset
     used for supervised learning this transformer should be applied on the
     dataframe containing `X` and `y`. So removing of columns by queries also
-    removes the corresponding `y` value. Read more about queries [here](https:/
-
-    /pandas.pydata.org/docs/reference/api/pandas.DataFrame.query.html).
+    removes the corresponding `y` value.
 
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.generic_transformer import QueryTransformer
+    from sk_transformers import QueryTransformer
 
     X = pd.DataFrame({"foo": [1, 8, 3, 6, 5, 4, 7, 2]})
     transformer = QueryTransformer(["foo > 4"])
@@ -468,7 +466,7 @@ class ValueReplacerTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.generic_transformer import ValueReplacerTransformer
+    from sk_transformers import ValueReplacerTransformer
 
     X = pd.DataFrame(
         {"foo": ["0000-01-01", "2022/01/08", "bar", "1982-12-7", "28-09-2022"]}
@@ -554,7 +552,7 @@ class LeftJoinTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.generic_transformer import LeftJoinTransformer
+    from sk_transformers import LeftJoinTransformer
 
     X = pd.DataFrame({"foo": ["A", "B", "C", "A", "C"]})
     lookup_df = pd.Series([1, 2, 3], index=["A", "B", "C"], name="values")

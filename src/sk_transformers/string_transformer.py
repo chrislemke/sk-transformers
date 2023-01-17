@@ -23,7 +23,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.string_transformer import IPAddressEncoderTransformer
+    from sk_transformers import IPAddressEncoderTransformer
 
     X = pd.DataFrame({"foo": ["192.168.1.1", "2001:0db8:3c4d:0015:0000:0000:1a2f:1a2b"]})
     transformer = IPAddressEncoderTransformer(["foo"])
@@ -100,7 +100,7 @@ class EmailTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.string_transformer import EmailTransformer
+    from sk_transformers import EmailTransformer
 
     X = pd.DataFrame({"foo": ["person-123@test.com"]})
     transformer = EmailTransformer(["foo"])
@@ -186,7 +186,7 @@ class StringSimilarityTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.string_transformer import StringSimilarityTransformer
+    from sk_transformers import StringSimilarityTransformer
 
     X = pd.DataFrame(
         {
@@ -255,7 +255,7 @@ class PhoneTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.string_transformer import PhoneTransformer
+    from sk_transformers import PhoneTransformer
 
     X = pd.DataFrame({"foo": ["+49123456789", "0044987654321", "3167891234"]})
     transformer = PhoneTransformer(["foo"])
@@ -344,7 +344,7 @@ class StringSlicerTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.string_transformer import StringSlicerTransformer
+    from sk_transformers import StringSlicerTransformer
 
     X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
     transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])

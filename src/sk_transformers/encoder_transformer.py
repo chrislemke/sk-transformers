@@ -12,7 +12,7 @@ class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.encoder_transformer import MeanEncoderTransformer
+    from sk_transformers import MeanEncoderTransformer
 
     X = pd.DataFrame({"foo": ["a", "b", "a", "c", "b", "a", "c", "a", "b", "c"]})
     y = pd.Series([1, 0, 1, 0, 1, 0, 1, 0, 1, 0])

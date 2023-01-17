@@ -20,7 +20,7 @@ class MathExpressionTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.number_transformer import MathExpressionTransformer
+    from sk_transformers import MathExpressionTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
     transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])

@@ -13,7 +13,7 @@ class DurationCalculatorTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.datetime_transformer import DurationCalculatorTransformer
+    from sk_transformers import DurationCalculatorTransformer
 
     X = pd.DataFrame(
         {
@@ -79,7 +79,7 @@ class TimestampTransformer(BaseTransformer):
     Example:
     ```python
     import pandas as pd
-    from sk_transformers.datetime_transformer import TimestampTransformer
+    from sk_transformers import TimestampTransformer
 
     X = pd.DataFrame({"foo": ["1960-01-01", "1970-01-01", "1990-01-01"]})
     transformer = TimestampTransformer(["foo"])
