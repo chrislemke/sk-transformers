@@ -27,7 +27,7 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
     import numpy as np
     import pandas as pd
     from pytorch_widedeep.datasets import load_adult
-    from sk_transformers.deep_transformer import ToVecTransformer
+    from sk_transformers import ToVecTransformer
 
     df = load_adult(as_frame=True)
     df["target"] = (df["income"].apply(lambda x: ">50K" in x)).astype(int)

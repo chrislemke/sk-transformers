@@ -2,10 +2,7 @@ import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers.datetime_transformer import (
-    DurationCalculatorTransformer,
-    TimestampTransformer,
-)
+from sk_transformers import DurationCalculatorTransformer, TimestampTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
