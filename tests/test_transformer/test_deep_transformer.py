@@ -1,6 +1,6 @@
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers.deep_transformer import ToVecTransformer
+from sk_transformers import ToVecTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
