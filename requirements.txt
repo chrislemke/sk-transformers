@@ -453,9 +453,9 @@ importlib-resources==5.10.2 ; python_version >= "3.8" and python_version < "3.9"
     --hash=sha256:e4a96c8cc0339647ff9a5e0550d9f276fc5a01ffa276012b58ec108cfd7b8484
 imutils==0.5.4 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:03827a9fca8b5c540305c0844a62591cf35a0caec199cb0f2f0a4a0fb15d8f24
-ipykernel==6.20.1 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:a314e6782a4f9e277783382976b3a93608a3787cd70a235b558b47f875134be1 \
-    --hash=sha256:f6016ecbf581d0ea6e29ba16cee6cc1a9bbde3835900c46c6571a791692f4139
+ipykernel==6.20.2 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:1893c5b847033cd7a58f6843b04a9349ffb1031bc6588401cadc9adb58da428e \
+    --hash=sha256:5d0675d5f48bf6a95fd517d7b70bcb3b2c5631b2069949b5c2d6e1d7477fb5a0
 ipython==8.8.0 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:da01e6df1501e6e7c32b5084212ddadd4ee2471602e2cf3e0190f4de6b0ea481 \
     --hash=sha256:f3bf2c08505ad2c3f4ed5c46ae0331a8547d36bf4b21a451e8ae80c0791db95b
