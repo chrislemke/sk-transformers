@@ -11,13 +11,8 @@ from sk_transformers.utils import check_ready_to_transform
 
 class MathExpressionTransformer(BaseTransformer):
     """Applies an function/operation to a column and a given value or column.
-    The operation can be a function from NumPy's [mathematical
-    functions](https.
-
-    ://numpy.org/doc/stable/reference/routines.math.html#mathematical-
-    functions)  or
-    [`operator`](https://docs.python.org/3/library/operator.html#module-
-    operator) package.
+    The operation can be a function from NumPy's mathematical functions or
+    operator package.
 
     **Warning!** Some functions/operators may not work as expected. Especially not all NumPy methods are supported. For example:
     various NumPy methods return values which are not fitting the size of the source column.
