@@ -613,3 +613,60 @@ class LeftJoinTransformer(BaseTransformer):
         elif isinstance(df, pd.DataFrame):
             df.columns = [prefix + "_" + column for column in df.columns]
         return df
+
+
+class AllowedValuesTransformer(BaseTransformer):
+    """Replaces all values that are not in a list of allowed values with a
+    replacement value. This performs an complementary transformation to that of
+    the ValueReplacerTransformer. This is useful while lumping several minor
+    categories together by selecting them using a list of major categories.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers.generic_transformer import AllowedValuesTransformer
+
+    X = pd.DataFrame({"foo": ["a", "b", "c", "d", "e"]})
+    transformer = AllowedValuesTransformer([("foo", ["a", "b"], "other")])
+    transformer.fit_transform(X)
+    ```
+    ```
+         foo
+    0      a
+    1      b
+    2  other
+    3  other
+    4  other
+    ```
+
+    Args:
+        features (List[Tuple[str, List[Any], Any]]): List of tuples where
+            the first element is the column name,
+            the second element is the list of allowed values in the column, and
+            the third element is the value to replace disallowed values in the column.
+    """
+
+    def __init__(self, features: List[Tuple[str, List[Any], Any]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Replaces values not in a list with another value.
+
+        Args:
+            X (pd.DataFrame): Dataframe containing the columns with values to be replaced.
+
+        Returns:
+            pd.DataFrame: Dataframe with replaced values.
+        """
+
+        X = check_ready_to_transform(
+            self,
+            X,
+            [feature[0] for feature in self.features],
+        )
+
+        for (column, allowed_values, replacement) in self.features:
+            X.loc[~X[column].isin(allowed_values), column] = replacement
+
+        return X
