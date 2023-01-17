@@ -6,6 +6,7 @@ from sk_transformers.deep_transformer import ToVecTransformer
 from sk_transformers.encoder_transformer import MeanEncoderTransformer
 from sk_transformers.generic_transformer import (
     AggregateTransformer,
+    AllowedValuesTransformer,
     ColumnDropperTransformer,
     DtypeTransformer,
     FunctionsTransformer,
