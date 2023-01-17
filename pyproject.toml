@@ -2,7 +2,7 @@
 name = "sk-transformers"
 version = "0.7.4"
 description = "A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
-authors = ["Christopher Lemke <chris@syhbl.mozmail.com>"]
+authors = ["Christopher Lemke <1@lemke.ai>"]
 license = "MIT"
 readme = "docs/README.md"
 packages = [{ include = "sk_transformers", from = "src" }]
