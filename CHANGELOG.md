@@ -1,5 +1,22 @@
 # Changelog
 
+## [0.8.0](https://github.com/chrislemke/sk-transformers/compare/v0.7.4...v0.8.0) (2023-01-18)
+
+
+### Features
+
+* add allowed_values_transformer ([#46](https://github.com/chrislemke/sk-transformers/issues/46)) ([2fe06f6](https://github.com/chrislemke/sk-transformers/commit/2fe06f6ebd688faa7bba7fb3a51b431fa4f83040))
+
+
+### Documentation
+
+* fix broken url ([a1279b4](https://github.com/chrislemke/sk-transformers/commit/a1279b4a6116f8580149070e6bde1231b0747971))
+
+
+### Maintenance
+
+* add init file for easier usage of transformers ([#45](https://github.com/chrislemke/sk-transformers/issues/45)) ([e1edb18](https://github.com/chrislemke/sk-transformers/commit/e1edb18c4a184e771de577eca6ab24c77fe38339))
+
 ## [0.7.4](https://github.com/chrislemke/sk-transformers/compare/v0.7.3...v0.7.4) (2023-01-16)
 
 
