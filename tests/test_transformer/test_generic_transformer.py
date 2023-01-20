@@ -29,6 +29,16 @@ def test_column_eval_transformer_in_pipeline(X_strings) -> None:
     assert pipeline.steps[0][0] == "columnevaltransformer"
 
 
+def test_column_eval_transformer_in_pipeline_new_column(X_strings) -> None:
+    pipeline = make_pipeline(
+        ColumnEvalTransformer([("email", "str.contains('@')", "new_column")])
+    )
+    X = pipeline.fit_transform(X_strings)
+
+    assert X["new_column"].to_list() == [True, True, True, True, True, False]
+    assert pipeline.steps[0][0] == "columnevaltransformer"
+
+
 def test_column_eval_transformer_with_invalid_start_of_eval(X_strings) -> None:
     with pytest.raises(ValueError) as error:
         transformer = ColumnEvalTransformer([("email", ".str.contains('@')")])

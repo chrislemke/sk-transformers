@@ -31,8 +31,9 @@ class ColumnEvalTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, str]]): List of tuples containing the column name and the method (`eval_func`) to apply.
-            E.g. `("foo", "str.upper()")` will apply the `str.upper()` on the column `foo`.
+        features (List[Union[Tuple[str, str], Tuple[str, str, str]]]): List of tuples containing the column name and the method (`eval_func`) to apply.
+            As a third entry in the tuple an alternative name for the column can be provided. If not provided the column name will be used.
+            This can be useful if the the original column should not be replaced but another column should be created.
 
     Raises:
         ValueError: If the `eval_func` starts with a dot (`.`).
@@ -40,7 +41,9 @@ class ColumnEvalTransformer(BaseTransformer):
         ValueError: If the `eval_func` tries to assign multiple columns to one target column.
     """
 
-    def __init__(self, features: List[Tuple[str, str]]) -> None:
+    def __init__(
+        self, features: List[Union[Tuple[str, str], Tuple[str, str, str]]]
+    ) -> None:
         super().__init__()
         self.features = features
 
@@ -60,7 +63,11 @@ class ColumnEvalTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        for (column, eval_func) in self.features:
+        for eval_tuple in self.features:
+
+            column = eval_tuple[0]
+            eval_func = eval_tuple[1]
+            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore
 
             if eval_func[0] == ".":
                 raise ValueError(
@@ -77,7 +84,7 @@ class ColumnEvalTransformer(BaseTransformer):
                 )
 
             try:
-                X[column] = eval(  # pylint: disable=eval-used # nosec
+                X[new_column] = eval(  # pylint: disable=eval-used # nosec
                     f"X[{'column'}].{eval_func}"
                 )
             except ValueError as e:
