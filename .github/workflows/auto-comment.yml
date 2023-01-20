@@ -13,9 +13,9 @@ jobs:
             Please make sure you have given us as much context as possible.
           pullRequestOpened: |
             ⚠️ ⚠️ ⚠️
-            👋 @{{ author }}!
-            Please remember that we use [**fast-forward merge**](https://git-scm.com/docs/git-merge#Documentation/git-merge.txt---ff-only)
-            instead of using the usual *Create a merge commit*, *squash and merge* or *rebase and merge* for merging `develop` into `main` or vice versa.
+
+            👋 @{{ author }}
+            Please remember that we use [**fast-forward merge**](https://git-scm.com/docs/git-merge#Documentation/git-merge.txt---ff-only) instead of using the usual *Create a merge commit*, *squash and merge* or *rebase and merge* for merging `develop` into `main` or vice versa.
             You can execute it by creating a new comment in this PR with the following content:
             ```
             /fast-forward
