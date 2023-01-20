@@ -4,6 +4,7 @@
 ***A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps*** 🛠
 
 [![testing](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml/badge.svg?branch=main)](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/44093b8f6b28454fb8e0336ccb83cdc5)](https://www.codacy.com/gh/chrislemke/sk-transformers/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chrislemke/sk-transformers&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/github/chrislemke/sk-transformers/branch/main/graph/badge.svg?token=LJLXQXX6M8)](https://codecov.io/github/chrislemke/sk-transformers)
 [![deploy package](https://github.com/chrislemke/sk-transformers/actions/workflows/deploy-package.yml/badge.svg)](https://github.com/chrislemke/sk-transformers/actions/workflows/deploy-package.yml)
 [![pypi](https://img.shields.io/pypi/v/sk-transformers)](https://pypi.org/project/sk-transformers/)
