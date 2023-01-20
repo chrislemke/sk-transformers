@@ -1,6 +1,9 @@
 default_language_version:
   python: python3.10
 
+ci:
+  skip: [poetry-lock, poetry-export]
+
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
     rev: v2.1.1
