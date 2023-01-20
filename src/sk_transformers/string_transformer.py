@@ -389,3 +389,65 @@ class StringSlicerTransformer(BaseTransformer):
             X[feature] = [x[slice(*slice_args)] for x in X[feature]]
 
         return X
+
+
+class StringSplitterTransformer(BaseTransformer):
+    """Uses the pandas `str.split` method to split a column of strings into
+    multiple columns.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers import StringSplitterTransformer
+
+    X = pd.DataFrame({"foo": ["a_b", "c_d", "e_f"], "bar": ["g*h*i", "j*k*l", "m*n*o"]})
+    transformer = StringSplitterTransformer([("foo", "_", 2), ("bar", "*", 3)])
+    transformer.fit_transform(X)
+    ```
+    ```
+       foo    bar foo_part_1 foo_part_2 bar_part_1 bar_part_2 bar_part_3
+    0  a_b  g*h*i          a          b          g          h          i
+    1  c_d  j*k*l          c          d          j          k          l
+    2  e_f  m*n*o          e          f          m          n          o
+    ```
+
+    Args:
+        features (List[Tuple[str, str, int]]): A list of tuples where
+            the first element is the name of the feature,
+            the second element is the string separator,
+            and the third element is the desired number of splits.
+    """
+
+    def __init__(
+        self,
+        features: List[
+            Tuple[
+                str,
+                str,
+                int,
+            ]
+        ],
+    ) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Splits the strings based on a separator character.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Dataframe containing additional columns containing
+                each split part of the string.
+        """
+
+        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
+
+        for column, separator, maxsplit in self.features:
+            split_column_names = [f"{column}_part_{i+1}" for i in range(maxsplit)]
+            X[split_column_names] = X[column].str.split(
+                separator, n=maxsplit, expand=True
+            )
+
+        return X

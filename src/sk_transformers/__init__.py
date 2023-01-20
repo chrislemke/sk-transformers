@@ -24,4 +24,5 @@ from sk_transformers.string_transformer import (
     PhoneTransformer,
     StringSimilarityTransformer,
     StringSlicerTransformer,
+    StringSplitterTransformer,
 )
