@@ -9,6 +9,76 @@ from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
 
+class ColumnEvalTransformer(BaseTransformer):
+    """Provides the possibility to use Pandas methods on columns.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers import ColumnEvalTransformer
+
+    X = pd.DataFrame({"foo": ["a", "b", "c"], "bar": [1, 2, 3]})
+    transformer = ColumnEvalTransformer(
+        [("foo", "str.upper()"), ("bar", "swifter.apply(lambda x: x + 1)")] # swifter is optional. But it speed up the process!
+    )
+    transformer.fit_transform(X)
+    ```
+    ```
+       foo  bar
+    0    A    2
+    1    B    3
+    2    C    4
+    ```
+    """
+
+    def __init__(self, features: List[Tuple[str, str]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Transform the dataframe by using the `eval` function provided.
+
+        Args:
+            X (pandas.DataFrame): dataframe to transform.
+        Returns:
+            pandas.DataFrame: Transformed dataframe.
+        """
+
+        check_ready_to_transform(
+            self,
+            X,
+            [feature[0] for feature in self.features],
+            force_all_finite="allow-nan",
+        )
+
+        for (column, eval_func) in self.features:
+
+            if eval_func[0] == ".":
+                raise ValueError(
+                    "The provided `eval_func` must not start with a dot! Just write e.g. `str.len()` instead of `.str.len()`."
+                )
+
+            if "apply" in eval_func and "swifter" not in eval_func:
+                raise Warning(
+                    """
+                    Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
+                    E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
+                    This will speed up your code. Read more about it here: https://github.com/jmcarpenter2/swifter.
+                    """
+                )
+
+            try:
+                X[column] = eval(  # pylint: disable=eval-used
+                    f"X[{'column'}].{eval_func}"
+                )
+            except AttributeError as e:
+                raise AttributeError(
+                    f"The Pandas Series `{column}` does not has the attribute `{eval_func.replace('(', '').replace(')', '')}`!"
+                ) from e
+
+        return X
+
+
 class DtypeTransformer(BaseTransformer):
     """Transformer that converts a column to a different dtype.
 

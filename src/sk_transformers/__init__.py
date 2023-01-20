@@ -8,6 +8,7 @@ from sk_transformers.generic_transformer import (
     AggregateTransformer,
     AllowedValuesTransformer,
     ColumnDropperTransformer,
+    ColumnEvalTransformer,
     DtypeTransformer,
     FunctionsTransformer,
     LeftJoinTransformer,
