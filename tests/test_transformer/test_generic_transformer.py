@@ -61,12 +61,16 @@ def test_column_eval_transformer_with_eval_func_to_multiple_columns(X_strings) -
                         """
     )
 
+
 def test_column_eval_transformer_for_value_error(X_strings) -> None:
     with pytest.raises(ValueError) as error:
         transformer = ColumnEvalTransformer([("email", "astype(int)")])
         _ = transformer.fit_transform(X_strings)
     str(error.value)
-    assert str(error.value) == "invalid literal for int() with base 10: 'test@test1.com'"
+    assert (
+        str(error.value) == "invalid literal for int() with base 10: 'test@test1.com'"
+    )
+
 
 def test_column_eval_transformer_with_warning(X_numbers) -> None:
     with pytest.raises(Warning) as warning:
