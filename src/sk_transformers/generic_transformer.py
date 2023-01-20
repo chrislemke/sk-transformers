@@ -29,6 +29,15 @@ class ColumnEvalTransformer(BaseTransformer):
     1    B    3
     2    C    4
     ```
+
+    Args:
+        features (List[Tuple[str, str]]): List of tuples containing the column name and the method (`eval_func`) to apply.
+            E.g. `("foo", "str.upper()")` will apply the `str.upper()` on the column `foo`.
+
+    Raises:
+        ValueError: If the `eval_func` starts with a dot (`.`).
+        Warning: If the `eval_func` contains `apply` but not `swifter`.
+        ValueError: If the `eval_func` tries to assign multiple columns to one target column.
     """
 
     def __init__(self, features: List[Tuple[str, str]]) -> None:
@@ -71,6 +80,16 @@ class ColumnEvalTransformer(BaseTransformer):
                 X[column] = eval(  # pylint: disable=eval-used
                     f"X[{'column'}].{eval_func}"
                 )
+            except ValueError as e:
+                if str(e) == "Columns must be same length as key":
+                    raise ValueError(
+                        f"""
+                        Your `eval_func` (`{eval_func}`) for the column `{column}`
+                        tries to assign multiple columns to one target column. This is not possible!
+                        Please adjust your `eval_func` to only return one column.
+                        """
+                    ) from e
+                raise e
             except AttributeError as e:
                 raise AttributeError(
                     f"The Pandas Series `{column}` does not has the attribute `{eval_func.replace('(', '').replace(')', '')}`!"
@@ -116,7 +135,7 @@ class DtypeTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        check_ready_to_transform(
+        X = check_ready_to_transform(
             self,
             X,
             [feature[0] for feature in self.features],

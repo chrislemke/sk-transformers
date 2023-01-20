@@ -49,6 +49,19 @@ def test_column_eval_transformer_with_invalid_eval(X_strings) -> None:
     )
 
 
+def test_column_eval_transformer_with_eval_func_to_multiple_columns(X_strings) -> None:
+    with pytest.raises(ValueError) as error:
+        transformer = ColumnEvalTransformer([("email", "str.split('@', expand=True)")])
+        _ = transformer.fit_transform(X_strings)
+    assert str(error.value) == (
+        """
+                        Your `eval_func` (`str.split('@', expand=True)`) for the column `email`
+                        tries to assign multiple columns to one target column. This is not possible!
+                        Please adjust your `eval_func` to only return one column.
+                        """
+    )
+
+
 def test_column_eval_transformer_with_warning(X_numbers) -> None:
     with pytest.raises(Warning) as warning:
         transformer = ColumnEvalTransformer(
