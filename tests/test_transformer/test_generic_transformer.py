@@ -7,6 +7,7 @@ from sk_transformers import (
     AggregateTransformer,
     AllowedValuesTransformer,
     ColumnDropperTransformer,
+    ColumnEvalTransformer,
     DtypeTransformer,
     FunctionsTransformer,
     LeftJoinTransformer,
@@ -18,6 +19,90 @@ from sk_transformers import (
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
+
+
+def test_column_eval_transformer_in_pipeline(X_strings) -> None:
+    pipeline = make_pipeline(ColumnEvalTransformer([("email", "str.contains('@')")]))
+    X = pipeline.fit_transform(X_strings)
+
+    assert X["email"].to_list() == [True, True, True, True, True, False]
+    assert pipeline.steps[0][0] == "columnevaltransformer"
+
+
+def test_column_eval_transformer_in_pipeline_new_column(X_strings) -> None:
+    pipeline = make_pipeline(
+        ColumnEvalTransformer([("email", "str.contains('@')", "new_column")])
+    )
+    X = pipeline.fit_transform(X_strings)
+
+    assert X["new_column"].to_list() == [True, True, True, True, True, False]
+    assert pipeline.steps[0][0] == "columnevaltransformer"
+
+
+def test_column_eval_transformer_with_invalid_start_of_eval(X_strings) -> None:
+    with pytest.raises(ValueError) as error:
+        transformer = ColumnEvalTransformer([("email", ".str.contains('@')")])
+        _ = transformer.fit_transform(X_strings)
+    assert (
+        str(error.value)
+        == "The provided `eval_func` must not start with a dot! Just write e.g. `str.len()` instead of `.str.len()`."
+    )
+
+
+def test_column_eval_transformer_with_invalid_eval(X_strings) -> None:
+    with pytest.raises(AttributeError) as error:
+        transformer = ColumnEvalTransformer([("email", "invalid_func()")])
+        _ = transformer.fit_transform(X_strings)
+    assert (
+        str(error.value)
+        == "The Pandas Series `email` does not has the attribute `invalid_func`!"
+    )
+
+
+def test_column_eval_transformer_with_eval_func_to_multiple_columns(X_strings) -> None:
+    with pytest.raises(ValueError) as error:
+        transformer = ColumnEvalTransformer([("email", "str.split('@', expand=True)")])
+        _ = transformer.fit_transform(X_strings)
+    assert str(error.value) == (
+        """
+                        Your `eval_func` (`str.split('@', expand=True)`) for the column `email`
+                        tries to assign multiple columns to one target column. This is not possible!
+                        Please adjust your `eval_func` to only return one column.
+                        """
+    )
+
+
+def test_column_eval_transformer_for_value_error(X_strings) -> None:
+    with pytest.raises(ValueError) as error:
+        transformer = ColumnEvalTransformer([("email", "astype(int)")])
+        _ = transformer.fit_transform(X_strings)
+    str(error.value)
+    assert (
+        str(error.value) == "invalid literal for int() with base 10: 'test@test1.com'"
+    )
+
+
+def test_column_eval_transformer_with_warning(X_numbers) -> None:
+    with pytest.raises(Warning) as warning:
+        transformer = ColumnEvalTransformer(
+            [("small_numbers", "apply(lambda x: x + 1)")]
+        )
+        _ = transformer.fit_transform(X_numbers)
+    assert str(warning.value) == (
+        """
+                    Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
+                    E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
+                    This will speed up your code. Read more about it here: https://github.com/jmcarpenter2/swifter.
+                    """
+    )
+
+
+def test_column_eval_transformer_with_swifter(X_numbers) -> None:
+    transformer = ColumnEvalTransformer(
+        [("small_numbers", "swifter.apply(lambda x: x + 1)")]
+    )
+    X = transformer.fit_transform(X_numbers)
+    assert X["small_numbers"].to_list() == [8, 13, 83, 2, 1]
 
 
 def test_dtype_transformer_in_pipeline(X) -> None:

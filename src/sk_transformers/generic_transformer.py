@@ -9,6 +9,102 @@ from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
 
+class ColumnEvalTransformer(BaseTransformer):
+    """Provides the possibility to use Pandas methods on columns.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers import ColumnEvalTransformer
+
+    X = pd.DataFrame({"foo": ["a", "b", "c"], "bar": [1, 2, 3]})
+    transformer = ColumnEvalTransformer(
+        [("foo", "str.upper()"), ("bar", "swifter.apply(lambda x: x + 1)")] # swifter is optional. But it speed up the process!
+    )
+    transformer.fit_transform(X)
+    ```
+    ```
+       foo  bar
+    0    A    2
+    1    B    3
+    2    C    4
+    ```
+
+    Args:
+        features (List[Union[Tuple[str, str], Tuple[str, str, str]]]): List of tuples containing the column name and the method (`eval_func`) to apply.
+            As a third entry in the tuple an alternative name for the column can be provided. If not provided the column name will be used.
+            This can be useful if the the original column should not be replaced but another column should be created.
+
+    Raises:
+        ValueError: If the `eval_func` starts with a dot (`.`).
+        Warning: If the `eval_func` contains `apply` but not `swifter`.
+        ValueError: If the `eval_func` tries to assign multiple columns to one target column.
+    """
+
+    def __init__(
+        self, features: List[Union[Tuple[str, str], Tuple[str, str, str]]]
+    ) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Transform the dataframe by using the `eval` function provided.
+
+        Args:
+            X (pandas.DataFrame): dataframe to transform.
+        Returns:
+            pandas.DataFrame: Transformed dataframe.
+        """
+
+        X = check_ready_to_transform(
+            self,
+            X,
+            [feature[0] for feature in self.features],
+            force_all_finite="allow-nan",
+        )
+
+        for eval_tuple in self.features:
+
+            column = eval_tuple[0]
+            eval_func = eval_tuple[1]
+            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore
+
+            if eval_func[0] == ".":
+                raise ValueError(
+                    "The provided `eval_func` must not start with a dot! Just write e.g. `str.len()` instead of `.str.len()`."
+                )
+
+            if "apply" in eval_func and "swifter" not in eval_func:
+                raise Warning(
+                    """
+                    Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
+                    E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
+                    This will speed up your code. Read more about it here: https://github.com/jmcarpenter2/swifter.
+                    """
+                )
+
+            try:
+                X[new_column] = eval(  # pylint: disable=eval-used # nosec
+                    f"X[{'column'}].{eval_func}"
+                )
+            except ValueError as e:
+                if str(e) == "Columns must be same length as key":
+                    raise ValueError(
+                        f"""
+                        Your `eval_func` (`{eval_func}`) for the column `{column}`
+                        tries to assign multiple columns to one target column. This is not possible!
+                        Please adjust your `eval_func` to only return one column.
+                        """
+                    ) from e
+                raise e
+            except AttributeError as e:
+                raise AttributeError(
+                    f"The Pandas Series `{column}` does not has the attribute `{eval_func.replace('(', '').replace(')', '')}`!"
+                ) from e
+
+        return X
+
+
 class DtypeTransformer(BaseTransformer):
     """Transformer that converts a column to a different dtype.
 
@@ -46,7 +142,7 @@ class DtypeTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        check_ready_to_transform(
+        X = check_ready_to_transform(
             self,
             X,
             [feature[0] for feature in self.features],
@@ -117,7 +213,7 @@ class AggregateTransformer(BaseTransformer):
             pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
         """
 
-        check_ready_to_transform(
+        X = check_ready_to_transform(
             self,
             X,
             [feature[0] for feature in self.features]
