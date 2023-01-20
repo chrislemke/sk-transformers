@@ -544,7 +544,9 @@ class QueryTransformer(BaseTransformer):
             pd.DataFrame: Dataframe with the queries applied.
         """
 
-        Xy = check_ready_to_transform(self, Xy, force_all_finite="allow-nan")
+        Xy = check_ready_to_transform(
+            self, Xy, Xy.columns, force_all_finite="allow-nan"
+        )
         for query in self.queries:
             Xy = Xy.query(query, inplace=False)
         return Xy
