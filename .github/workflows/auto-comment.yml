@@ -18,9 +18,10 @@ jobs:
             Please remember that we use [**fast-forward merge**](https://git-scm.com/docs/git-merge#Documentation/git-merge.txt---ff-only) instead of using the usual *Create a merge commit*, *squash and merge* or *rebase and merge* for merging `develop` into `main` or vice versa.
             You can execute it by creating a new comment in this PR with the following content:
             ```
-            /fast-forward
+            fast-forward
             ```
-            **please create this comment only after all tests have been completed positively!**
+            ***With an additional slash (`/`) before the command.***
+            **Please create this comment only after all tests have been completed positively!**
 
             For merging your feature branch to `develop` please use [*squash and merge*](https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/incorporating-changes-from-a-pull-request/about-pull-request-merges#squash-and-merge-your-commits).
 
