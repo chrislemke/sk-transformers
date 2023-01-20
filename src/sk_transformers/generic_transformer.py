@@ -53,7 +53,7 @@ class ColumnEvalTransformer(BaseTransformer):
             pandas.DataFrame: Transformed dataframe.
         """
 
-        check_ready_to_transform(
+        X = check_ready_to_transform(
             self,
             X,
             [feature[0] for feature in self.features],
@@ -77,7 +77,7 @@ class ColumnEvalTransformer(BaseTransformer):
                 )
 
             try:
-                X[column] = eval(  # pylint: disable=eval-used
+                X[column] = eval(  # pylint: disable=eval-used # nosec
                     f"X[{'column'}].{eval_func}"
                 )
             except ValueError as e:
@@ -206,7 +206,7 @@ class AggregateTransformer(BaseTransformer):
             pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
         """
 
-        check_ready_to_transform(
+        X = check_ready_to_transform(
             self,
             X,
             [feature[0] for feature in self.features]

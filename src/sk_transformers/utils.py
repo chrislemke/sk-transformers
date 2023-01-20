@@ -5,7 +5,7 @@ from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array, check_is_fitted
 
 
-def  check_ready_to_transform(
+def check_ready_to_transform(
     transformer: Any,
     X: pd.DataFrame,
     features: Optional[Union[str, List[str]]] = None,
