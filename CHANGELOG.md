@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.9.0](https://github.com/chrislemke/sk-transformers/compare/v0.8.0...v0.9.0) (2023-01-20)
+
+
+### Features
+
+* add ColumnEvalTransformer ([#52](https://github.com/chrislemke/sk-transformers/issues/52)) ([a03b079](https://github.com/chrislemke/sk-transformers/commit/a03b079d1818674c7115b4f3122656f0f1af1b1d))
+* add string_splitter_transformer ([#53](https://github.com/chrislemke/sk-transformers/issues/53)) ([fdf89e1](https://github.com/chrislemke/sk-transformers/commit/fdf89e1dd9cb9de1348a9be11796a24023ec1817))
+
+
+### Bug Fixes
+
+* allow nans in query transformer ([b8bf874](https://github.com/chrislemke/sk-transformers/commit/b8bf8748124b12f634182af5660875f3b98e397c))
+
+
+### Maintenance
+
+* improve data check by only checking used columns ([#54](https://github.com/chrislemke/sk-transformers/issues/54)) ([ca450a4](https://github.com/chrislemke/sk-transformers/commit/ca450a4d69d0b9136996edf3dedb8a7e51b148d7))
+
+
+### CI/CD
+
+* add ability to run the Release action manually ([#56](https://github.com/chrislemke/sk-transformers/issues/56)) ([42f76a3](https://github.com/chrislemke/sk-transformers/commit/42f76a318e1202c6556b4b7f335cb855ec30368a))
+
 ## [0.8.0](https://github.com/chrislemke/sk-transformers/compare/v0.7.4...v0.8.0) (2023-01-18)
 
 
