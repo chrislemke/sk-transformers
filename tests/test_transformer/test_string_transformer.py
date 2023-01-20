@@ -8,6 +8,7 @@ from sk_transformers import (
     PhoneTransformer,
     StringSimilarityTransformer,
     StringSlicerTransformer,
+    StringSplitterTransformer,
 )
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
@@ -156,3 +157,34 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
 
     assert pipeline.steps[0][0] == "stringslicertransformer"
     assert result.equals(expected)
+
+
+def test_string_splitter_transformer_in_pipeline(X_strings):
+    pipeline = make_pipeline(
+        StringSplitterTransformer(
+            [
+                ("email", "@", 2),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(X_strings)
+    expected_part_1 = [
+        "test",
+        "test123",
+        "test_123$$",
+        "test_test",
+        "ttt",
+        "test_test_test",
+    ]
+    expected_part_2 = [
+        "test1.com",
+        "test2.com",
+        "test3.com",
+        "test4.com",
+        "test5.com",
+        None,
+    ]
+
+    assert np.array_equal(result["email_part_1"], expected_part_1)
+    assert np.array_equal(result["email_part_2"], expected_part_2)
+    assert pipeline.steps[0][0] == "stringsplittertransformer"
