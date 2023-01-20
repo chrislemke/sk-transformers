@@ -33,7 +33,6 @@ def check_ready_to_transform(
         ValueError: If the input `X` does not contain the feature.
         ValueError: if the input `X` does not contain all features.
 
-
     Returns:
         pandas.DataFrame: A checked copy of original dataframe.
     """
