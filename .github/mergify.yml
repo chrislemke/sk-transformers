@@ -1,0 +1,28 @@
+pull_request_rules:
+  - name: Fast-forward merge
+    conditions:
+      - or:
+          - base=develop
+          - base=main
+      - or:
+          - head=develop
+          - head=main
+      - and:
+          - -conflict
+    actions:
+      merge:
+        method: fast-forward
+
+  - name: Release squash merge
+    conditions:
+      - or:
+          - base=main
+      - or:
+          - head~=^release-please--branches--main
+      - and:
+          - title~=^chore\(main\)
+          - -conflict
+          - approved-reviews-by>=1
+    actions:
+      merge:
+        method: squash

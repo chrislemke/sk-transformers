@@ -2,12 +2,13 @@ name: DeployPackage
 
 on:
   push:
-    branches:
-      - "main"
+    branches: [main]
 
 jobs:
-  deploy:
-    if: ${{ startsWith(github.event.head_commit.message, 'chore(main)') }}
+  deploy-package:
+    if: |
+      ${{ startsWith(github.event.head_commit.message, 'chore(main)') &&
+      startsWith(github.head_ref, 'release-please--branches--main') }}
     runs-on: ubuntu-latest
     environment: deploy-package
     steps:
