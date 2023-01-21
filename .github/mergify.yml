@@ -22,7 +22,19 @@ pull_request_rules:
       - and:
           - title~=^chore\(main\)
           - -conflict
-          - approved-reviews-by>=1
     actions:
       merge:
         method: squash
+
+  - name: main to develop fast-forward
+    conditions:
+      - or:
+          - base=develop
+      - or:
+          - head=main
+      - and:
+          - title=^resolve
+          - -conflict
+    actions:
+      merge:
+        method: fast-forward
