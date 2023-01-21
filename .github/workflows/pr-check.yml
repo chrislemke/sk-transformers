@@ -1,4 +1,4 @@
-name: BranchNameCheck
+name: PRCheck
 on:
   pull_request_target:
     types: [opened]
@@ -8,7 +8,7 @@ permissions:
   pull-requests: write
 
 jobs:
-  branch-name-check:
+  pr-check-main:
     if: ${{ !startsWith(github.head_ref, 'release-please--branches--main') }}
     runs-on: ubuntu-latest
     steps:
@@ -20,5 +20,17 @@ jobs:
             🚨 🚨 🚨
             Merging the `${{ github.head_ref }}` branch into `main` is not allowed.
             Only `develop` (and release branches) can be merged into `main`.
+
+            **This pull request will be closed!**
+  pr-check-gh-pages:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          if: ${{ github.base_ref == 'gh-pages' }}
+          comment: |
+            🚨 🚨 🚨
+            No pull request are allowed to be merged into `gh-pages`.
 
             **This pull request will be closed!**
