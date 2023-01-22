@@ -1,11 +1,9 @@
 pull_request_rules:
   - name: Develop to main fast-forward merge
     conditions:
-      - or:
-          - base=main
-      - or:
-          - head=develop
       - and:
+          - base=main
+          - head=develop
           - -conflict
     actions:
       merge:
@@ -13,12 +11,10 @@ pull_request_rules:
 
   - name: Release squash merge
     conditions:
-      - or:
-          - base=main
-      - or:
-          - head~=^release-please--branches--main
       - and:
-          - title~=^chore\(main\)
+          - base=main
+          - head~=^release-please--branches--main
+          - title~=^chore\(main\).*release.*
           - -conflict
     actions:
       merge:
@@ -26,12 +22,10 @@ pull_request_rules:
 
   - name: Main to develop fast-forward merge
     conditions:
-      - or:
-          - base=develop
-      - or:
-          - head=main
       - and:
-          - title=^resolve
+          - base=develop
+          - head=main
+          - title~=^resolve.*fast-forward merge `main` into `develop`.*
           - -conflict
     actions:
       merge:

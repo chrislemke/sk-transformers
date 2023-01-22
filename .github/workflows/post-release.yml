@@ -1,0 +1,68 @@
+name: PostRelease
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  deploy-package:
+    name: Deploy package to PyPI
+    if: ${{ startsWith(github.event.head_commit.message, 'chore(main)') && startsWith(github.head_ref, 'release-please--branches--main') }}
+    runs-on: ubuntu-latest
+    environment: deploy-package
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install poetry
+        run: |
+          curl -O -sSL https://install.python-poetry.org/install-poetry.py
+          python install-poetry.py -y --version 1.3.1
+          echo "PATH=${HOME}/.poetry/bin:${PATH}" >> $GITHUB_ENV
+          rm install-poetry.py
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "poetry"
+      - run: poetry env use python3.10
+      - run: poetry config pypi-token.pypi ${{ secrets.PYPI_TOKEN }}
+      - run: poetry publish --build
+
+  deploy-docs:
+    name: Deploy documentation
+    needs: deploy-package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install poetry
+        run: |
+          curl -O -sSL https://install.python-poetry.org/install-poetry.py
+          python install-poetry.py -y --version 1.3.1
+          echo "PATH=${HOME}/.poetry/bin:${PATH}" >> $GITHUB_ENV
+          rm install-poetry.py
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.10"
+          cache: "poetry"
+      - run: poetry env use python3.10
+      - run: poetry install --with docs
+      - run: poetry run mkdocs gh-deploy --force --clean --verbose
+
+  fast-forward-merge-pr:
+    name: Create fast-forward merge PR
+    needs: deploy-package
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v4
+        with:
+          branch: main
+          base: develop
+          title: "resolve: fast-forward merge `main` into `develop`"
+      - uses: wow-actions/auto-comment@v1
+        if: ${{ github.base_ref == 'develop' && github.head_ref == 'main' && contains(github.event.pull_request.title, 'fast-forward merge `main` into `develop`') }}
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          pullRequestOpened: |
+            ℹ️ ℹ️ ℹ️
+            This pull request was created automatically by a GitHub Action to fast-forward-merge the `main` branch into `develop`.
+            it will be automatically merged. You don't need to do anything. Have a 🍪 and enjoy this automation!
