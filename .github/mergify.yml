@@ -1,12 +1,10 @@
 pull_request_rules:
-  - name: Fast-forward merge
+  - name: Develop to main fast-forward merge
     conditions:
       - or:
-          - base=develop
           - base=main
       - or:
           - head=develop
-          - head=main
       - and:
           - -conflict
     actions:
@@ -26,7 +24,7 @@ pull_request_rules:
       merge:
         method: squash
 
-  - name: main to develop fast-forward
+  - name: Main to develop fast-forward merge
     conditions:
       - or:
           - base=develop
