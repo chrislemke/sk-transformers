@@ -24,7 +24,7 @@ pull_request_rules:
     conditions:
       - and:
           - base=develop
-          - head=main
+          - head=temp-main
           - title~=^resolve.*fast-forward merge `main` into `develop`.*
           - -conflict
     actions:

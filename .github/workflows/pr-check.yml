@@ -39,7 +39,7 @@ jobs:
 
   pr-check-main-gh-pages:
     name: Close PR (no merge from gh-pages to develop)
-    if: ${{ github.base_ref == 'develop' && github.head_ref != 'gh-pages' }}
+    if: ${{ github.base_ref == 'develop' && github.head_ref == 'gh-pages' }}
     runs-on: ubuntu-latest
     steps:
       - uses: superbrothers/close-pull-request@v3
