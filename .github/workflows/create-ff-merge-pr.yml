@@ -18,9 +18,9 @@ jobs:
           title: "resolve: fast-forward merge `main` into `develop`"
       - uses: wow-actions/auto-comment@v1
         if: |
-          ${{ github.base_ref == 'develop' &&
+          github.base_ref == 'develop' &&
           github.head_ref == 'main' &&
-          github.event.pull_request.title == 'resolve: fast-forward merge `main` into `develop`' }}
+          github.event.pull_request.title == 'resolve: fast-forward merge `main` into `develop`'
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           pullRequestOpened: |

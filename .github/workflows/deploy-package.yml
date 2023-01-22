@@ -7,9 +7,7 @@ on:
 jobs:
   deploy-package:
     name: Deploy package to PyPI
-    if: |
-      ${{ startsWith(github.event.head_commit.message, 'chore(main)') &&
-      startsWith(github.head_ref, 'release-please--branches--main') }}
+    if: ${{ startsWith(github.event.head_commit.message, 'chore(main)') && startsWith(github.head_ref, 'release-please--branches--main') }}
     runs-on: ubuntu-latest
     environment: deploy-package
     steps:
