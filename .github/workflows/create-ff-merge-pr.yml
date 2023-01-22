@@ -6,6 +6,7 @@ on:
 
 jobs:
   fast-forward-merge-pr:
+    name: Create fast-forward merge PR
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3

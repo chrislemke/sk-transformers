@@ -6,6 +6,7 @@ on:
 
 jobs:
   deploy-docs:
+    name: Deploy documentation
     if: |
       ${{ startsWith(github.event.head_commit.message, 'chore(main)') &&
       startsWith(github.head_ref, 'release-please--branches--main') }}

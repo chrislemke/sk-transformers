@@ -4,6 +4,7 @@ on: [pull_request]
 
 jobs:
   code-coverage:
+    name: Create code coverage report
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
