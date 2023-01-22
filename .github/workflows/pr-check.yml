@@ -9,7 +9,7 @@ permissions:
 
 jobs:
   pr-check-main:
-    name: Close PR (no merge to main except from develop)
+    name: Close PR (no merge to main except from develop or release branches)
     if: ${{ !startsWith(github.head_ref, 'release-please--branches--main') && github.base_ref == 'main' && github.head_ref != 'develop' }}
     runs-on: ubuntu-latest
     steps:
@@ -34,5 +34,19 @@ jobs:
           comment: |
             🚨 🚨 🚨
             No pull request are allowed to be merged into `gh-pages`.
+
+            **This pull request will be closed**❗️
+
+  pr-check-main-gh-pages:
+    name: Close PR (no merge from gh-pages to develop)
+    if: ${{ github.base_ref == 'develop' && github.head_ref != 'gh-pages' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment: |
+            🚨 🚨 🚨
+            Merging the `${{ github.head_ref }}` branch into `develop` is not allowed.
 
             **This pull request will be closed**❗️
