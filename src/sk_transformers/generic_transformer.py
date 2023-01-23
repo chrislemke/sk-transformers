@@ -55,7 +55,6 @@ class ColumnEvalTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-
         X = check_ready_to_transform(
             self,
             X,
@@ -212,7 +211,6 @@ class AggregateTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
         """
-
         X = check_ready_to_transform(
             self,
             X,
@@ -292,7 +290,6 @@ class FunctionsTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: The original dataframe with the modified columns.
         """
-
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (column, func, kwargs) in self.features:
@@ -344,7 +341,6 @@ class MapTransformer(BaseTransformer):
             pandas.DataFrame: The dataframe containing
                 the new column together with the non-transformed original columns.
         """
-
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (feature, callback) in self.features:
@@ -543,7 +539,6 @@ class QueryTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with the queries applied.
         """
-
         Xy = check_ready_to_transform(
             self, Xy, Xy.columns, force_all_finite="allow-nan"
         )
@@ -609,7 +604,6 @@ class ValueReplacerTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with replaced values.
         """
-
         X = check_ready_to_transform(
             self, X, [feature[0][0] for feature in self.features]
         )
@@ -688,7 +682,6 @@ class LeftJoinTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe joined on the given columns.
         """
-
         X = check_ready_to_transform(
             self,
             X,
@@ -757,7 +750,6 @@ class AllowedValuesTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with replaced values.
         """
-
         X = check_ready_to_transform(
             self,
             X,
