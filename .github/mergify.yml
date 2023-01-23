@@ -1,0 +1,32 @@
+pull_request_rules:
+  - name: Develop to main fast-forward merge
+    conditions:
+      - and:
+          - base=main
+          - head=develop
+          - -conflict
+    actions:
+      merge:
+        method: fast-forward
+
+  - name: Release squash merge
+    conditions:
+      - and:
+          - base=main
+          - head~=^release-please--branches--main
+          - title~=^chore\(main\).*release.*
+          - -conflict
+    actions:
+      merge:
+        method: squash
+
+  - name: Main to develop fast-forward merge
+    conditions:
+      - and:
+          - base=develop
+          - head=temp-main
+          - title~=^resolve.*fast-forward merge `main` into `develop`.*
+          - -conflict
+    actions:
+      merge:
+        method: fast-forward
