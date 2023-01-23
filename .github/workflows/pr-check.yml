@@ -1,0 +1,66 @@
+name: PRCheck
+on:
+  pull_request_target:
+    types: [opened, edited, reopened]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  pr-check-main:
+    name: Close PR (no merge to main except from develop or release branches)
+    if: ${{ !startsWith(github.head_ref, 'release-please--branches--main') && github.base_ref == 'main' && github.head_ref != 'develop' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment: |
+            🚨 🚨 🚨
+            Merging the `${{ github.head_ref }}` branch into `main` is not allowed.
+            Only `develop` (and release branches) can be merged into `main`.
+
+            **This pull request will be closed**❗️
+
+  pr-check-gh-pages:
+    name: Close PR (no PR to gh-pages)
+    if: github.base_ref == 'gh-pages'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment: |
+            🚨 🚨 🚨
+            No pull request are allowed to be merged into `gh-pages`.
+
+            **This pull request will be closed**❗️
+
+  pr-check-main-gh-pages:
+    name: Close PR (no merge from gh-pages to develop)
+    if: ${{ github.base_ref == 'develop' && github.head_ref == 'gh-pages' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment: |
+            🚨 🚨 🚨
+            Merging the `${{ github.head_ref }}` branch into `develop` is not allowed.
+
+            **This pull request will be closed**❗️
+
+  pr-check-main-develop:
+    name: Close PR (no merge from main to develop)
+    if: ${{ github.base_ref == 'develop' && github.head_ref == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment: |
+            🚨 🚨 🚨
+            Merging the `${{ github.head_ref }}` branch into `develop` is not allowed.
+
+            **This pull request will be closed**❗️

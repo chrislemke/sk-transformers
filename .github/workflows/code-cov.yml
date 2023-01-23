@@ -3,7 +3,8 @@ name: CodeCov
 on: [pull_request]
 
 jobs:
-  run:
+  code-coverage:
+    name: Create code coverage report
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
