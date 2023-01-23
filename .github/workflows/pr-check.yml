@@ -50,3 +50,17 @@ jobs:
             Merging the `${{ github.head_ref }}` branch into `develop` is not allowed.
 
             **This pull request will be closed**❗️
+
+  pr-check-main-develop:
+    name: Close PR (no merge from main to develop)
+    if: ${{ github.base_ref == 'develop' && github.head_ref == 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - uses: superbrothers/close-pull-request@v3
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          comment: |
+            🚨 🚨 🚨
+            Merging the `${{ github.head_ref }}` branch into `develop` is not allowed.
+
+            **This pull request will be closed**❗️
