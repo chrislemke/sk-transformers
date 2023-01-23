@@ -3,10 +3,9 @@
 # sk-transformers
 ***A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps*** 🛠
 
-[![testing](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml/badge.svg?branch=main)](https://github.com/chrislemke/sk-transformers/actions/workflows/testing.yml)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/44093b8f6b28454fb8e0336ccb83cdc5)](https://www.codacy.com/gh/chrislemke/sk-transformers/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=chrislemke/sk-transformers&amp;utm_campaign=Badge_Grade)
+[![ChecksAndTesting](https://github.com/chrislemke/sk-transformers/actions/workflows/checks-testing.yml/badge.svg)](https://github.com/chrislemke/sk-transformers/actions/workflows/checks-testing.yml)
 [![codecov](https://codecov.io/github/chrislemke/sk-transformers/branch/main/graph/badge.svg?token=LJLXQXX6M8)](https://codecov.io/github/chrislemke/sk-transformers)
-[![deploy package](https://github.com/chrislemke/sk-transformers/actions/workflows/deploy-package.yml/badge.svg)](https://github.com/chrislemke/sk-transformers/actions/workflows/deploy-package.yml)
+[![Release](https://github.com/chrislemke/sk-transformers/actions/workflows/release.yml/badge.svg)](https://github.com/chrislemke/sk-transformers/actions/workflows/release.yml)
 [![pypi](https://img.shields.io/pypi/v/sk-transformers)](https://pypi.org/project/sk-transformers/)
 [![python version](https://img.shields.io/pypi/pyversions/sk-transformers?logo=python&logoColor=yellow)](https://www.python.org/)
 [![downloads](https://img.shields.io/pypi/dm/sk-transformers)](https://pypistats.org/packages/sk-transformers)

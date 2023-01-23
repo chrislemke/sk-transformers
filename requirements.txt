@@ -1205,9 +1205,9 @@ smart-open==6.3.0 ; python_version >= "3.8" and python_version < "3.11" \
 smmap==5.0.0 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:2aba19d6a040e78d8b09de5c57e96207b09ed71d8e55ce0959eeee6c8e190d94 \
     --hash=sha256:c840e62059cd3be204b0c9c9f74be2c09d5648eddd4580d9314c3ecde0b30936
-spacy-legacy==3.0.11 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:7b2a72bfe8e135c5885ecf22db946daa352c7a24639aaeda10a76d4c1c66196f \
-    --hash=sha256:bfaef03c377c323a3089b1885518e0dad489597b07a80af2499750b24fdbf54b
+spacy-legacy==3.0.12 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:476e3bd0d05f8c339ed60f40986c07387c0a71479245d6d0f4298dbd52cda55f \
+    --hash=sha256:b37d6e0c9b6e1d7ca1cf5bc7152ab64a4c4671f59c85adaf7a3fcb870357a774
 spacy-loggers==1.0.4 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:e050bf2e63208b2f096b777e494971c962ad7c1dc997641c8f95c622550044ae \
     --hash=sha256:e6f983bf71230091d5bb7b11bf64bd54415eca839108d5f83d9155d0ba93bf28
