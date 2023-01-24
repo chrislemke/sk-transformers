@@ -112,7 +112,6 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         Returns:
             ToVecTransformer: The fitted transformer.
         """
-
         self.fitted_ = True
 
         preprocessor = TabPreprocessor(
@@ -164,7 +163,6 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         Returns:
             pd.DataFrame: The embeddings.
         """
-
         X = check_ready_to_transform(
             self,
             X,

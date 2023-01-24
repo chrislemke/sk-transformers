@@ -81,7 +81,6 @@ class MathExpressionTransformer(BaseTransformer):
         Returns:
             str: The operation as a string with numpy replaced with np.
         """
-
         if operation.startswith("numpy"):
             operation = "np" + operation[5:]
         return operation
@@ -96,7 +95,6 @@ class MathExpressionTransformer(BaseTransformer):
             pandas.DataFrame: The original dataframe with the new columns. The new columns are named as follows:
             '`column_name`_`operation`_`value`' or '`column_name`_`operation`' if `value` is `None`.
         """
-
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for (feature, operation, value, kwargs) in self.features:

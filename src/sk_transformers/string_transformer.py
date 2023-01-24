@@ -64,7 +64,6 @@ class IPAddressEncoderTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-
         X = check_ready_to_transform(self, X, self.features)
 
         function = functools.partial(
@@ -132,7 +131,6 @@ class EmailTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe containing the extra columns.
         """
-
         X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
@@ -221,7 +219,6 @@ class StringSimilarityTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-
         X = check_ready_to_transform(self, X, list(self.features))
 
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
@@ -297,7 +294,6 @@ class PhoneTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-
         X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
@@ -382,7 +378,6 @@ class StringSlicerTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe with sliced strings in specified features.
         """
-
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for feature, slice_args in self.features:
@@ -441,7 +436,6 @@ class StringSplitterTransformer(BaseTransformer):
             pandas.DataFrame: Dataframe containing additional columns containing
                 each split part of the string.
         """
-
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for column, separator, maxsplit in self.features:

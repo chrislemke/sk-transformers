@@ -167,7 +167,6 @@ class DurationCalculatorTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: The transformed DataFrame.
         """
-
         X = check_ready_to_transform(self, X, list(self.features))
 
         duration_series = pd.to_datetime(
@@ -225,7 +224,6 @@ class TimestampTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Dataframe with transformed columns.
         """
-
         X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
