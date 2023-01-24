@@ -50,7 +50,7 @@ def check_ready_to_transform(
     if isinstance(features, list):
         if not all(c in X.columns for c in features):
             not_in_df = (
-                str([c for c in features if c not in X.columns])
+                str(list(dict.fromkeys([c for c in features if c not in X.columns])))
                 .replace("[", "")
                 .replace("]", "")
                 .replace("'", "`")
