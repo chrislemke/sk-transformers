@@ -128,7 +128,7 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
 
     expected = pd.DataFrame(
         {
-            "email": [
+            "email_slice": [
                 "test@",
                 "test1",
                 "test_",
@@ -136,7 +136,7 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
                 "ttt@t",
                 "test_",
             ],
-            "strings_1": [
+            "strings_1_slice": [
                 "a_string",
                 "another_",
                 "a_third_",
@@ -144,7 +144,7 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
                 "a_fifth_",
                 "a_sixth_",
             ],
-            "strings_2": [
+            "strings_2_slice": [
                 "i_o__",
                 "i_nte",
                 "i  hr",
@@ -156,7 +156,9 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
     )
 
     assert pipeline.steps[0][0] == "stringslicertransformer"
-    assert result.equals(expected)
+    assert result[["email_slice", "strings_1_slice", "strings_2_slice"]].equals(
+        expected
+    )
 
 
 def test_string_splitter_transformer_in_pipeline(X_strings):
