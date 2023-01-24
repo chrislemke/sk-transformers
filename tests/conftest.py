@@ -98,6 +98,11 @@ def X_time_values() -> pd.DataFrame:
 
 
 @pytest.fixture()
+def tiny_date_df() -> pd.DataFrame:
+    return pd.DataFrame({"a": ["2021-01-01", "2022-02-02", "2023-03-03"]})
+
+
+@pytest.fixture()
 def X_nan_values() -> pd.DataFrame:
     return pd.DataFrame(
         {
