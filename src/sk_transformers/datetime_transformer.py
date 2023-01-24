@@ -95,7 +95,7 @@ class DateColumnsTransformer(BaseTransformer):
             if "day_of_year" in self.date_elements:
                 X[f"{column}_day_of_year"] = X[column].dt.dayofyear
             if "week_of_year" in self.date_elements:
-                X[f"{column}_week_of_year"] = X[column].dt.weekofyear
+                X[f"{column}_week_of_year"] = X[column].dt.isocalendar().week
             if "quarter" in self.date_elements:
                 X[f"{column}_quarter"] = X[column].dt.quarter
             if "is_leap_year" in self.date_elements:

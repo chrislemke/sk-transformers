@@ -15,23 +15,25 @@ def test_check_ready_to_transform_for_empty_df() -> None:
     with pytest.raises(ValueError) as error:
         check_ready_to_transform(None, pd.DataFrame(), ["a"])
 
-    assert "X must not be empty!" == str(error.value)
+    assert "NoneType: X must not be empty!" == str(error.value)
 
 
 def test_check_ready_to_transform_for_not_dataframe() -> None:
     with pytest.raises(ValueError) as error:
         check_ready_to_transform(None, np.ndarray([1, 2, 3]), ["a"])
 
-    assert "X must be a Pandas dataframe!" == str(error.value)
+    assert "NoneType: X must be a Pandas dataframe!" == str(error.value)
 
 
 def test_check_ready_to_transform_for_wrong_column() -> None:
     with pytest.raises(ValueError) as error:
         check_ready_to_transform(None, pd.DataFrame({"a": [1, 2, 3]}), "b")
 
-    assert (
-        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `b`."
-        == str(error.value)
+    assert """
+                NoneType:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `b`.
+                """ == str(
+        error.value
     )
 
 
@@ -39,9 +41,11 @@ def test_check_ready_to_transform_for_wrong_columns() -> None:
     with pytest.raises(ValueError) as error:
         check_ready_to_transform(None, pd.DataFrame({"a": [1, 2, 3]}), ["b", "c"])
 
-    assert (
-        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `b`, `c`."
-        == str(error.value)
+    assert """
+                NoneType:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `b`, `c`.
+                """ == str(
+        error.value
     )
 
 

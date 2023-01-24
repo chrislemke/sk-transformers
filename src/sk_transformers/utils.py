@@ -41,9 +41,11 @@ def check_ready_to_transform(
         features = [features]
 
     if not isinstance(X, pd.DataFrame):
-        raise ValueError("X must be a Pandas dataframe!")
+        raise ValueError(
+            f"{transformer.__class__.__name__}: X must be a Pandas dataframe!"
+        )
     if X.empty:
-        raise ValueError("X must not be empty!")
+        raise ValueError(f"{transformer.__class__.__name__}: X must not be empty!")
 
     if isinstance(features, list):
         if not all(c in X.columns for c in features):
@@ -54,7 +56,10 @@ def check_ready_to_transform(
                 .replace("'", "`")
             )
             raise ValueError(
-                f"Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: {not_in_df}."
+                f"""
+                {transformer.__class__.__name__}:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: {not_in_df}.
+                """
             )
 
     if issubclass(transformer.__class__, BaseEstimator) is False:

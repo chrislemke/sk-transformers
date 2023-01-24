@@ -130,9 +130,11 @@ def test_dtype_transformer_raises_error(X) -> None:
             [("non_existing", np.float32), ("e", "category")]
         ).fit_transform(X)
 
-    assert (
-        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`."
-        == str(error.value)
+    assert """
+                DtypeTransformer:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`.
+                """ == str(
+        error.value
     )
 
 
@@ -165,9 +167,11 @@ def test_aggregate_transformer_raises_error(X) -> None:
             X
         )
 
-    assert (
-        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`."
-        == str(error.value)
+    assert """
+                AggregateTransformer:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`.
+                """ == str(
+        error.value
     )
 
 
@@ -215,9 +219,11 @@ def test_functions_transformer_raises_error(X) -> None:
     with pytest.raises(ValueError) as error:
         FunctionsTransformer([("non_existing", np.sqrt, None)]).fit_transform(X)
 
-    assert (
-        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`."
-        == str(error.value)
+    assert """
+                FunctionsTransformer:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`.
+                """ == str(
+        error.value
     )
 
 
@@ -233,9 +239,11 @@ def test_map_transformer_raises_error(X) -> None:
     with pytest.raises(ValueError) as error:
         MapTransformer([("non_existing", lambda x: x**2)]).fit_transform(X)
 
-    assert (
-        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`."
-        == str(error.value)
+    assert """
+                MapTransformer:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`.
+                """ == str(
+        error.value
     )
 
 
@@ -273,9 +281,11 @@ def test_value_indicator_transformer_in_pipeline_with_non_existing_column(
         )
         _ = pipeline.fit_transform(X_nan_values)
 
-    assert (
-        "Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`."
-        == str(error.value)
+    assert """
+                ValueIndicatorTransformer:
+                Not all provided `features` could be found in `X`! Following columns were not found in the dataframe: `non_existing`.
+                """ == str(
+        error.value
     )
 
 
