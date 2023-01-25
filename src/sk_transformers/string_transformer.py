@@ -347,10 +347,10 @@ class StringSlicerTransformer(BaseTransformer):
     transformer.fit_transform(X)
     ```
     ```
-      foo bar
-    0  ac  jk
-    1  df  mn
-    2  gi  pq
+       foo  bar foo_slice bar_slice
+    0  abc  jkl        ac        jk
+    1  def  mno        df        mn
+    2  ghi  pqr        gi        pq
     ```
 
     Args:
@@ -381,7 +381,7 @@ class StringSlicerTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for feature, slice_args in self.features:
-            X[feature] = [x[slice(*slice_args)] for x in X[feature]]
+            X[feature + "_slice"] = [x[slice(*slice_args)] for x in X[feature]]
 
         return X
 
