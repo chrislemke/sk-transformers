@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.10.0](https://github.com/chrislemke/sk-transformers/compare/v0.9.1...v0.10.0) (2023-01-26)
+
+
+### Features
+
+* add date columns transformer ([#68](https://github.com/chrislemke/sk-transformers/issues/68)) ([6e6ce3e](https://github.com/chrislemke/sk-transformers/commit/6e6ce3e305dc7a811e2867b4f7ab7605c54cc8f8))
+
+
+### Bug Fixes
+
+* add sliced string as a separate column ([#71](https://github.com/chrislemke/sk-transformers/issues/71)) ([743f617](https://github.com/chrislemke/sk-transformers/commit/743f61781f964bcbc481bb1fb47b0e7b878fda81))
+
+
+### CI/CD
+
+* pre-commit autoupdate ([#69](https://github.com/chrislemke/sk-transformers/issues/69)) ([6241a09](https://github.com/chrislemke/sk-transformers/commit/6241a09947fbbbcb6efc1da0043e7a1bfbe6001e))
+
+
+### Maintenance
+
+* check for different dtypes in nan transformer ([#72](https://github.com/chrislemke/sk-transformers/issues/72)) ([ffc11cb](https://github.com/chrislemke/sk-transformers/commit/ffc11cb5d17733663a0f8f8e87dac37fe3bc9f25))
+* improve error messages by adding transformer name ([#70](https://github.com/chrislemke/sk-transformers/issues/70)) ([b03d46a](https://github.com/chrislemke/sk-transformers/commit/b03d46a6377cb233c143317c39ce80f75d562b87))
+
 ## [0.9.1](https://github.com/chrislemke/sk-transformers/compare/v0.9.0...v0.9.1) (2023-01-23)
 
 
