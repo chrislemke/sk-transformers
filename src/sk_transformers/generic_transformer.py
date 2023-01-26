@@ -1,3 +1,4 @@
+import numbers
 import re
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
@@ -413,6 +414,9 @@ class NaNTransformer(BaseTransformer):
 
     Args:
         features (List[Tuple[str, Any]]): List of tuples where the first element is the column name, and the second is the value to replace NaN with.
+
+    Raises:
+        TypeError: If the value to replace NaN with is not a number, but the column is a number or vice versa.
     """
 
     def __init__(self, features: List[Tuple[str, Any]]) -> None:
@@ -434,6 +438,16 @@ class NaNTransformer(BaseTransformer):
             [feature[0] for feature in self.features],
             force_all_finite="allow-nan",
         )
+
+        for feature, value in self.features:
+            value_is_number = isinstance(value, numbers.Number)
+            feature_is_number = np.issubdtype(X[feature].dtype, np.number)
+
+            if value_is_number != feature_is_number:
+                raise TypeError(
+                    f"Cannot replace NaN values in column `{feature}` (type: `{X[feature].dtype.name}`) with `{value}` of type: `{type(value).__name__}`."
+                )
+
         return X.fillna(dict(self.features))
 
 

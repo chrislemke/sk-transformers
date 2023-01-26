@@ -359,6 +359,16 @@ def test_nan_transformer_in_pipeline(X_nan_values) -> None:
     assert pipeline.steps[0][1].features[0][1] == -1
 
 
+def test_nan_transformer_with_different_types_string(X_nan_values) -> None:
+    with pytest.raises(TypeError) as error:
+        transformer = NaNTransformer([("a", "a_value")])
+        _ = transformer.fit_transform(X_nan_values)
+    assert (
+        "Cannot replace NaN values in column `a` (type: `float64`) with `a_value` of type: `str`."
+        == str(error.value)
+    )
+
+
 def test_left_join_transformer_in_pipeline_for_series(X_categorical) -> None:
     lookup_df = pd.Series([1, 2], index=["A1", "A2"], name="values")
     pipeline = make_pipeline(LeftJoinTransformer([("a", lookup_df)]))
