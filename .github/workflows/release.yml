@@ -17,6 +17,7 @@ jobs:
           changelog-types: '[{"type":"maintain","section":"Maintenance","hidden":false},{"type":"resolve","section":"Miscellaneous","hidden":true},{"type":"add","section":"Features","hidden":false},{"type":"feat","section":"Features","hidden":false},{"type":"fix","section":"Bug Fixes","hidden":false},{"type":"bug","section":"Bug Fixes","hidden":false},{"type":"chore","section":"Miscellaneous","hidden":true},{"type":"test","section":"Tests","hidden":false},{"type":"ci","section":"CI/CD","hidden":false},{"type":"refactor","section":"Maintenance","hidden":false},{"type":"perf","section":"Maintenance","hidden":false},{"type":"revert","section":"Maintenance","hidden":true},{"type":"docs","section":"Documentation","hidden":false},{"type":"security","section":"Security","hidden":false}]'
 
   deploy-package:
+    if: ${{ startsWith(github.event.head_commit.message, 'chore(main)') }}
     name: Deploy package to PyPI
     needs: release-please
     runs-on: ubuntu-latest
