@@ -658,14 +658,14 @@ files = [
 
 [[package]]
 name = "dask"
-version = "2023.1.0"
+version = "2023.1.1"
 description = "Parallel PyData with Task Scheduling"
 category = "main"
 optional = false
 python-versions = ">=3.8"
 files = [
-    {file = "dask-2023.1.0-py3-none-any.whl", hash = "sha256:ea313767b3d11e0610fbe7c57f7a01b1f8990bb6c699456ba910d9b31da2c9c0"},
-    {file = "dask-2023.1.0.tar.gz", hash = "sha256:397b07a0de718f7c87d12ceb1700048aa085a14059847a33ecbdc57132c01eed"},
+    {file = "dask-2023.1.1-py3-none-any.whl", hash = "sha256:de7c1da6eb669f6fd082ed6deba60b5f99c16c8a01fccda2f0cfe9712753ca6a"},
+    {file = "dask-2023.1.1.tar.gz", hash = "sha256:fde72f6971fcb141b9648a13fad270f2223624fe5099c100af6c161e2c8ea3d6"},
 ]
 
 [package.dependencies]
@@ -681,10 +681,10 @@ toolz = ">=0.8.2"
 
 [package.extras]
 array = ["numpy (>=1.18)"]
-complete = ["bokeh (>=2.4.2,<3)", "distributed (==2023.1.0)", "jinja2", "numpy (>=1.18)", "pandas (>=1.0)"]
+complete = ["bokeh (>=2.4.2,<3)", "distributed (==2023.1.1)", "jinja2", "numpy (>=1.18)", "pandas (>=1.0)"]
 dataframe = ["numpy (>=1.18)", "pandas (>=1.0)"]
 diagnostics = ["bokeh (>=2.4.2,<3)", "jinja2"]
-distributed = ["distributed (==2023.1.0)"]
+distributed = ["distributed (==2023.1.1)"]
 test = ["pandas[test]", "pre-commit", "pytest", "pytest-rerunfailures", "pytest-xdist"]
 
 [[package]]
@@ -1074,14 +1074,14 @@ async = ["aiofiles (>=0.7,<1.0)"]
 
 [[package]]
 name = "identify"
-version = "2.5.15"
+version = "2.5.16"
 description = "File identification library for Python"
 category = "dev"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "identify-2.5.15-py2.py3-none-any.whl", hash = "sha256:1f4b36c5f50f3f950864b2a047308743f064eaa6f6645da5e5c780d1c7125487"},
-    {file = "identify-2.5.15.tar.gz", hash = "sha256:c22aa206f47cc40486ecf585d27ad5f40adbfc494a3fa41dc3ed0499a23b123f"},
+    {file = "identify-2.5.16-py2.py3-none-any.whl", hash = "sha256:832832a58ecc1b8f33d5e8cb4f7d3db2f5c7fbe922dfee5f958b48fed691501a"},
+    {file = "identify-2.5.16.tar.gz", hash = "sha256:c47acedfe6495b1c603ed7e93469b26e839cab38db4155113f36f718f8b3dc47"},
 ]
 
 [package.extras]
@@ -1257,19 +1257,19 @@ test = ["jsonschema", "pytest (>=3.6.0)", "pytest-cov", "pytz"]
 
 [[package]]
 name = "isort"
-version = "5.11.4"
+version = "5.12.0"
 description = "A Python utility / library to sort Python imports."
 category = "dev"
 optional = false
-python-versions = ">=3.7.0"
+python-versions = ">=3.8.0"
 files = [
-    {file = "isort-5.11.4-py3-none-any.whl", hash = "sha256:c033fd0edb91000a7f09527fe5c75321878f98322a77ddcc81adbd83724afb7b"},
-    {file = "isort-5.11.4.tar.gz", hash = "sha256:6db30c5ded9815d813932c04c2f85a360bcdd35fed496f4d8f35495ef0a261b6"},
+    {file = "isort-5.12.0-py3-none-any.whl", hash = "sha256:f84c2818376e66cf843d497486ea8fed8700b340f308f076c6fb1229dff318b6"},
+    {file = "isort-5.12.0.tar.gz", hash = "sha256:8bef7dde241278824a6d83f44a544709b065191b95b6e50894bdc722fcba0504"},
 ]
 
 [package.extras]
-colors = ["colorama (>=0.4.3,<0.5.0)"]
-pipfile-deprecated-finder = ["pipreqs", "requirementslib"]
+colors = ["colorama (>=0.4.3)"]
+pipfile-deprecated-finder = ["pip-shims (>=0.5.2)", "pipreqs", "requirementslib"]
 plugins = ["setuptools"]
 requirements-deprecated-finder = ["pip-api", "pipreqs"]
 
@@ -1494,6 +1494,31 @@ importlib-metadata = {version = ">=4.4", markers = "python_version < \"3.10\""}
 testing = ["coverage", "pyyaml"]
 
 [[package]]
+name = "markdown-it-py"
+version = "2.1.0"
+description = "Python port of markdown-it. Markdown parsing, done right!"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "markdown-it-py-2.1.0.tar.gz", hash = "sha256:cf7e59fed14b5ae17c0006eff14a2d9a00ed5f3a846148153899a0224e2c07da"},
+    {file = "markdown_it_py-2.1.0-py3-none-any.whl", hash = "sha256:93de681e5c021a432c63147656fe21790bc01231e0cd2da73626f1aa3ac0fe27"},
+]
+
+[package.dependencies]
+mdurl = ">=0.1,<1.0"
+
+[package.extras]
+benchmarking = ["psutil", "pytest", "pytest-benchmark (>=3.2,<4.0)"]
+code-style = ["pre-commit (==2.6)"]
+compare = ["commonmark (>=0.9.1,<0.10.0)", "markdown (>=3.3.6,<3.4.0)", "mistletoe (>=0.8.1,<0.9.0)", "mistune (>=2.0.2,<2.1.0)", "panflute (>=2.1.3,<2.2.0)"]
+linkify = ["linkify-it-py (>=1.0,<2.0)"]
+plugins = ["mdit-py-plugins"]
+profiling = ["gprof2dot"]
+rtd = ["attrs", "myst-parser", "pyyaml", "sphinx", "sphinx-copybutton", "sphinx-design", "sphinx_book_theme"]
+testing = ["coverage", "pytest", "pytest-cov", "pytest-regressions"]
+
+[[package]]
 name = "markupsafe"
 version = "2.1.2"
 description = "Safely add untrusted strings to HTML/XML markup."
@@ -1578,6 +1603,18 @@ python-versions = ">=3.6"
 files = [
     {file = "mccabe-0.7.0-py2.py3-none-any.whl", hash = "sha256:6c2d30ab6be0e4a46919781807b4f0d834ebdd6c6e3dca0bda5a15f863427b6e"},
     {file = "mccabe-0.7.0.tar.gz", hash = "sha256:348e0240c33b60bbdf4e523192ef919f28cb2c3d7d5c7794f74009290f236325"},
+]
+
+[[package]]
+name = "mdurl"
+version = "0.1.2"
+description = "Markdown URL utilities"
+category = "main"
+optional = false
+python-versions = ">=3.7"
+files = [
+    {file = "mdurl-0.1.2-py3-none-any.whl", hash = "sha256:84008a41e51615a49fc9966191ff91509e3c40b939176e643fd50a5c2196b8f8"},
+    {file = "mdurl-0.1.2.tar.gz", hash = "sha256:bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba"},
 ]
 
 [[package]]
@@ -3097,6 +3134,26 @@ socks = ["PySocks (>=1.5.6,!=1.5.7)"]
 use-chardet-on-py3 = ["chardet (>=3.0.2,<6)"]
 
 [[package]]
+name = "rich"
+version = "13.3.1"
+description = "Render rich text, tables, progress bars, syntax highlighting, markdown and more to the terminal"
+category = "main"
+optional = false
+python-versions = ">=3.7.0"
+files = [
+    {file = "rich-13.3.1-py3-none-any.whl", hash = "sha256:8aa57747f3fc3e977684f0176a88e789be314a99f99b43b75d1e9cb5dc6db9e9"},
+    {file = "rich-13.3.1.tar.gz", hash = "sha256:125d96d20c92b946b983d0d392b84ff945461e5a06d3867e9f9e575f8697b67f"},
+]
+
+[package.dependencies]
+markdown-it-py = ">=2.1.0,<3.0.0"
+pygments = ">=2.14.0,<3.0.0"
+typing-extensions = {version = ">=4.0.0,<5.0", markers = "python_version < \"3.9\""}
+
+[package.extras]
+jupyter = ["ipywidgets (>=7.5.1,<9)"]
+
+[[package]]
 name = "scikit-learn"
 version = "1.2.1"
 description = "A set of python modules for machine learning and data mining"
@@ -4228,21 +4285,21 @@ files = [
 
 [[package]]
 name = "zipp"
-version = "3.11.0"
+version = "3.12.0"
 description = "Backport of pathlib-compatible object wrapper for zip files"
 category = "main"
 optional = false
 python-versions = ">=3.7"
 files = [
-    {file = "zipp-3.11.0-py3-none-any.whl", hash = "sha256:83a28fcb75844b5c0cdaf5aa4003c2d728c77e05f5aeabe8e95e56727005fbaa"},
-    {file = "zipp-3.11.0.tar.gz", hash = "sha256:a7a22e05929290a67401440b39690ae6563279bced5f314609d9d03798f56766"},
+    {file = "zipp-3.12.0-py3-none-any.whl", hash = "sha256:9eb0a4c5feab9b08871db0d672745b53450d7f26992fd1e4653aa43345e97b86"},
+    {file = "zipp-3.12.0.tar.gz", hash = "sha256:73efd63936398aac78fd92b6f4865190119d6c91b531532e798977ea8dd402eb"},
 ]
 
 [package.extras]
-docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)"]
+docs = ["furo", "jaraco.packaging (>=9)", "jaraco.tidelift (>=1.4)", "rst.linker (>=1.9)", "sphinx (>=3.5)", "sphinx-lint"]
 testing = ["flake8 (<5)", "func-timeout", "jaraco.functools", "jaraco.itertools", "more-itertools", "pytest (>=6)", "pytest-black (>=0.3.7)", "pytest-checkdocs (>=2.4)", "pytest-cov", "pytest-enabler (>=1.3)", "pytest-flake8", "pytest-mypy (>=0.9.1)"]
 
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.8,<3.11"
-content-hash = "f744ee6a93527af342a3f34e7227b5492b6ae6586ce0eaef3bf7ab447826b339"
+content-hash = "03eb8fcbc57c2a0d99ee06ef9055602995bce7eb20552de2633a059d32460e52"
