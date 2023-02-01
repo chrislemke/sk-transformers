@@ -128,7 +128,7 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
 
     expected = pd.DataFrame(
         {
-            "email_slice": [
+            "email": [
                 "test@",
                 "test1",
                 "test_",
@@ -136,7 +136,7 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
                 "ttt@t",
                 "test_",
             ],
-            "strings_1_slice": [
+            "strings_1": [
                 "a_string",
                 "another_",
                 "a_third_",
@@ -144,7 +144,7 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
                 "a_fifth_",
                 "a_sixth_",
             ],
-            "strings_2_slice": [
+            "strings_2": [
                 "i_o__",
                 "i_nte",
                 "i  hr",
@@ -156,37 +156,77 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
     )
 
     assert pipeline.steps[0][0] == "stringslicertransformer"
-    assert result[["email_slice", "strings_1_slice", "strings_2_slice"]].equals(
-        expected
+    assert result[["email", "strings_1", "strings_2"]].equals(expected)
+
+
+def test_string_slicer_transformer_new_column_name_in_pipeline(X_strings):
+    pipeline = make_pipeline(
+        StringSlicerTransformer(
+            [
+                ("email", (5,), "new_email_slice"),
+            ]
+        )
     )
+    result = pipeline.fit_transform(X_strings)
+
+    assert "new_email_slice" in result.columns
+    assert pipeline.steps[0][0] == "stringslicertransformer"
 
 
 def test_string_splitter_transformer_in_pipeline(X_strings):
     pipeline = make_pipeline(
         StringSplitterTransformer(
             [
-                ("email", "@", 2),
+                ("strings_2", "_", 1),
             ]
         )
     )
     result = pipeline.fit_transform(X_strings)
     expected_part_1 = [
-        "test",
-        "test123",
-        "test_123$$",
-        "test_test",
-        "ttt",
-        "test_test_test",
+        "this",
+        "this",
+        "this is a third string",
+        "this",
+        " ",
+        "!@#$%^&*()",
     ]
     expected_part_2 = [
-        "test1.com",
-        "test2.com",
-        "test3.com",
-        "test4.com",
-        "test5.com",
+        "is_not_a_string",
+        "is_another_string",
         None,
+        "is_a_fifth_string",
+        None,
+        "+",
     ]
 
-    assert np.array_equal(result["email_part_1"], expected_part_1)
-    assert np.array_equal(result["email_part_2"], expected_part_2)
+    assert np.array_equal(result["strings_2_part_1"], expected_part_1)
+    assert np.array_equal(result["strings_2_part_2"], expected_part_2)
+    assert pipeline.steps[0][0] == "stringsplittertransformer"
+
+
+def test_string_splitter_transformer_no_maxsplits_in_pipeline(X_strings):
+    pipeline = make_pipeline(
+        StringSplitterTransformer(
+            [
+                ("strings_2", "_"),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(X_strings)
+
+    assert "strings_2_part_5" in result.columns
+    assert pipeline.steps[0][0] == "stringsplittertransformer"
+
+
+def test_string_splitter_transformer_zero_maxsplits_in_pipeline(X_strings):
+    pipeline = make_pipeline(
+        StringSplitterTransformer(
+            [
+                ("strings_2", "_", 0),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(X_strings)
+
+    assert "strings_2_part_5" in result.columns
     assert pipeline.steps[0][0] == "stringsplittertransformer"

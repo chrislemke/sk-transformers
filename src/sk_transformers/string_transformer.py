@@ -4,7 +4,7 @@ import itertools
 import re
 import unicodedata
 from difflib import SequenceMatcher
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import pandas as pd
 import phonenumbers
@@ -354,7 +354,7 @@ class StringSlicerTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]]]]): The arguments to the `slice` function, for each feature.
+        features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]], Optional[str]]]): The arguments to the `slice` function, for each feature.
     """
 
     def __init__(
@@ -363,6 +363,7 @@ class StringSlicerTransformer(BaseTransformer):
             Tuple[
                 str,
                 Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
+                Optional[str],
             ]
         ],
     ) -> None:
@@ -380,8 +381,11 @@ class StringSlicerTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for feature, slice_args in self.features:
-            X[feature + "_slice"] = [x[slice(*slice_args)] for x in X[feature]]
+        for slice_tuple in self.features:
+            column = slice_tuple[0]
+            slice_args = slice_tuple[1]
+            slice_column = slice_tuple[2] if len(slice_tuple) == 3 else column
+            X[slice_column] = [x[slice(*slice_args)] for x in X[column]]
 
         return X
 
@@ -407,10 +411,11 @@ class StringSplitterTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, str, int]]): A list of tuples where
+        features (List[Tuple[str, str, Optional[int]]]): A list of tuples where
             the first element is the name of the feature,
             the second element is the string separator,
-            and the third element is the desired number of splits.
+            and a third optional element is the desired number of splits.
+            If the third element is not provided or is equal to 0 or -1, maximum number of splits are made.
     """
 
     def __init__(
@@ -419,7 +424,7 @@ class StringSplitterTransformer(BaseTransformer):
             Tuple[
                 str,
                 str,
-                int,
+                Optional[int],
             ]
         ],
     ) -> None:
@@ -438,8 +443,16 @@ class StringSplitterTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for column, separator, maxsplit in self.features:
-            split_column_names = [f"{column}_part_{i+1}" for i in range(maxsplit)]
+        for split_tuple in self.features:
+            column = split_tuple[0]
+            separator = split_tuple[1]
+
+            max_possible_splits = X[column].str.count(separator).max()
+            maxsplit = split_tuple[2] if len(split_tuple) == 3 else max_possible_splits
+            if maxsplit in [0, -1] or maxsplit > max_possible_splits:
+                maxsplit = max_possible_splits
+
+            split_column_names = [f"{column}_part_{i+1}" for i in range(maxsplit + 1)]
             X[split_column_names] = X[column].str.split(
                 separator, n=maxsplit, expand=True
             )
