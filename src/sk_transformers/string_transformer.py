@@ -4,7 +4,7 @@ import itertools
 import re
 import unicodedata
 from difflib import SequenceMatcher
-from typing import List, Tuple, Union
+from typing import List, Optional, Tuple, Union
 
 import pandas as pd
 import phonenumbers
@@ -354,7 +354,7 @@ class StringSlicerTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]]]]): The arguments to the `slice` function, for each feature.
+        features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]], Optional[str]]]): The arguments to the `slice` function, for each feature.
     """
 
     def __init__(
@@ -363,6 +363,7 @@ class StringSlicerTransformer(BaseTransformer):
             Tuple[
                 str,
                 Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
+                Optional[str],
             ]
         ],
     ) -> None:
@@ -380,8 +381,11 @@ class StringSlicerTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for feature, slice_args in self.features:
-            X[feature + "_slice"] = [x[slice(*slice_args)] for x in X[feature]]
+        for slice_tuple in self.features:
+            column = slice_tuple[0]
+            slice_args = slice_tuple[1]
+            slice_column = slice_tuple[2] if len(slice_tuple) == 3 else column
+            X[slice_column] = [x[slice(*slice_args)] for x in X[column]]
 
         return X
 
