@@ -174,7 +174,7 @@ class AggregateTransformer(BaseTransformer):
         }
     )
 
-    transformer = AggregateTransformer([("foo", "bar", ["mean"])])
+    transformer = AggregateTransformer([("foo", ("bar", "mean", "MEAN(foo__bar)"))])
     transformer.fit_transform(X)
     ```
     ```
@@ -192,15 +192,44 @@ class AggregateTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, str, List[str]]]): List of tuples containing the column identifiers and the aggregation function(s).
-                The first column identifier (features[0]) is the column that will be used to group the data.
-                It can be either numerical or categorical. The second column identifier (features[1]) is the column that will be used
-                for aggregations. This column must be numerical.
+        features (List[Tuple[str, Tuple[str, Any, str]]]): List of tuples where
+            the first element is the name or the list of names of columns to be grouped-by,
+            and the second element is a tuple or list of tuples containing the aggregation information.
+            In this tuple, the first element is the name of the column to be aggregated,
+            the second element is the aggregation function as a string or function object,
+            and the third element is the name of the new aggregated column.
     """
 
-    def __init__(self, features: List[Tuple[str, str, List[str]]]) -> None:
+    def __init__(
+        self,
+        features: List[
+            Tuple[
+                Union[str, List[str]],
+                Union[Tuple[str, Any, str], List[Tuple[str, Any, str]]],
+            ]
+        ],
+    ) -> None:
         super().__init__()
         self.features = features
+
+    def __get_list_of_features(self) -> List:
+        feature_list = []
+
+        for (groupby_columns, agg_features) in self.features:
+
+            if isinstance(groupby_columns, str):
+                feature_list.append(groupby_columns)
+            else:
+                for groupby_column in groupby_columns:
+                    feature_list.append(groupby_column)
+
+            if isinstance(agg_features, tuple):
+                feature_list.append(agg_features[0])
+            else:
+                for agg_column, _, _ in agg_features:
+                    feature_list.append(agg_column)
+
+        return list(set(feature_list))
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Creates new columns by using Pandas `groupby` method and `aggregate`
@@ -215,29 +244,22 @@ class AggregateTransformer(BaseTransformer):
         X = check_ready_to_transform(
             self,
             X,
-            [feature[0] for feature in self.features]
-            + [feature[1] for feature in self.features],
+            self.__get_list_of_features(),
         )
 
-        for (groupby_column, agg_column, aggs) in self.features:
+        for (groupby_columns, agg_features) in self.features:
 
-            agg_df = (
-                X.groupby([groupby_column])[agg_column]
-                .aggregate(aggs, engine="cython")
-                .reset_index()
-            )
+            if isinstance(agg_features, tuple):
+                agg_features = [agg_features]
 
-            agg_df = agg_df.rename(
-                columns={
-                    agg: f"{agg.upper()}({groupby_column}__{agg_column})"
-                    for agg in aggs
-                }
-            )
+            agg_dict = {
+                agg_new_column: pd.NamedAgg(column=agg_column, aggfunc=agg_func)
+                for (agg_column, agg_func, agg_new_column) in agg_features
+            }
 
-            for column in list(np.delete(agg_df.columns, 0)):
-                agg_df[column] = agg_df[column].astype(np.float32)
+            agg_df = X.groupby(groupby_columns).aggregate(**agg_dict, engine="cython")
 
-            X = X.merge(agg_df, on=groupby_column, how="left")
+            X = X.join(agg_df, on=groupby_columns)
 
         return X
 

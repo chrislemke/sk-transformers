@@ -139,25 +139,62 @@ def test_dtype_transformer_raises_error(X) -> None:
 
 
 def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
-    pipeline = make_pipeline(AggregateTransformer([("a", "b", ["mean"])]))
+    pipeline = make_pipeline(AggregateTransformer([("a", ("b", "mean", "MEAN(a__b)"))]))
     result = pipeline.fit_transform(X_group_by)
     expected = np.array(
         [
-            ["mr", 46, 52.16666793823242],
-            ["mr", 32, 52.16666793823242],
-            ["ms", 78, 68.75],
-            ["ms", 48, 68.75],
-            ["ms", 93, 68.75],
-            ["mr", 68, 52.16666793823242],
-            ["mr", 53, 52.16666793823242],
-            ["mr", 38, 52.16666793823242],
-            ["mr", 76, 52.16666793823242],
-            ["ms", 56, 68.75],
+            52.166666666666664,
+            52.166666666666664,
+            68.75,
+            68.75,
+            68.75,
+            52.166666666666664,
+            52.166666666666664,
+            52.166666666666664,
+            52.166666666666664,
+            68.75,
+        ]
+    )
+
+    assert np.array_equal(result["MEAN(a__b)"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "aggregatetransformer"
+
+
+def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
+    pipeline = make_pipeline(
+        AggregateTransformer(
+            [
+                (  # pylint: disable=W0108
+                    ["a", "c"],
+                    [
+                        ("b", np.sum, "b_sum"),
+                        ("b", np.max, "b_max"),
+                        ("d", lambda x: "|".join(x), "d_join_pipe"),
+                        ("d", lambda x: x[x == "foo"].count(), "d_foo_count"),
+                    ],
+                )
+            ]
+        )
+    )
+    result = pipeline.fit_transform(X_group_by)
+    expected = np.array(
+        [
+            [175, 76, "foo|foo|baz", 2],
+            [138, 68, "bar|baz|bar", 0],
+            [171, 93, "baz|bar", 0],
+            [104, 56, "foo|foo", 2],
+            [171, 93, "baz|bar", 0],
+            [138, 68, "bar|baz|bar", 0],
+            [175, 76, "foo|foo|baz", 2],
+            [138, 68, "bar|baz|bar", 0],
+            [175, 76, "foo|foo|baz", 2],
+            [104, 56, "foo|foo", 2],
         ],
         dtype=object,
     )
-    assert np.array_equal(result.to_numpy(), expected)
-    assert list(result.columns) == ["a", "b", "MEAN(a__b)"]
+    assert np.array_equal(
+        result[["b_sum", "b_max", "d_join_pipe", "d_foo_count"]].to_numpy(), expected
+    )
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
 
