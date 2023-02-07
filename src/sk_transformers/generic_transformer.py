@@ -230,6 +230,35 @@ class AggregateTransformer(BaseTransformer):
 
         return list(set(feature_list))
 
+    def __check_input_type(self) -> None:
+        for feature in self.features:
+
+            if len(feature) != 2:
+                raise IndexError(
+                    f"Expected 2 elements in the feature tuple, got {len(feature)}."
+                )
+
+            agg_features = feature[1]
+
+            if isinstance(agg_features, tuple):
+                agg_features = [agg_features]
+
+            if isinstance(agg_features, list):
+                for agg_feature in agg_features:
+                    if isinstance(agg_feature, tuple):
+                        if len(agg_feature) != 3:
+                            raise IndexError(
+                                f"Expected 3 elements in the aggregation tuple, got {len(agg_feature)}."
+                            )
+                    else:
+                        raise TypeError(
+                            f"Expected a list of tuples, found {type(agg_feature).__name__} in list."
+                        )
+            else:
+                raise TypeError(
+                    f"Expected a list or tuple of aggregations, got {type(agg_features).__name__}."
+                )
+
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Creates new columns by using Pandas `groupby` method and `aggregate`
         to apply function on the column.
@@ -240,6 +269,7 @@ class AggregateTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
         """
+        self.__check_input_type()
         X = check_ready_to_transform(
             self,
             X,

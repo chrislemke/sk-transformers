@@ -212,6 +212,34 @@ def test_aggregate_transformer_raises_error(X) -> None:
     )
 
 
+def test_aggregate_transformer_feat_tuple_raises_error(X_group_by) -> None:
+    with pytest.raises(IndexError) as error:
+        AggregateTransformer([("a", "b", "mean")]).fit_transform(X_group_by)
+
+    assert "Expected 2 elements in the feature tuple, got 3." == str(error.value)
+
+
+def test_aggregate_transformer_agg_tuple_raises_error(X_group_by) -> None:
+    with pytest.raises(IndexError) as error:
+        AggregateTransformer([("a", ("b", "mean"))]).fit_transform(X_group_by)
+
+    assert "Expected 3 elements in the aggregation tuple, got 2." == str(error.value)
+
+
+def test_aggregate_transformer_nontuple_in_list_raises_error(X_group_by) -> None:
+    with pytest.raises(TypeError) as error:
+        AggregateTransformer([("a", [1, 2, 3])]).fit_transform(X_group_by)
+
+    assert "Expected a list of tuples, found int in list." == str(error.value)
+
+
+def test_aggregate_transformer_nonlist_raises_error(X_group_by) -> None:
+    with pytest.raises(TypeError) as error:
+        AggregateTransformer([("a", "b")]).fit_transform(X_group_by)
+
+    assert "Expected a list or tuple of aggregations, got str." == str(error.value)
+
+
 def test_functions_transformer_in_pipeline(X) -> None:
     pipeline = make_pipeline(
         FunctionsTransformer([("a", np.log1p, None), ("b", np.sqrt, None)])
