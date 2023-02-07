@@ -64,7 +64,6 @@ class ColumnEvalTransformer(BaseTransformer):
         )
 
         for eval_tuple in self.features:
-
             column = eval_tuple[0]
             eval_func = eval_tuple[1]
             new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore
@@ -149,7 +148,7 @@ class DtypeTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        for (column, dtype) in self.features:
+        for column, dtype in self.features:
             X[column] = X[column].astype(dtype)
         return X
 
@@ -174,11 +173,11 @@ class AggregateTransformer(BaseTransformer):
         }
     )
 
-    transformer = AggregateTransformer([("foo", "bar", ["mean"])])
+    transformer = AggregateTransformer([("foo", ("bar", "mean", "MEAN(foo_bar)"))])
     transformer.fit_transform(X)
     ```
     ```
-      foo  bar  MEAN(foo__bar)
+      foo  bar  MEAN(foo_bar)
     0  mr   46       52.166668
     1  mr   32       52.166668
     2  ms   78       68.750000
@@ -192,15 +191,72 @@ class AggregateTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, str, List[str]]]): List of tuples containing the column identifiers and the aggregation function(s).
-                The first column identifier (features[0]) is the column that will be used to group the data.
-                It can be either numerical or categorical. The second column identifier (features[1]) is the column that will be used
-                for aggregations. This column must be numerical.
+        features (List[Tuple[str, Tuple[str, Union[str, Callable], str]]]): List of tuples where
+            the first element is the name or the list of names of columns to be grouped-by,
+            and the second element is a tuple or list of tuples containing the aggregation information.
+            In this tuple, the first element is the name of the column to be aggregated,
+            the second element is the aggregation function as a string or function object,
+            and the third element is the name of the new aggregated column.
     """
 
-    def __init__(self, features: List[Tuple[str, str, List[str]]]) -> None:
+    def __init__(
+        self,
+        features: List[
+            Tuple[
+                Union[str, List[str]],
+                Union[
+                    Tuple[str, Union[str, Callable], str],
+                    List[Tuple[str, Union[str, Callable], str]],
+                ],
+            ]
+        ],
+    ) -> None:
         super().__init__()
         self.features = features
+
+    def __get_list_of_features(self) -> List[str]:
+        feature_list = []
+
+        for groupby_columns, agg_features in self.features:
+            if isinstance(groupby_columns, str):
+                groupby_columns = [groupby_columns]
+            for groupby_column in groupby_columns:
+                feature_list.append(groupby_column)
+
+            if isinstance(agg_features, tuple):
+                agg_features = [agg_features]
+            for agg_column, _, _ in agg_features:
+                feature_list.append(agg_column)
+
+        return list(set(feature_list))
+
+    def __check_input(self) -> None:
+        for feature in self.features:
+            if len(feature) != 2:
+                raise IndexError(
+                    f"Expected 2 elements in the feature tuple, got {len(feature)}."
+                )
+
+            agg_features = feature[1]
+
+            if isinstance(agg_features, tuple):
+                agg_features = [agg_features]
+
+            if isinstance(agg_features, list):
+                for agg_feature in agg_features:
+                    if isinstance(agg_feature, tuple):
+                        if len(agg_feature) != 3:
+                            raise IndexError(
+                                f"Expected 3 elements in the aggregation tuple, got {len(agg_feature)}."
+                            )
+                    else:
+                        raise TypeError(
+                            f"Expected a list of tuples, found {type(agg_feature).__name__} in list."
+                        )
+            else:
+                raise TypeError(
+                    f"Expected a list or tuple of aggregations, got {type(agg_features).__name__}."
+                )
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Creates new columns by using Pandas `groupby` method and `aggregate`
@@ -212,32 +268,25 @@ class AggregateTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
         """
+        self.__check_input()
         X = check_ready_to_transform(
             self,
             X,
-            [feature[0] for feature in self.features]
-            + [feature[1] for feature in self.features],
+            self.__get_list_of_features(),
         )
 
-        for (groupby_column, agg_column, aggs) in self.features:
+        for groupby_columns, agg_features in self.features:
+            if isinstance(agg_features, tuple):
+                agg_features = [agg_features]
 
-            agg_df = (
-                X.groupby([groupby_column])[agg_column]
-                .aggregate(aggs, engine="cython")
-                .reset_index()
-            )
+            agg_dict = {
+                agg_new_column: pd.NamedAgg(column=agg_column, aggfunc=agg_func)
+                for (agg_column, agg_func, agg_new_column) in agg_features
+            }
 
-            agg_df = agg_df.rename(
-                columns={
-                    agg: f"{agg.upper()}({groupby_column}__{agg_column})"
-                    for agg in aggs
-                }
-            )
+            agg_df = X.groupby(groupby_columns).aggregate(**agg_dict, engine="cython")
 
-            for column in list(np.delete(agg_df.columns, 0)):
-                agg_df[column] = agg_df[column].astype(np.float32)
-
-            X = X.merge(agg_df, on=groupby_column, how="left")
+            X = X.join(agg_df, on=groupby_columns)
 
         return X
 
@@ -293,7 +342,7 @@ class FunctionsTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for (column, func, kwargs) in self.features:
+        for column, func, kwargs in self.features:
             X[column] = FunctionTransformer(
                 func, validate=True, kw_args=kwargs
             ).transform(X[[column]].to_numpy())
@@ -344,7 +393,7 @@ class MapTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for (feature, callback) in self.features:
+        for feature, callback in self.features:
             X[feature] = X[feature].map(callback)
 
         return X
@@ -505,7 +554,7 @@ class ValueIndicatorTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        for (column, indicator) in self.features:
+        for column, indicator in self.features:
             X[f"{column}_found_indicator"] = (X[column] == indicator).astype(
                 int if self.as_int else bool
             )
@@ -622,7 +671,7 @@ class ValueReplacerTransformer(BaseTransformer):
             self, X, [feature[0][0] for feature in self.features]
         )
 
-        for (columns, value, replacement) in self.features:
+        for columns, value, replacement in self.features:
             for column in columns:
                 is_regex = ValueReplacerTransformer.__check_for_regex(value)
                 column_dtype = X[column].dtype
@@ -703,7 +752,7 @@ class LeftJoinTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        for (column, lookup_df) in self.features:
+        for column, lookup_df in self.features:
             lookup_df = LeftJoinTransformer.__prefix_df_column_names(lookup_df, column)
             X = pd.merge(X, lookup_df, how="left", left_on=column, right_index=True)
 
@@ -770,7 +819,7 @@ class AllowedValuesTransformer(BaseTransformer):
             [feature[0] for feature in self.features],
         )
 
-        for (column, allowed_values, replacement) in self.features:
+        for column, allowed_values, replacement in self.features:
             X.loc[~X[column].isin(allowed_values), column] = replacement
 
         return X

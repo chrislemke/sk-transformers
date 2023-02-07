@@ -46,6 +46,8 @@ def X_group_by() -> pd.DataFrame:
         {
             "a": ["mr", "mr", "ms", "ms", "ms", "mr", "mr", "mr", "mr", "ms"],
             "b": [46, 32, 78, 48, 93, 68, 53, 38, 76, 56],
+            "c": ["x", "y", "x", "y", "x", "y", "x", "y", "x", "y"],
+            "d": ["foo", "bar", "baz", "foo", "bar", "baz", "foo", "bar", "baz", "foo"],
         }
     )
 

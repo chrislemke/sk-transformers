@@ -97,7 +97,7 @@ class MathExpressionTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for (feature, operation, value, kwargs) in self.features:
+        for feature, operation, value, kwargs in self.features:
             operation = self.__abbreviate_numpy_in_operation(operation)
             is_np_op, op = self.__verify_operation(operation)
 
