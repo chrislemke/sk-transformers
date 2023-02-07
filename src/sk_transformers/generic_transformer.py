@@ -230,7 +230,7 @@ class AggregateTransformer(BaseTransformer):
 
         return list(set(feature_list))
 
-    def __check_input_type(self) -> None:
+    def __check_input(self) -> None:
         for feature in self.features:
             if len(feature) != 2:
                 raise IndexError(
@@ -268,7 +268,7 @@ class AggregateTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Transformed dataframe. It contains the original columns and the new columns created by this transformer.
         """
-        self.__check_input_type()
+        self.__check_input()
         X = check_ready_to_transform(
             self,
             X,
