@@ -64,7 +64,6 @@ class ColumnEvalTransformer(BaseTransformer):
         )
 
         for eval_tuple in self.features:
-
             column = eval_tuple[0]
             eval_func = eval_tuple[1]
             new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore
@@ -149,7 +148,7 @@ class DtypeTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        for (column, dtype) in self.features:
+        for column, dtype in self.features:
             X[column] = X[column].astype(dtype)
         return X
 
@@ -215,8 +214,7 @@ class AggregateTransformer(BaseTransformer):
     def __get_list_of_features(self) -> List:
         feature_list = []
 
-        for (groupby_columns, agg_features) in self.features:
-
+        for groupby_columns, agg_features in self.features:
             if isinstance(groupby_columns, str):
                 feature_list.append(groupby_columns)
             else:
@@ -247,8 +245,7 @@ class AggregateTransformer(BaseTransformer):
             self.__get_list_of_features(),
         )
 
-        for (groupby_columns, agg_features) in self.features:
-
+        for groupby_columns, agg_features in self.features:
             if isinstance(agg_features, tuple):
                 agg_features = [agg_features]
 
@@ -315,7 +312,7 @@ class FunctionsTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for (column, func, kwargs) in self.features:
+        for column, func, kwargs in self.features:
             X[column] = FunctionTransformer(
                 func, validate=True, kw_args=kwargs
             ).transform(X[[column]].to_numpy())
@@ -366,7 +363,7 @@ class MapTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        for (feature, callback) in self.features:
+        for feature, callback in self.features:
             X[feature] = X[feature].map(callback)
 
         return X
@@ -527,7 +524,7 @@ class ValueIndicatorTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        for (column, indicator) in self.features:
+        for column, indicator in self.features:
             X[f"{column}_found_indicator"] = (X[column] == indicator).astype(
                 int if self.as_int else bool
             )
@@ -644,7 +641,7 @@ class ValueReplacerTransformer(BaseTransformer):
             self, X, [feature[0][0] for feature in self.features]
         )
 
-        for (columns, value, replacement) in self.features:
+        for columns, value, replacement in self.features:
             for column in columns:
                 is_regex = ValueReplacerTransformer.__check_for_regex(value)
                 column_dtype = X[column].dtype
@@ -725,7 +722,7 @@ class LeftJoinTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        for (column, lookup_df) in self.features:
+        for column, lookup_df in self.features:
             lookup_df = LeftJoinTransformer.__prefix_df_column_names(lookup_df, column)
             X = pd.merge(X, lookup_df, how="left", left_on=column, right_index=True)
 
@@ -792,7 +789,7 @@ class AllowedValuesTransformer(BaseTransformer):
             [feature[0] for feature in self.features],
         )
 
-        for (column, allowed_values, replacement) in self.features:
+        for column, allowed_values, replacement in self.features:
             X.loc[~X[column].isin(allowed_values), column] = replacement
 
         return X

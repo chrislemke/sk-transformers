@@ -134,7 +134,6 @@ class EmailTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
-
             X[f"{column}_domain"] = (
                 X[column].str.split("@").str[1].str.split(".").str[0]
             )
@@ -297,7 +296,6 @@ class PhoneTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, self.features)
 
         for column in self.features:
-
             X[f"{column}_national_number"] = X[column].swifter.apply(
                 lambda x: PhoneTransformer.__phone_to_float(
                     "national_number",
