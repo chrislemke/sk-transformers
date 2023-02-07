@@ -232,7 +232,6 @@ class AggregateTransformer(BaseTransformer):
 
     def __check_input_type(self) -> None:
         for feature in self.features:
-
             if len(feature) != 2:
                 raise IndexError(
                     f"Expected 2 elements in the feature tuple, got {len(feature)}."
