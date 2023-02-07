@@ -164,12 +164,12 @@ def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
     pipeline = make_pipeline(
         AggregateTransformer(
             [
-                (  # pylint: disable=W0108
+                (
                     ["a", "c"],
                     [
                         ("b", np.sum, "b_sum"),
                         ("b", np.max, "b_max"),
-                        ("d", lambda x: "|".join(x), "d_join_pipe"),
+                        ("d", "|".join, "d_join_pipe"),
                         ("d", lambda x: x[x == "foo"].count(), "d_foo_count"),
                     ],
                 )
@@ -200,9 +200,9 @@ def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
 
 def test_aggregate_transformer_raises_error(X) -> None:
     with pytest.raises(ValueError) as error:
-        AggregateTransformer([("e", "non_existing", ["count", "mean"])]).fit_transform(
-            X
-        )
+        AggregateTransformer(
+            [("e", ("non_existing", "mean", "non_existing_mean"))]
+        ).fit_transform(X)
 
     assert """
                 AggregateTransformer:

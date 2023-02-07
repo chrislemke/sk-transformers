@@ -173,11 +173,11 @@ class AggregateTransformer(BaseTransformer):
         }
     )
 
-    transformer = AggregateTransformer([("foo", ("bar", "mean", "MEAN(foo__bar)"))])
+    transformer = AggregateTransformer([("foo", ("bar", "mean", "MEAN(foo_bar)"))])
     transformer.fit_transform(X)
     ```
     ```
-      foo  bar  MEAN(foo__bar)
+      foo  bar  MEAN(foo_bar)
     0  mr   46       52.166668
     1  mr   32       52.166668
     2  ms   78       68.750000
@@ -191,7 +191,7 @@ class AggregateTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, Tuple[str, Any, str]]]): List of tuples where
+        features (List[Tuple[str, Tuple[str, Union[str, Callable], str]]]): List of tuples where
             the first element is the name or the list of names of columns to be grouped-by,
             and the second element is a tuple or list of tuples containing the aggregation information.
             In this tuple, the first element is the name of the column to be aggregated,
@@ -204,28 +204,29 @@ class AggregateTransformer(BaseTransformer):
         features: List[
             Tuple[
                 Union[str, List[str]],
-                Union[Tuple[str, Any, str], List[Tuple[str, Any, str]]],
+                Union[
+                    Tuple[str, Union[str, Callable], str],
+                    List[Tuple[str, Union[str, Callable], str]],
+                ],
             ]
         ],
     ) -> None:
         super().__init__()
         self.features = features
 
-    def __get_list_of_features(self) -> List:
+    def __get_list_of_features(self) -> List[str]:
         feature_list = []
 
         for groupby_columns, agg_features in self.features:
             if isinstance(groupby_columns, str):
-                feature_list.append(groupby_columns)
-            else:
-                for groupby_column in groupby_columns:
-                    feature_list.append(groupby_column)
+                groupby_columns = [groupby_columns]
+            for groupby_column in groupby_columns:
+                feature_list.append(groupby_column)
 
             if isinstance(agg_features, tuple):
-                feature_list.append(agg_features[0])
-            else:
-                for agg_column, _, _ in agg_features:
-                    feature_list.append(agg_column)
+                agg_features = [agg_features]
+            for agg_column, _, _ in agg_features:
+                feature_list.append(agg_column)
 
         return list(set(feature_list))
 
