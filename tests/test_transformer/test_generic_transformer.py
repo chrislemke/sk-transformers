@@ -83,12 +83,12 @@ def test_column_eval_transformer_for_value_error(X_strings) -> None:
 
 
 def test_column_eval_transformer_with_warning(X_numbers) -> None:
-    with pytest.raises(Warning) as warning:
+    with pytest.warns(UserWarning) as warning:
         transformer = ColumnEvalTransformer(
             [("small_numbers", "apply(lambda x: x + 1)")]
         )
         _ = transformer.fit_transform(X_numbers)
-    assert str(warning.value) == (
+    assert str(warning[0].message) == (
         """
                     Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
                     E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
