@@ -1,5 +1,6 @@
 import numbers
 import re
+import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -38,7 +39,6 @@ class ColumnEvalTransformer(BaseTransformer):
 
     Raises:
         ValueError: If the `eval_func` starts with a dot (`.`).
-        Warning: If the `eval_func` contains `apply` but not `swifter`.
         ValueError: If the `eval_func` tries to assign multiple columns to one target column.
     """
 
@@ -74,7 +74,7 @@ class ColumnEvalTransformer(BaseTransformer):
                 )
 
             if "apply" in eval_func and "swifter" not in eval_func:
-                raise Warning(
+                warnings.warn(
                     """
                     Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
                     E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
