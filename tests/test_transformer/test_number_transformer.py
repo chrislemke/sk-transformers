@@ -32,7 +32,8 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
             [
                 ("small_numbers", "add", 1, None),
                 ("small_numbers", "mul", "small_numbers", None),
-                ("small_numbers", "np.sum", "small_float_numbers", {"axis": 0}),
+                ("small_numbers", "np.add", "small_float_numbers", None),
+                ("small_numbers", "np.divide", "small_numbers", None),
                 ("small_numbers", "numpy.sin", None, None),
                 ("small_numbers", "np.sum", 1, None),
                 ("big_numbers", "neg", None, None),
@@ -43,6 +44,7 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
     expected_add = np.array([8, 13, 83, 2, 1])
     expected_mul = np.array([49, 144, 6724, 1, 0])
     expected_sum = np.array([11.5, 15.5, 88.9, 2.9, 0.6])
+    expected_div = np.array([1.0, 1.0, 1.0, 1.0, np.nan])
     expected_neg = np.array(
         [
             -10_000_000,
@@ -69,7 +71,12 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
         result["small_numbers_mul_small_numbers"].to_numpy(), expected_mul
     )
     assert np.array_equal(
-        result["small_numbers_sum_small_float_numbers"].to_numpy(), expected_sum
+        result["small_numbers_add_small_float_numbers"].to_numpy(), expected_sum
+    )
+    assert np.array_equal(
+        result["small_numbers_divide_small_numbers"].to_numpy(),
+        expected_div,
+        equal_nan=True,
     )
     assert np.array_equal(
         result["small_numbers_sin"].to_numpy().round(3), expected_sin.round(3)
