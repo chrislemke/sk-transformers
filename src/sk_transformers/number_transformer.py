@@ -116,7 +116,7 @@ class MathExpressionTransformer(BaseTransformer):
                 elif isinstance(value, str):
                     X[new_column_with_value] = op(X[feature], X[value], **kwargs or {})
                 else:
-                    X[new_column_with_value] = op([X[feature], value], **kwargs or {})
+                    X[new_column_with_value] = op(X[feature], value, **kwargs or {})
             else:
                 if value is None:
                     X[new_column] = op(X[feature])

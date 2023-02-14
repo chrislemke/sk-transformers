@@ -51,6 +51,7 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
                 ),
                 ("small_numbers", "np.divide", "small_numbers", None),
                 ("small_numbers", "numpy.sin", None, None),
+                ("small_numbers", "np.subtract", 2, None),
                 ("big_numbers", "neg", None, None),
             ]
         )
@@ -58,8 +59,9 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
     result = pipeline.fit_transform(X_numbers)
     expected_add = np.array([8, 13, 83, 2, 1])
     expected_mul = np.array([49, 144, 6724, 1, 0])
-    expected_sum = np.array([11.5, 0, 0, 2.9, 0.6])
-    expected_div = np.array([1.0, 1.0, 1.0, 1.0, np.nan])
+    expected_np_add = np.array([11.5, 0, 0, 2.9, 0.6])
+    expected_np_divide = np.array([1.0, 1.0, 1.0, 1.0, np.nan])
+    expected_np_subtract = np.array([5, 10, 80, -1, -2])
     expected_neg = np.array(
         [
             -10_000_000,
@@ -69,7 +71,7 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
             -99_999_999_999_999,
         ]
     )
-    expected_sin = np.array(
+    expected_np_sin = np.array(
         [
             0.6569865987187891,
             -0.5365729180004349,
@@ -85,15 +87,18 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
         result["small_numbers_mul_small_numbers"].to_numpy(), expected_mul
     )
     assert np.allclose(
-        result["small_numbers_add_small_float_numbers"].to_numpy(), expected_sum
+        result["small_numbers_add_small_float_numbers"].to_numpy(), expected_np_add
     )
     assert np.array_equal(
         result["small_numbers_divide_small_numbers"].to_numpy(),
-        expected_div,
+        expected_np_divide,
         equal_nan=True,
     )
     assert np.array_equal(
-        result["small_numbers_sin"].to_numpy().round(3), expected_sin.round(3)
+        result["small_numbers_sin"].to_numpy().round(3), expected_np_sin.round(3)
+    )
+    assert np.array_equal(
+        result["small_numbers_subtract_2"].to_numpy(), expected_np_subtract
     )
     assert np.array_equal(result["big_numbers_neg"].to_numpy(), expected_neg)
 
