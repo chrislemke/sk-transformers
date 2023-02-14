@@ -14,8 +14,9 @@ class MathExpressionTransformer(BaseTransformer):
     The operation can be a function from NumPy's mathematical functions or
     operator package.
 
-    **Warning!** Some functions/operators may not work as expected. Especially not all NumPy methods are supported. For example:
-    various NumPy methods return values which are not fitting the size of the source column.
+    **Warning!** Some functions/operators may not work as expected. Especially, functions that don't
+    belong in [`numpy.ufunc`](https://numpy.org/doc/stable/reference/ufuncs.html) are not supported.
+    NumPy functions with return values that don't fit the size of the source column are also not supported.
 
     Example:
     ```python
@@ -23,11 +24,11 @@ class MathExpressionTransformer(BaseTransformer):
     from sk_transformers import MathExpressionTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-    transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
+    transformer = MathExpressionTransformer([("foo", "np.add", "bar", None)])
     transformer.fit_transform(X)
     ```
     ```
-       foo  bar  foo_sum_bar
+       foo  bar  foo_add_bar
     0    1    4            5
     1    2    5            7
     2    3    6            9
@@ -54,6 +55,10 @@ class MathExpressionTransformer(BaseTransformer):
             if hasattr(np, operation[3:]):
                 op = getattr(np, operation[3:])
                 is_np_op = True
+                if not isinstance(op, np.ufunc):
+                    raise ValueError(
+                        f"The function `{operation}` is not a NumPy universal function. If you are using `np.sum` or `np.prod`, please use `np.add` or `np.multiply` instead."
+                    )
             else:
                 raise AttributeError(f"Operation {operation[3:]} not found in NumPy!")
 
@@ -109,11 +114,9 @@ class MathExpressionTransformer(BaseTransformer):
                 if value is None:
                     X[new_column] = op(X[feature], **kwargs or {})
                 elif isinstance(value, str):
-                    X[new_column_with_value] = op(
-                        [X[feature], X[value]], **kwargs or {}
-                    )
+                    X[new_column_with_value] = op(X[feature], X[value], **kwargs or {})
                 else:
-                    X[new_column_with_value] = op([X[feature], value], **kwargs or {})
+                    X[new_column_with_value] = op(X[feature], value, **kwargs or {})
             else:
                 if value is None:
                     X[new_column] = op(X[feature])
