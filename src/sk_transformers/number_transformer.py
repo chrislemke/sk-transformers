@@ -23,11 +23,11 @@ class MathExpressionTransformer(BaseTransformer):
     from sk_transformers import MathExpressionTransformer
 
     X = pd.DataFrame({"foo": [1, 2, 3], "bar": [4, 5, 6]})
-    transformer = MathExpressionTransformer([("foo", "np.sum", "bar", {"axis": 0})])
+    transformer = MathExpressionTransformer([("foo", "np.add", "bar", None)])
     transformer.fit_transform(X)
     ```
     ```
-       foo  bar  foo_sum_bar
+       foo  bar  foo_add_bar
     0    1    4            5
     1    2    5            7
     2    3    6            9
