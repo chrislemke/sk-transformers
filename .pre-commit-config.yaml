@@ -106,7 +106,7 @@ repos:
         args: ["--profile=black"]
 
   - repo: https://github.com/PyCQA/pylint
-    rev: v2.16.1
+    rev: v2.16.2
     hooks:
       - id: pylint
         args: ["--rcfile=pyproject.toml"]
