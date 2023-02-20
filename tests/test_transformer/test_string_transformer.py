@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import polars as pl
 from sklearn.pipeline import make_pipeline
 
 from sk_transformers import (
@@ -204,6 +205,37 @@ def test_string_splitter_transformer_in_pipeline(X_strings):
     assert pipeline.steps[0][0] == "stringsplittertransformer"
 
 
+def test_string_splitter_transformer_in_pipeline_polars(X_strings):
+    pipeline = make_pipeline(
+        StringSplitterTransformer(
+            [
+                ("strings_2", "_", 1),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(pl.from_pandas(X_strings))
+    expected_part_1 = [
+        "this",
+        "this",
+        "this is a third string",
+        "this",
+        " ",
+        "!@#$%^&*()",
+    ]
+    expected_part_2 = [
+        "is_not_a_string",
+        "is_another_string",
+        None,
+        "is_a_fifth_string",
+        None,
+        "+",
+    ]
+
+    assert np.array_equal(result["strings_2_part_1"], expected_part_1)
+    assert np.array_equal(result["strings_2_part_2"], expected_part_2)
+    assert pipeline.steps[0][0] == "stringsplittertransformer"
+
+
 def test_string_splitter_transformer_no_maxsplits_in_pipeline(X_strings):
     pipeline = make_pipeline(
         StringSplitterTransformer(
@@ -227,6 +259,20 @@ def test_string_splitter_transformer_zero_maxsplits_in_pipeline(X_strings):
         )
     )
     result = pipeline.fit_transform(X_strings)
+
+    assert "strings_2_part_5" in result.columns
+    assert pipeline.steps[0][0] == "stringsplittertransformer"
+
+
+def test_string_splitter_transformer_zero_maxsplits_in_pipeline_polars(X_strings):
+    pipeline = make_pipeline(
+        StringSplitterTransformer(
+            [
+                ("strings_2", "_", 0),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(pl.from_pandas(X_strings))
 
     assert "strings_2_part_5" in result.columns
     assert pipeline.steps[0][0] == "stringsplittertransformer"

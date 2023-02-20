@@ -8,6 +8,7 @@ from typing import List, Optional, Tuple, Union
 
 import pandas as pd
 import phonenumbers
+import polars as pl
 import swifter  # pylint: disable=unused-import
 
 from sk_transformers.base_transformer import BaseTransformer
@@ -422,12 +423,17 @@ class StringSplitterTransformer(BaseTransformer):
             Tuple[
                 str,
                 str,
-                Optional[int],
+                int,
             ]
         ],
     ) -> None:
         super().__init__()
-        self.features = features
+        self.features = [
+            (split_tuple[0], split_tuple[1], split_tuple[2])
+            if len(split_tuple) == 3
+            else (split_tuple[0], split_tuple[1], -1)
+            for split_tuple in features
+        ]
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Splits the strings based on a separator character.
@@ -441,12 +447,43 @@ class StringSplitterTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
+        if isinstance(X, pl.DataFrame):
+            max_possible_splits_list = [
+                X[column].str.count_match(separator).max()
+                for column, separator, _ in self.features
+            ]
+
+            select_with_expr = [
+                pl.col(column)
+                .str.splitn(by=separator, n=max_possible_split + 1)
+                .struct.rename_fields(
+                    [column + f"_part_{i}" for i in range(1, max_possible_split + 2)]
+                )
+                .alias(column + "_alias")
+                if maxsplit in [0, -1] or maxsplit > max_possible_split
+                else (
+                    pl.col(column)
+                    .str.splitn(by=separator, n=maxsplit + 1)
+                    .struct.rename_fields(
+                        [column + f"_part_{i}" for i in range(1, maxsplit + 2)]
+                    )
+                    .alias(column + "_alias")
+                )
+                for (column, separator, maxsplit), max_possible_split in zip(
+                    self.features, max_possible_splits_list
+                )
+            ]
+
+            return X.with_columns(select_with_expr).unnest(
+                [column + "_alias" for column, _, _ in self.features]
+            )
+
         for split_tuple in self.features:
             column = split_tuple[0]
             separator = split_tuple[1]
+            maxsplit = split_tuple[2]
 
             max_possible_splits = X[column].str.count(separator).max()
-            maxsplit = split_tuple[2] if len(split_tuple) == 3 else max_possible_splits
             if maxsplit in [0, -1] or maxsplit > max_possible_splits:
                 maxsplit = max_possible_splits
 
