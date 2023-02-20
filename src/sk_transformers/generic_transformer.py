@@ -423,10 +423,9 @@ class ColumnDropperTransformer(BaseTransformer):
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
     """
 
-    def __init__(self, columns: Union[str, List[str]], engine: str = "pandas") -> None:
+    def __init__(self, columns: Union[str, List[str]]) -> None:
         super().__init__()
         self.columns = columns
-        self.engine = engine
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Returns the dataframe with the `columns` dropped.
@@ -437,21 +436,10 @@ class ColumnDropperTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with columns dropped.
         """
-        if self.engine == "pandas":
-            X = check_ready_to_transform(self, X, self.columns, force_all_finite=False)
-            return X.drop(self.columns, axis=1)
-
-        if self.engine == "polars":
-            X = pl.from_pandas(
-                check_ready_to_transform(
-                    self, X.to_pandas(), self.columns, force_all_finite=False
-                )
-            )
+        X = check_ready_to_transform(self, X, self.columns, force_all_finite=False)
+        if isinstance(X, pl.DataFrame):
             return X.select([col for col in X.columns if col not in self.columns])
-
-        raise ValueError(
-            f"Invalid engine {self.engine}. Please use `pandas` or `polars`."
-        )
+        return X.drop(self.columns, axis=1)
 
 
 class NaNTransformer(BaseTransformer):

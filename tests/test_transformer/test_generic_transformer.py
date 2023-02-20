@@ -404,9 +404,7 @@ def test_column_dropper_transformer_in_pipeline(X) -> None:
 
 
 def test_column_dropper_transformer_in_pipeline_polars(X) -> None:
-    pipeline = make_pipeline(
-        ColumnDropperTransformer(columns=["a", "b", "c", "d"], engine="polars")
-    )
+    pipeline = make_pipeline(ColumnDropperTransformer(columns=["a", "b", "c", "d"]))
 
     result = pipeline.fit_transform(pl.from_pandas(X))
     expected = X.drop(columns=["a", "b", "c", "d"])
@@ -426,9 +424,7 @@ def test_column_dropper_transformer_in_pipeline_with_nan(X_nan_values) -> None:
 
 def test_column_dropper_transformer_in_pipeline_with_nan_polars(X_nan_values) -> None:
     drop_columns = ["a", "d"]
-    pipeline = make_pipeline(
-        ColumnDropperTransformer(columns=drop_columns, engine="polars")
-    )
+    pipeline = make_pipeline(ColumnDropperTransformer(columns=drop_columns))
 
     result = pipeline.fit_transform(pl.from_pandas(X_nan_values))
     expected = X_nan_values.drop(columns=drop_columns)

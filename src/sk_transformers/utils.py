@@ -1,6 +1,7 @@
 from typing import Any, List, Optional, Tuple, Union
 
 import pandas as pd
+import polars as pl
 from sklearn.base import BaseEstimator
 from sklearn.utils.validation import check_array, check_is_fitted
 
@@ -40,11 +41,11 @@ def check_ready_to_transform(
     if isinstance(features, str):
         features = [features]
 
-    if not isinstance(X, pd.DataFrame):
+    if not isinstance(X, (pd.DataFrame, pl.DataFrame)):
         raise ValueError(
-            f"{transformer.__class__.__name__}: X must be a Pandas dataframe!"
+            f"{transformer.__class__.__name__}: X must be a `pandas` or `polars` dataframe!"
         )
-    if X.empty:
+    if X.shape[0] == 0:
         raise ValueError(f"{transformer.__class__.__name__}: X must not be empty!")
 
     if isinstance(features, list):
@@ -70,6 +71,16 @@ def check_ready_to_transform(
             """
         )
     check_is_fitted(transformer, "fitted_")
+
+    if isinstance(X, pl.DataFrame):
+        X_tmp = X.select([col for col in X.columns if col in set(features)])
+        non_included_features = [c for c in X.columns if c not in features]
+        if non_included_features:
+            X_tmp = pl.concat(
+                [X_tmp, X.select(non_included_features)], how="horizontal"
+            )
+
+        return X_tmp
 
     X_tmp = X[
         dict.fromkeys(X[features]).keys()
