@@ -438,7 +438,7 @@ class ColumnDropperTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, self.columns, force_all_finite=False)
         if isinstance(X, pl.DataFrame):
-            return X.select([col for col in X.columns if col not in self.columns])
+            return X.select(pl.exclude(self.columns))
         return X.drop(self.columns, axis=1)
 
 
