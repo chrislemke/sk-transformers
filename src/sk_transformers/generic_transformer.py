@@ -5,6 +5,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+import polars as pl
 from sklearn.preprocessing import FunctionTransformer
 
 from sk_transformers.base_transformer import BaseTransformer
@@ -422,9 +423,10 @@ class ColumnDropperTransformer(BaseTransformer):
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
     """
 
-    def __init__(self, columns: Union[str, List[str]]) -> None:
+    def __init__(self, columns: Union[str, List[str]], engine: str = "pandas") -> None:
         super().__init__()
         self.columns = columns
+        self.engine = engine
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Returns the dataframe with the `columns` dropped.
@@ -435,8 +437,21 @@ class ColumnDropperTransformer(BaseTransformer):
         Returns:
             pd.DataFrame: Dataframe with columns dropped.
         """
-        X = check_ready_to_transform(self, X, self.columns, force_all_finite=False)
-        return X.drop(self.columns, axis=1)
+        if self.engine == "pandas":
+            X = check_ready_to_transform(self, X, self.columns, force_all_finite=False)
+            return X.drop(self.columns, axis=1)
+
+        if self.engine == "polars":
+            X = pl.from_pandas(
+                check_ready_to_transform(
+                    self, X.to_pandas(), self.columns, force_all_finite=False
+                )
+            )
+            return X.select([col for col in X.columns if col not in self.columns])
+
+        raise ValueError(
+            f"Invalid engine {self.engine}. Please use `pandas` or `polars`."
+        )
 
 
 class NaNTransformer(BaseTransformer):

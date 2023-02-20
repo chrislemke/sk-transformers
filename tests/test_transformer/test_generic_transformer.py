@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import polars as pl
 import pytest
 from sklearn.pipeline import make_pipeline
 
@@ -402,6 +403,17 @@ def test_column_dropper_transformer_in_pipeline(X) -> None:
     assert pipeline.steps[0][0] == "columndroppertransformer"
 
 
+def test_column_dropper_transformer_in_pipeline_polars(X) -> None:
+    pipeline = make_pipeline(
+        ColumnDropperTransformer(columns=["a", "b", "c", "d"], engine="polars")
+    )
+
+    result = pipeline.fit_transform(pl.from_pandas(X))
+    expected = X.drop(columns=["a", "b", "c", "d"])
+    assert result.to_pandas().equals(expected)
+    assert pipeline.steps[0][0] == "columndroppertransformer"
+
+
 def test_column_dropper_transformer_in_pipeline_with_nan(X_nan_values) -> None:
     drop_columns = ["a", "d"]
     pipeline = make_pipeline(ColumnDropperTransformer(columns=drop_columns))
@@ -409,6 +421,18 @@ def test_column_dropper_transformer_in_pipeline_with_nan(X_nan_values) -> None:
     result = pipeline.fit_transform(X_nan_values)
     expected = X_nan_values.drop(columns=drop_columns)
     assert result.equals(expected)
+    assert pipeline.steps[0][0] == "columndroppertransformer"
+
+
+def test_column_dropper_transformer_in_pipeline_with_nan_polars(X_nan_values) -> None:
+    drop_columns = ["a", "d"]
+    pipeline = make_pipeline(
+        ColumnDropperTransformer(columns=drop_columns, engine="polars")
+    )
+
+    result = pipeline.fit_transform(pl.from_pandas(X_nan_values))
+    expected = X_nan_values.drop(columns=drop_columns)
+    assert result.to_pandas().equals(expected)
     assert pipeline.steps[0][0] == "columndroppertransformer"
 
 
