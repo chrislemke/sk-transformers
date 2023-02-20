@@ -491,6 +491,16 @@ class NaNTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
+        if isinstance(X, pl.DataFrame):
+            feature_dict = dict(self.features)
+            select_expr = []
+            for feature in X.columns:
+                if feature in feature_dict.keys():
+                    select_expr.append(pl.col(feature).fill_null(feature_dict[feature]))
+                else:
+                    select_expr.append(pl.col(feature))
+            return X.select(select_expr)
+
         for feature, value in self.features:
             value_is_number = isinstance(value, numbers.Number)
             feature_is_number = np.issubdtype(X[feature].dtype, np.number)

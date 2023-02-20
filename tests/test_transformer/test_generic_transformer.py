@@ -444,6 +444,18 @@ def test_nan_transformer_in_pipeline(X_nan_values) -> None:
     assert pipeline.steps[0][1].features[0][1] == -1
 
 
+def test_nan_transformer_in_pipeline_polars(X_nan_values) -> None:
+    pipeline = make_pipeline(NaNTransformer([("a", -1), ("b", -1), ("c", "missing")]))
+    X = pipeline.fit_transform(pl.from_pandas(X_nan_values))
+
+    assert X.null_count().sum(axis=1).sum() == 0
+    assert X["a"][1] == -1
+    assert X["b"][2] == -1
+    assert X["c"][6] == "missing"
+    assert pipeline.steps[0][0] == "nantransformer"
+    assert pipeline.steps[0][1].features[0][1] == -1
+
+
 def test_nan_transformer_with_different_types_string(X_nan_values) -> None:
     with pytest.raises(TypeError) as error:
         transformer = NaNTransformer([("a", "a_value")])
