@@ -73,14 +73,14 @@ def check_ready_to_transform(
     check_is_fitted(transformer, "fitted_")
 
     if isinstance(X, pl.DataFrame):
-        X_tmp = X.select([col for col in X.columns if col in set(features)])
+        X_tmp_pl = X.select([col for col in X.columns if col in set(features)])
         non_included_features = [c for c in X.columns if c not in features]
         if non_included_features:
-            X_tmp = pl.concat(
-                [X_tmp, X.select(non_included_features)], how="horizontal"
+            X_tmp_pl = pl.concat(
+                [X_tmp_pl, X.select(non_included_features)], how="horizontal"
             )
 
-        return X_tmp
+        return X_tmp_pl
 
     X_tmp = X[
         dict.fromkeys(X[features]).keys()

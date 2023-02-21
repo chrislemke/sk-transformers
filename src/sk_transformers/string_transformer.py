@@ -448,7 +448,7 @@ class StringSplitterTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         if isinstance(X, pl.DataFrame):
-            max_possible_splits_list = [
+            max_possible_splits_list: List[int] = [
                 X[column].str.count_match(separator).max()
                 for column, separator, _ in self.features
             ]
