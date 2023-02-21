@@ -71,6 +71,23 @@ class ToVecTransformer(BaseEstimator, TransformerMixin):
         training_kwargs (Optional[Dict[str, Any]]): Keyword arguments to pass to the [`Trainer`](https://pytorch-widedeep.readthedocs.io/en/latest/pytorch-widedeep/trainer.html#pytorch_widedeep.training.Trainer).
     """
 
+    __slots__ = (
+        "cat_embed_columns",
+        "continuous_columns",
+        "training_objective",
+        "n_epochs",
+        "batch_size",
+        "input_dim",
+        "n_heads",
+        "n_blocks",
+        "verbose",
+        "preprocessing_kwargs",
+        "training_kwargs",
+        "training_kwargs",
+        "tab_vec_",
+        "fitted_",
+    )
+
     def __init__(
         self,
         cat_embed_columns: List[str],

@@ -39,6 +39,11 @@ class MeanEncoderTransformer(BaseEstimator, TransformerMixin):
             Those may appear if a category is not present in the set the encoder was not fitted on.
     """
 
+    __slots__ = (
+        "fill_na_value",
+        "encoder",
+    )
+
     def __init__(self, fill_na_value: Union[int, float] = -999) -> None:
         self.encoder = MeanEncoder(ignore_format=False)
         self.fill_na_value = fill_na_value
