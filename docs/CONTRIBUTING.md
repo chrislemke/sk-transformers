@@ -100,6 +100,7 @@ This installs all needed dependencies for development and testing.
 ## Pre-commit hooks
 We are using [pre-commit](https://pre-commit.com/) to ensure a consistent code style and to avoid common mistakes. Please install the [pre-commit](https://pre-commit.com/#installation) and install the hook with:
 ```bash
+pre-commit install
 pre-commit install --hook-type commit-msg
 ```
 
