@@ -41,6 +41,8 @@ class MathExpressionTransformer(BaseTransformer):
             the operation only takes one argument. The fourth entry of the tuple is a dictionary passed as `kwargs` to the operation.
     """
 
+    __slots__ = ("features",)
+
     def __init__(
         self,
         features: List[

@@ -3,13 +3,13 @@ default_language_version:
 
 ci:
   autofix_commit_msg: |
-    [pre-commit.ci] auto fixes from pre-commit.com hooks
+    ci: auto fixes from pre-commit.com hooks
     for more information, see https://pre-commit.ci
   autofix_prs: true
   autoupdate_branch: "develop"
   autoupdate_commit_msg: "ci: pre-commit autoupdate"
   autoupdate_schedule: weekly
-  skip: [poetry-lock, poetry-export]
+  skip: [python-safety-dependencies-check, poetry-lock, poetry-export]
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
@@ -118,7 +118,7 @@ repos:
         args: ["--rcfile=pyproject.toml"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.0.0
+    rev: v1.0.1
     hooks:
       - id: mypy
         args:
