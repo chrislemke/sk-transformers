@@ -514,3 +514,20 @@ def test_allowed_values_transformer_in_pipeline(X) -> None:
     assert np.array_equal(result["a"].to_numpy(), expected_a)
     assert np.array_equal(result["c"].to_numpy(), expected_c)
     assert pipeline.steps[0][0] == "allowedvaluestransformer"
+
+
+def test_allowed_values_transformer_in_pipeline_polars(X) -> None:
+    values = [
+        ("a", [1, 2], -999),
+        ("c", ["1", "2"], "other"),
+    ]
+    pipeline = make_pipeline(AllowedValuesTransformer(values))
+    result = pipeline.fit_transform(pl.from_pandas(X))
+    expected_a = np.array([1, 2, -999, -999, -999, -999, -999, -999, -999, -999])
+    expected_c = np.array(
+        ["1", "1", "1", "1", "2", "2", "2", "other", "other", "other"]
+    )
+
+    assert np.array_equal(result["a"].to_numpy(), expected_a)
+    assert np.array_equal(result["c"].to_numpy(), expected_c)
+    assert pipeline.steps[0][0] == "allowedvaluestransformer"

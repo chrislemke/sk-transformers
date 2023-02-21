@@ -832,6 +832,22 @@ class AllowedValuesTransformer(BaseTransformer):
             [feature[0] for feature in self.features],
         )
 
+        if isinstance(X, pl.DataFrame):
+            return X.with_columns(
+                [
+                    pl.col(column)
+                    .map_dict(
+                        {
+                            allowed_value: allowed_value
+                            for allowed_value in allowed_values
+                        }
+                    )
+                    .cast(type(replacement))
+                    .fill_null(replacement)
+                    for column, allowed_values, replacement in self.features
+                ]
+            )
+
         for column, allowed_values, replacement in self.features:
             X.loc[~X[column].isin(allowed_values), column] = replacement
 
