@@ -2,6 +2,7 @@ from datetime import datetime
 from typing import List, Tuple
 
 import pandas as pd
+import polars as pl
 
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
@@ -243,6 +244,17 @@ class TimestampTransformer(BaseTransformer):
             pandas.DataFrame: Dataframe with transformed columns.
         """
         X = check_ready_to_transform(self, X, self.features)
+
+        if isinstance(X, pl.DataFrame):
+            return X.with_columns(
+                [
+                    pl.col(column)
+                    .str.strptime(pl.Datetime, self.date_format)
+                    .dt.timestamp("ms")
+                    / 1000
+                    for column in self.features
+                ]
+            )
 
         for column in self.features:
             X[column] = pd.to_datetime(

@@ -1,4 +1,5 @@
 import numpy as np
+import polars as pl
 import pytest
 from sklearn.pipeline import make_pipeline
 
@@ -158,6 +159,27 @@ def test_duration_calculator_transformer_exception_no_column(X) -> None:
 def test_timestamp_transformer_in_pipeline(X_time_values) -> None:
     pipeline = make_pipeline(TimestampTransformer(["b"]))
     result = pipeline.fit_transform(X_time_values)["b"].to_numpy()
+    expected = np.array(
+        [
+            -3.1561920e08,
+            0.0000000e00,
+            8.6400000e04,
+            1.6412544e09,
+            1.6413408e09,
+            1.6414272e09,
+            1.6415136e09,
+            1.6416000e09,
+            1.6416864e09,
+            1.6417728e09,
+        ]
+    )
+    assert np.array_equal(result, expected)
+    assert pipeline.steps[0][0] == "timestamptransformer"
+
+
+def test_timestamp_transformer_in_pipeline_polars(X_time_values) -> None:
+    pipeline = make_pipeline(TimestampTransformer(["b"]))
+    result = pipeline.fit_transform(pl.from_pandas(X_time_values))["b"].to_numpy()
     expected = np.array(
         [
             -3.1561920e08,
