@@ -121,6 +121,34 @@ def test_duration_calculator_transformer_in_pipeline_seconds(X_time_values) -> N
     assert pipeline.steps[0][1].unit == "seconds"
 
 
+def test_duration_calculator_transformer_in_pipeline_seconds_polars(
+    X_time_values,
+) -> None:
+    pipeline = make_pipeline(
+        DurationCalculatorTransformer(
+            ("b", "c"), new_column_name="duration", unit="seconds"
+        )
+    )
+    X = pipeline.fit_transform(pl.from_pandas(X_time_values))
+    expected = np.array(
+        [
+            0.0,
+            0.0,
+            31536000.0,
+            31536000.0,
+            2678400.0,
+            2678400.0,
+            86400.0,
+            86400.0,
+            -1957305600.0,
+            2460672000.0,
+        ]
+    )
+    assert np.array_equal(X["duration"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "durationcalculatortransformer"
+    assert pipeline.steps[0][1].unit == "seconds"
+
+
 def test_duration_calculator_transformer_in_pipeline_days(X_time_values) -> None:
     pipeline = make_pipeline(
         DurationCalculatorTransformer(
@@ -128,6 +156,19 @@ def test_duration_calculator_transformer_in_pipeline_days(X_time_values) -> None
         )
     )
     X = pipeline.fit_transform(X_time_values)
+    expected = np.array([0, 0, 365, 365, 31, 31, 1, 1, -22654, 28480])
+    assert np.array_equal(X["duration"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "durationcalculatortransformer"
+    assert pipeline.steps[0][1].unit == "days"
+
+
+def test_duration_calculator_transformer_in_pipeline_days_polars(X_time_values) -> None:
+    pipeline = make_pipeline(
+        DurationCalculatorTransformer(
+            ("b", "c"), new_column_name="duration", unit="days"
+        )
+    )
+    X = pipeline.fit_transform(pl.from_pandas(X_time_values))
     expected = np.array([0, 0, 365, 365, 31, 31, 1, 1, -22654, 28480])
     assert np.array_equal(X["duration"].to_numpy(), expected)
     assert pipeline.steps[0][0] == "durationcalculatortransformer"

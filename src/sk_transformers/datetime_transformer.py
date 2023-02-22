@@ -183,6 +183,24 @@ class DurationCalculatorTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, list(self.features))
 
+        if isinstance(X, pl.DataFrame):
+            if self.unit == "seconds":
+                factor = 1000
+            elif self.unit == "days":
+                factor = 1000 * 60 * 60 * 24
+            return X.with_columns(
+                (
+                    pl.col(self.features[1])
+                    .str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                    .dt.timestamp("ms")
+                    / factor
+                    - pl.col(self.features[0])
+                    .str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                    .dt.timestamp("ms")
+                    / factor
+                ).alias(self.new_column_name)
+            )
+
         duration_series = pd.to_datetime(
             X[self.features[1]], utc=True, errors="raise"
         ) - pd.to_datetime(X[self.features[0]], utc=True, errors="raise")
