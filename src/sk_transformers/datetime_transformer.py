@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import pandas as pd
 import polars as pl
@@ -87,6 +87,51 @@ class DateColumnsTransformer(BaseTransformer):
         """
 
         X = check_ready_to_transform(self, X, self.features)
+
+        if isinstance(X, pl.DataFrame):
+            for column in self.features:
+                X = X.with_columns(
+                    pl.col(column)
+                    .str.strptime(pl.Datetime, fmt=self.date_format)
+                    .alias(column + "_datetime")
+                )
+
+                date_element_dict: Dict[str, pl.Expr] = {
+                    "year": pl.col(f"{column}_datetime").dt.year(),
+                    "month": pl.col(f"{column}_datetime").dt.month(),
+                    "day": pl.col(f"{column}_datetime").dt.day(),
+                    "day_of_week": pl.col(f"{column}_datetime").dt.weekday() - 1,
+                    "day_of_year": pl.col(f"{column}_datetime").dt.ordinal_day(),
+                    "week_of_year": pl.col(f"{column}_datetime").dt.week(),
+                    "quarter": pl.col(f"{column}_datetime").dt.quarter(),
+                    "is_leap_year": pl.col(f"{column}_datetime").dt.year() % 4 == 0,
+                    "is_month_start": pl.col(f"{column}_datetime").dt.day() == 1,
+                    "is_month_end": pl.col(f"{column}_datetime")
+                    .dt.day()
+                    .is_in([28, 29, 30, 31]),
+                    "is_quarter_start": pl.col(f"{column}_datetime")
+                    .dt.ordinal_day()
+                    .is_in([1, 91, 183, 275]),
+                    "is_quarter_end": pl.col(f"{column}_datetime")
+                    .dt.ordinal_day()
+                    .is_in([90, 182, 274, 365]),
+                    "is_year_start": pl.col(f"{column}_datetime").dt.ordinal_day() == 1,
+                    "is_year_end": pl.col(f"{column}_datetime")
+                    .dt.ordinal_day()
+                    .is_in([365, 366]),
+                    "is_weekend": pl.col(f"{column}_datetime")
+                    .dt.weekday()
+                    .is_in([6, 7]),
+                }
+
+                X = X.with_columns(
+                    [
+                        date_element_dict[element].alias(f"{column}_{element}")
+                        for element in self.date_elements
+                    ]
+                ).drop(f"{column}_datetime")
+
+            return X
 
         for column in self.features:
             X[column] = pd.to_datetime(
