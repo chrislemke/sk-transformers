@@ -230,20 +230,25 @@ class DurationCalculatorTransformer(BaseTransformer):
 
         if isinstance(X, pl.DataFrame):
             if self.unit == "seconds":
-                factor = 1000
-            elif self.unit == "days":
-                factor = 1000 * 60 * 60 * 24
+                return X.with_columns(
+                    (
+                        pl.col(self.features[1]).str.strptime(
+                            pl.Datetime, fmt="%Y-%m-%d"
+                        )
+                        - pl.col(self.features[0]).str.strptime(
+                            pl.Datetime, fmt="%Y-%m-%d"
+                        )
+                    )
+                    .dt.seconds()
+                    .alias(self.new_column_name)
+                )
             return X.with_columns(
                 (
-                    pl.col(self.features[1])
-                    .str.strptime(pl.Datetime, fmt="%Y-%m-%d")
-                    .dt.timestamp("ms")
-                    / factor
-                    - pl.col(self.features[0])
-                    .str.strptime(pl.Datetime, fmt="%Y-%m-%d")
-                    .dt.timestamp("ms")
-                    / factor
-                ).alias(self.new_column_name)
+                    pl.col(self.features[1]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                    - pl.col(self.features[0]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                )
+                .dt.days()
+                .alias(self.new_column_name)
             )
 
         duration_series = pd.to_datetime(
