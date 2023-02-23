@@ -115,6 +115,24 @@ def test_phone_number_transformer(X_numbers):
     )
 
 
+def test_phone_number_transformer_polars(X_numbers):
+    pipeline = make_pipeline(PhoneTransformer(["phone_number"]))
+
+    X = pipeline.fit_transform(pl.from_pandas(X_numbers))
+    expected_national_number = np.array(
+        [1.763456123, -999.0, 4.045654449, -999.0, -999.0]
+    )
+    expected_country_code = np.array([0.49, -999.0, 0.49, -999.0, -999.0])
+
+    assert pipeline.steps[0][0] == "phonetransformer"
+    assert np.array_equal(
+        X["phone_number_national_number"].to_numpy(), expected_national_number
+    )
+    assert np.array_equal(
+        X["phone_number_country_code"].to_numpy(), expected_country_code
+    )
+
+
 def test_string_similarity_transformer_in_pipeline(X_strings):
     pipeline = make_pipeline(StringSimilarityTransformer(("strings_1", "strings_2")))
     result = pipeline.fit_transform(X_strings)

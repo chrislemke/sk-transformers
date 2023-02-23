@@ -4,7 +4,7 @@ import itertools
 import re
 import unicodedata
 from difflib import SequenceMatcher
-from typing import List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 import pandas as pd
 import phonenumbers
@@ -335,6 +335,31 @@ class PhoneTransformer(BaseTransformer):
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
         X = check_ready_to_transform(self, X, self.features)
+
+        if isinstance(X, pl.DataFrame):
+            function_list: List[Callable] = [
+                lambda x: PhoneTransformer.__phone_to_float(
+                    "national_number",
+                    x,
+                    int(self.national_number_divisor),
+                    self.error_value,
+                ),
+                lambda x: PhoneTransformer.__phone_to_float(
+                    "country_code", x, int(self.country_code_divisor), self.error_value
+                ),
+            ]
+            phone_number_attr_list: List[str] = ["national_number", "country_code"]
+            return X.with_columns(
+                [
+                    pl.col(column)
+                    .apply(function)
+                    .alias(f"{column}_{phone_number_attr}")
+                    for column in self.features
+                    for function, phone_number_attr in zip(
+                        function_list, phone_number_attr_list
+                    )
+                ]
+            )
 
         for column in self.features:
             X[f"{column}_national_number"] = X[column].swifter.apply(
