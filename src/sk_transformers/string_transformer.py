@@ -80,6 +80,12 @@ class IPAddressEncoderTransformer(BaseTransformer):
             self.ip6_divisor,
             self.error_value,
         )
+
+        if isinstance(X, pl.DataFrame):
+            return X.with_columns(
+                [pl.col(column).apply(function) for column in self.features]
+            )
+
         for column in self.features:
             X[column] = X[column].map(function)
 

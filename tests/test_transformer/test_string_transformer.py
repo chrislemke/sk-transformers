@@ -32,6 +32,23 @@ def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
     assert np.array_equal(X["ip_address"].to_numpy(), expected)
 
 
+def test_ip_address_encoder_transformer_in_pipeline_polars(X_numbers) -> None:
+    pipeline = make_pipeline(IPAddressEncoderTransformer(["ip_address"]))
+
+    X = pipeline.fit_transform(pl.from_pandas(X_numbers))
+    expected = np.array(
+        [
+            0.3405803971,
+            0.3232235777,
+            4.254076642994478e-11,
+            4.254076645264119e-11,
+            -999,
+        ]
+    )
+    assert pipeline.steps[0][0] == "ipaddressencodertransformer"
+    assert np.array_equal(X["ip_address"].to_numpy(), expected)
+
+
 def test_email_transformer_in_pipeline(X_strings) -> None:
     pipeline = make_pipeline(EmailTransformer(["email"]))
     result = pipeline.fit_transform(X_strings)
