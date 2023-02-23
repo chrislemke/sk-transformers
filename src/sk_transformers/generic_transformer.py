@@ -586,6 +586,16 @@ class ValueIndicatorTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
+        if isinstance(X, pl.DataFrame):
+            return X.with_columns(
+                [
+                    (pl.col(column) == indicator)
+                    .cast(pl.Int32 if self.as_int else pl.Boolean)
+                    .suffix("_found_indicator")
+                    for column, indicator in self.features
+                ]
+            )
+
         for column, indicator in self.features:
             X[f"{column}_found_indicator"] = (X[column] == indicator).astype(
                 int if self.as_int else bool

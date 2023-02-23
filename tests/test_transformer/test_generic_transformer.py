@@ -336,6 +336,20 @@ def test_value_indicator_transformer_in_pipeline(X_nan_values) -> None:
     assert pipeline.steps[0][0] == "valueindicatortransformer"
 
 
+def test_value_indicator_transformer_in_pipeline_polars(X_nan_values) -> None:
+    pipeline = make_pipeline(
+        ValueIndicatorTransformer([("d", -999), ("e", "-999")], as_int=True)
+    )
+    X = pipeline.fit_transform(pl.from_pandas(X_nan_values))
+
+    assert X[5, "d_found_indicator"] == 1
+    assert X[6, "d_found_indicator"] == 0
+    assert X[6, "e_found_indicator"] == 1
+    assert X[7, "e_found_indicator"] == 0
+
+    assert pipeline.steps[0][0] == "valueindicatortransformer"
+
+
 def test_value_indicator_transformer_in_pipeline_with_non_existing_column(
     X_nan_values,
 ) -> None:
