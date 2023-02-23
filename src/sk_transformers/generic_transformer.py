@@ -153,6 +153,11 @@ class DtypeTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
+        if isinstance(X, pl.DataFrame):
+            return X.with_columns(
+                [pl.col(column).cast(dtype) for column, dtype in self.features]
+            )
+
         for column, dtype in self.features:
             X[column] = X[column].astype(dtype)
         return X

@@ -116,12 +116,34 @@ def test_dtype_transformer_in_pipeline(X) -> None:
     assert pipeline.steps[0][0] == "dtypetransformer"
 
 
+def test_dtype_transformer_in_pipeline_polars(X) -> None:
+    pipeline = make_pipeline(
+        DtypeTransformer([("a", pl.Float64), ("e", pl.Categorical)])
+    )
+    X = pipeline.fit_transform(pl.from_pandas(X))
+
+    assert X["a"].dtype == pl.Float64
+    assert X["e"].dtype == pl.Categorical
+    assert pipeline.steps[0][0] == "dtypetransformer"
+
+
 def test_dtype_transformer_in_pipeline_with_nan(X_nan_values) -> None:
     pipeline = make_pipeline(DtypeTransformer([("a", np.float32), ("d", "category")]))
     X = pipeline.fit_transform(X_nan_values)
 
     assert X["a"].dtype == "float32"
     assert X["d"].dtype == "category"
+    assert pipeline.steps[0][0] == "dtypetransformer"
+
+
+def test_dtype_transformer_in_pipeline_with_nan_polars(X_nan_values) -> None:
+    pipeline = make_pipeline(
+        DtypeTransformer([("a", pl.Float64), ("e", pl.Categorical)])
+    )
+    X = pipeline.fit_transform(pl.from_pandas(X_nan_values))
+
+    assert X["a"].dtype == pl.Float64
+    assert X["e"].dtype == pl.Categorical
     assert pipeline.steps[0][0] == "dtypetransformer"
 
 
