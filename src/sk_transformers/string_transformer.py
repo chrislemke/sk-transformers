@@ -149,6 +149,47 @@ class EmailTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, self.features)
 
+        if isinstance(X, pl.DataFrame):
+            for column in self.features:
+                X = X.with_columns(
+                    pl.col(column)
+                    .str.split_exact("@", 1)
+                    .struct.rename_fields(["username", "domain"])
+                    .alias("email_parts"),
+                ).unnest("email_parts")
+
+                X = (
+                    X.with_columns(
+                        pl.col("domain")
+                        .str.split_exact(".", 1)
+                        .struct.rename_fields([f"{column}_domain", "subdomain"])
+                        .alias("domain_parts"),
+                    )
+                    .unnest("domain_parts")
+                    .drop(["domain", "subdomain"])
+                )
+
+                expr = [
+                    pl.col("username")
+                    .apply(EmailTransformer.__num_of_digits)
+                    .alias(f"{column}_num_of_digits"),
+                    pl.col("username")
+                    .apply(EmailTransformer.__num_of_letters)
+                    .alias(f"{column}_num_of_letters"),
+                    pl.col("username")
+                    .apply(EmailTransformer.__num_of_special_characters)
+                    .alias(f"{column}_num_of_special_chars"),
+                    pl.col("username")
+                    .apply(EmailTransformer.__num_of_repeated_characters)
+                    .alias(f"{column}_num_of_repeated_chars"),
+                    pl.col("username")
+                    .apply(EmailTransformer.__num_of_words)
+                    .alias(f"{column}_num_of_words"),
+                ]
+
+                X = X.with_columns(expr).drop(column).rename({"username": column})
+            return X
+
         for column in self.features:
             X[f"{column}_domain"] = (
                 X[column].str.split("@").str[1].str.split(".").str[0]

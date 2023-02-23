@@ -97,6 +97,38 @@ def test_email_transformer_in_pipeline(X_strings) -> None:
     assert pipeline.steps[0][0] == "emailtransformer"
 
 
+def test_email_transformer_in_pipeline_polars(X_strings) -> None:
+    pipeline = make_pipeline(EmailTransformer(["email"]))
+    result = pipeline.fit_transform(pl.from_pandas(X_strings[["email"]])).to_pandas()
+    expected = pd.DataFrame(
+        {
+            "email": {
+                0: "test",
+                1: "test123",
+                2: "test_123$$",
+                3: "test_test",
+                4: "ttt",
+                5: "test_test_test",
+            },
+            "email_domain": {
+                0: "test1",
+                1: "test2",
+                2: "test3",
+                3: "test4",
+                4: "test5",
+                5: np.nan,
+            },
+            "email_num_of_digits": {0: 0, 1: 3, 2: 3, 3: 0, 4: 0, 5: 0},
+            "email_num_of_letters": {0: 4, 1: 4, 2: 4, 3: 8, 4: 3, 5: 12},
+            "email_num_of_special_chars": {0: 0, 1: 0, 2: 3, 3: 1, 4: 0, 5: 2},
+            "email_num_of_repeated_chars": {0: 1, 1: 1, 2: 2, 3: 1, 4: 3, 5: 1},
+            "email_num_of_words": {0: 1, 1: 1, 2: 2, 3: 2, 4: 1, 5: 3},
+        }
+    )
+    assert result.equals(expected)
+    assert pipeline.steps[0][0] == "emailtransformer"
+
+
 def test_phone_number_transformer(X_numbers):
     pipeline = make_pipeline(PhoneTransformer(["phone_number"]))
 
