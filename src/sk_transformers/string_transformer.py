@@ -149,7 +149,7 @@ class EmailTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, self.features)
 
-        if isinstance(X, pl.DataFrame):
+        if isinstance(X, pl.DataFrame):  # pylint: disable=duplicate-code
             for column in self.features:
                 X = X.with_columns(
                     pl.col(column)
