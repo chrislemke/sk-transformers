@@ -720,14 +720,14 @@ nvidia-cuda-runtime-cu11==11.7.99 ; python_version >= "3.8" and python_version <
 nvidia-cudnn-cu11==8.5.0.96 ; python_version >= "3.8" and python_version < "3.11" and platform_system == "Linux" \
     --hash=sha256:402f40adfc6f418f9dae9ab402e773cfed9beae52333f6d86ae3107a1b9527e7 \
     --hash=sha256:71f8111eb830879ff2836db3cccf03bbd735df9b0d17cd93761732ac50a8a108
-opencv-contrib-python==4.7.0.68 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:1a48c2f24440cfd6e49c84dbe39c39feff5efbc90be8299c76e7141973d403b6 \
-    --hash=sha256:2b8e3a1a7af31ebed28487d161ca4be0edd0b0e241667c6e9c842ac683313b2f \
-    --hash=sha256:2f0c32b0f2f55255632a44bdcfa185f88c7fb6d2616869942aff9d5a39df4997 \
-    --hash=sha256:35e9a3809da10a47189c06d4d78b8e7821b9a3578dec8cbddf6ee1675bd83557 \
-    --hash=sha256:7a75f1775790106e54bcfb101c0e00e1f801a57d9baebc82d0b6758fc83a4ca0 \
-    --hash=sha256:b4033a164b2e2ea0049ba8c1194dab82dca680953ac36f33d1cc2c060906555f \
-    --hash=sha256:e3967b1f3d74b8c70be724dbc07921faec87e8806cc87b2db5e7057815d6a08c
+opencv-contrib-python==4.7.0.72 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:641ca83b34a9d3e8ef2da70533c6e4e3f076ffb0db69b963d82899cc53e9b3c2 \
+    --hash=sha256:698c6b6203831f6573e04258be197e3bfde97fb7279fb614e39d75a8bd5818fb \
+    --hash=sha256:8cad628ea6cc493f6c56140d7edc86f7ed8de528e18e44311e42b390a7d9996e \
+    --hash=sha256:ab33fa2385ec7e70b9d484293f6f1f3707933045af4d18bb3b0a0290fa44370f \
+    --hash=sha256:b54c2e8bb636e367d29bde48fae2aa52c43b782265cf65838a1fe852006cdd94 \
+    --hash=sha256:d1fef5ae16dfa73022749165e029e85eb0f399503470c0df1f84c95633f4ae52 \
+    --hash=sha256:fefc5f7f1eef3125f78242afe5c989057b36c2f015619698c741b04f4503f913
 packaging==23.0 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:714ac14496c3e68c99c29b00845f7a2b85f3bb6f1078fd9f72fd20f0570002b2 \
     --hash=sha256:b6ad297f8907de0fa2fe1ccbd26fdaf387f5f47c7275fedf8cce89f99446cf97
@@ -863,9 +863,9 @@ polars==0.16.8 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:7a247c0ce59562ee412e684ea999ddc004213fe2acf30753340b662fb6609041 \
     --hash=sha256:da306f9049afd11ad3c190cccf10fea4497cb413812c02bc774c60934aa679f4 \
     --hash=sha256:f85c7a3753af0f59ce18641446efdc2d3f85eaa9a9d232232061faafa02f87b9
-pre-commit==3.0.4 ; python_version >= "3.8" and python_version < "3.11" \
-    --hash=sha256:9e3255edb0c9e7fe9b4f328cb3dc86069f8fdc38026f1bf521018a05eaf4d67b \
-    --hash=sha256:bc4687478d55578c4ac37272fe96df66f73d9b5cf81be6f28627d4e712e752d5
+pre-commit==3.1.0 ; python_version >= "3.8" and python_version < "3.11" \
+    --hash=sha256:61bd9f1b96d3d1e763f2a9a0f8522aed341646800642ff6803c73fac5781f5b7 \
+    --hash=sha256:7001dfcd174540658822b1fd3630ceadf4f41375a5d1844b5c3b3830f227348c
 preshed==3.0.8 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:019d8fa4161035811fb2804d03214143298739e162d0ad24e087bd46c50970f5 \
     --hash=sha256:06793022a56782ef51d74f1399925a2ba958e50c5cfbc6fa5b25c4945e158a07 \

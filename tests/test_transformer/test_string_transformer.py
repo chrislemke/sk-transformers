@@ -160,6 +160,42 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
     assert result[["email", "strings_1", "strings_2"]].equals(expected)
 
 
+def test_string_slicer_transformer_in_pipeline_polars(X_strings):
+    pipeline = make_pipeline(
+        StringSlicerTransformer(
+            [
+                ("email", (5,)),
+                ("strings_1", (8, 16)),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(pl.from_pandas(X_strings)).to_pandas()
+
+    expected = pd.DataFrame(
+        {
+            "email": [
+                "test@",
+                "test1",
+                "test_",
+                "test_",
+                "ttt@t",
+                "test_",
+            ],
+            "strings_1": [
+                "a_string",
+                "another_",
+                "a_third_",
+                "a_fourth",
+                "a_fifth_",
+                "a_sixth_",
+            ],
+        }
+    )
+
+    assert pipeline.steps[0][0] == "stringslicertransformer"
+    assert result[["email", "strings_1"]].equals(expected)
+
+
 def test_string_slicer_transformer_new_column_name_in_pipeline(X_strings):
     pipeline = make_pipeline(
         StringSlicerTransformer(
@@ -169,6 +205,20 @@ def test_string_slicer_transformer_new_column_name_in_pipeline(X_strings):
         )
     )
     result = pipeline.fit_transform(X_strings)
+
+    assert "new_email_slice" in result.columns
+    assert pipeline.steps[0][0] == "stringslicertransformer"
+
+
+def test_string_slicer_transformer_new_column_name_in_pipeline_polars(X_strings):
+    pipeline = make_pipeline(
+        StringSlicerTransformer(
+            [
+                ("email", (5,), "new_email_slice"),
+            ]
+        )
+    )
+    result = pipeline.fit_transform(pl.from_pandas(X_strings))
 
     assert "new_email_slice" in result.columns
     assert pipeline.steps[0][0] == "stringslicertransformer"

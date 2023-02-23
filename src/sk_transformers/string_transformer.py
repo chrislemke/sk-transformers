@@ -400,6 +400,26 @@ class StringSlicerTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
+        if isinstance(X, pl.DataFrame):
+            for slice_tuple in self.features:
+                column = slice_tuple[0]
+                slice_args = slice_tuple[1]
+                slice_column = slice_tuple[2] if len(slice_tuple) == 3 else column
+
+                slice_offset = slice_args[0] if len(slice_args) > 1 else 0
+                slice_length = (
+                    (slice_args[1] - slice_args[0])  # type: ignore[misc]
+                    if len(slice_args) > 1
+                    else slice_args[0]
+                )
+
+                X = X.with_columns(
+                    pl.col(column)
+                    .str.slice(offset=slice_offset, length=slice_length)
+                    .alias(slice_column)  # type: ignore[arg-type]
+                )
+            return X
+
         for slice_tuple in self.features:
             column = slice_tuple[0]
             slice_args = slice_tuple[1]
