@@ -132,6 +132,23 @@ def test_string_similarity_transformer_in_pipeline(X_strings):
     assert pipeline.steps[0][0] == "stringsimilaritytransformer"
 
 
+def test_string_similarity_transformer_in_pipeline_polars(X_strings):
+    pipeline = make_pipeline(StringSimilarityTransformer(("strings_1", "strings_2")))
+    result = pipeline.fit_transform(pl.from_pandas(X_strings))
+    expected = np.array(
+        [
+            0.8888888888888888,
+            1.0,
+            0.8181818181818182,
+            0.8888888888888888,
+            0.0,
+            0.058823529411764705,
+        ]
+    )
+    assert np.array_equal(result["strings_1_strings_2_similarity"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "stringsimilaritytransformer"
+
+
 def test_string_slicer_transformer_in_pipeline(X_strings):
     pipeline = make_pipeline(
         StringSlicerTransformer(

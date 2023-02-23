@@ -238,6 +238,22 @@ class StringSimilarityTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, list(self.features))
 
+        if isinstance(X, pl.DataFrame):
+            return X.with_columns(
+                pl.struct([self.features[0], self.features[1]])
+                .apply(
+                    lambda x: StringSimilarityTransformer.__similar(
+                        StringSimilarityTransformer.__normalize_string(
+                            x[self.features[0]]
+                        ),
+                        StringSimilarityTransformer.__normalize_string(
+                            x[self.features[1]]
+                        ),
+                    )
+                )
+                .alias(f"{self.features[0]}_{self.features[1]}_similarity")
+            )
+
         X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
             [self.features[0], self.features[1]]
         ].swifter.apply(
