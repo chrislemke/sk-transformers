@@ -490,6 +490,24 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     assert pipeline.steps[0][0] == "valuereplacertransformer"
 
 
+def test_value_replacer_transformer_in_pipeline_polars(X_time_values) -> None:
+    values = [
+        (["a", "e"], r"^(?:[1-9][0-9]+|9)$", 99),
+        (["f"], "\\N", "-999"),
+    ]
+
+    pipeline = make_pipeline(ValueReplacerTransformer(values))
+    result = pipeline.fit_transform(pl.from_pandas(X_time_values))
+    expected_a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 99, 99])
+    expected_e = np.array([2, 4, 6, 8, 99, 99, 99, 99, 99, 99])
+    expected_f = np.array(["2", "4", "6", "8", "-999", "12", "14", "16", "18", "20"])
+
+    assert np.array_equal(result["a"].to_numpy(), expected_a)
+    assert np.array_equal(result["e"].to_numpy(), expected_e)
+    assert np.array_equal(result["f"].to_numpy(), expected_f)
+    assert pipeline.steps[0][0] == "valuereplacertransformer"
+
+
 def test_column_dropper_transformer_in_pipeline(X) -> None:
     pipeline = make_pipeline(ColumnDropperTransformer(columns=["a", "b", "c", "d"]))
 

@@ -740,6 +740,35 @@ class ValueReplacerTransformer(BaseTransformer):
             self, X, [feature[0][0] for feature in self.features]
         )
 
+        if isinstance(X, pl.DataFrame):
+            return (
+                X.with_columns(
+                    [
+                        pl.col(column)
+                        .cast(pl.Utf8)
+                        .str.replace(
+                            value,
+                            replacement,
+                            literal=not ValueReplacerTransformer.__check_for_regex(
+                                value
+                            ),
+                        )
+                        .alias(f"{column}_replaced")
+                        .cast(X[column].dtype)
+                        for columns, value, replacement in self.features
+                        for column in columns
+                    ]
+                )
+                .drop([column for columns, _, _ in self.features for column in columns])
+                .rename(
+                    {
+                        f"{column}_replaced": column
+                        for columns, _, _ in self.features
+                        for column in columns
+                    }
+                )
+            )
+
         for columns, value, replacement in self.features:
             for column in columns:
                 is_regex = ValueReplacerTransformer.__check_for_regex(value)
