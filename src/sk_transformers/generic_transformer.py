@@ -416,6 +416,7 @@ class MapTransformer(BaseTransformer):
             column to apply the callback on and the callback itself.
     """
 
+    # pylint: disable=duplicate-code
     __slots__ = ("features",)
 
     def __init__(self, features: List[Tuple[str, Callable]]) -> None:

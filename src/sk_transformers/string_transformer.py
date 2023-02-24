@@ -462,6 +462,7 @@ class StringSlicerTransformer(BaseTransformer):
         features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]], Optional[str]]]): The arguments to the `slice` function, for each feature.
     """
 
+    # pylint: disable=duplicate-code
     __slots__ = ("features",)
 
     def __init__(
