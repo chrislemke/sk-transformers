@@ -287,6 +287,24 @@ class AggregateTransformer(BaseTransformer):
             self.__get_list_of_features(),
         )
 
+        if isinstance(X, pl.DataFrame):
+            for groupby_columns, agg_features in self.features:
+                if isinstance(agg_features, tuple):
+                    agg_features = [agg_features]
+
+                agg_df = X.groupby(groupby_columns).agg(
+                    [
+                        getattr(pl, agg_func)(agg_column).alias(agg_new_column)
+                        if isinstance(agg_func, str)
+                        else pl.col(agg_column).apply(agg_func).alias(agg_new_column)
+                        for (agg_column, agg_func, agg_new_column) in agg_features
+                    ]
+                )
+
+                X = X.join(agg_df, on=groupby_columns)
+
+            return X
+
         for groupby_columns, agg_features in self.features:
             if isinstance(agg_features, tuple):
                 agg_features = [agg_features]

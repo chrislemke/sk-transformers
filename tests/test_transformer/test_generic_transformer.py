@@ -183,6 +183,28 @@ def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
 
+def test_aggregate_transformer_in_pipeline_polars(X_group_by) -> None:
+    pipeline = make_pipeline(AggregateTransformer([("a", ("b", "mean", "MEAN(a__b)"))]))
+    result = pipeline.fit_transform(pl.from_pandas(X_group_by))
+    expected = np.array(
+        [
+            52.166666666666664,
+            52.166666666666664,
+            68.75,
+            68.75,
+            68.75,
+            52.166666666666664,
+            52.166666666666664,
+            52.166666666666664,
+            52.166666666666664,
+            68.75,
+        ]
+    )
+
+    assert np.array_equal(result["MEAN(a__b)"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "aggregatetransformer"
+
+
 def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
     pipeline = make_pipeline(
         AggregateTransformer(
@@ -200,6 +222,44 @@ def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
         )
     )
     result = pipeline.fit_transform(X_group_by)
+    expected = np.array(
+        [
+            [175, 76, "foo|foo|baz", 2],
+            [138, 68, "bar|baz|bar", 0],
+            [171, 93, "baz|bar", 0],
+            [104, 56, "foo|foo", 2],
+            [171, 93, "baz|bar", 0],
+            [138, 68, "bar|baz|bar", 0],
+            [175, 76, "foo|foo|baz", 2],
+            [138, 68, "bar|baz|bar", 0],
+            [175, 76, "foo|foo|baz", 2],
+            [104, 56, "foo|foo", 2],
+        ],
+        dtype=object,
+    )
+    assert np.array_equal(
+        result[["b_sum", "b_max", "d_join_pipe", "d_foo_count"]].to_numpy(), expected
+    )
+    assert pipeline.steps[0][0] == "aggregatetransformer"
+
+
+def test_aggregate_transformer_multiple_in_pipeline_polars(X_group_by) -> None:
+    pipeline = make_pipeline(
+        AggregateTransformer(
+            [
+                (
+                    ["a", "c"],
+                    [
+                        ("b", "sum", "b_sum"),
+                        ("b", "max", "b_max"),
+                        ("d", "|".join, "d_join_pipe"),
+                        ("d", lambda x: (x == "foo").sum(), "d_foo_count"),
+                    ],
+                )
+            ]
+        )
+    )
+    result = pipeline.fit_transform(pl.from_pandas(X_group_by))
     expected = np.array(
         [
             [175, 76, "foo|foo|baz", 2],
