@@ -86,9 +86,16 @@ class ColumnEvalTransformer(BaseTransformer):
                 )
 
             try:
-                X[new_column] = eval(  # pylint: disable=eval-used # nosec
-                    f"X[{'column'}].{eval_func}"
-                )
+                if isinstance(X, pl.DataFrame):
+                    X = X.with_columns(
+                        eval(  # pylint: disable=eval-used # nosec
+                            f"pl.col({'column'}).{eval_func}.alias({'new_column'})"
+                        )
+                    )
+                else:
+                    X[new_column] = eval(  # pylint: disable=eval-used # nosec
+                        f"X[{'column'}].{eval_func}"
+                    )
             except ValueError as e:
                 if str(e) == "Columns must be same length as key":
                     raise ValueError(
