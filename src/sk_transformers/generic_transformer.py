@@ -823,6 +823,11 @@ class LeftJoinTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
+        if isinstance(X, pl.DataFrame):
+            for column, lookup_df in self.features:
+                X = X.join(lookup_df, on=column, how="left")
+            return X
+
         for column, lookup_df in self.features:
             lookup_df = LeftJoinTransformer.__prefix_df_column_names(lookup_df, column)
             X = pd.merge(X, lookup_df, how="left", left_on=column, right_index=True)
