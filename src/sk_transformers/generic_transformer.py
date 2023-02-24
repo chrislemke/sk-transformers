@@ -155,7 +155,7 @@ class DtypeTransformer(BaseTransformer):
 
         if isinstance(X, pl.DataFrame):
             return X.with_columns(
-                [pl.col(column).cast(dtype) for column, dtype in self.features]
+                [pl.col(column).cast(dtype) for column, dtype in self.features]  # type: ignore[arg-type]
             )
 
         for column, dtype in self.features:
