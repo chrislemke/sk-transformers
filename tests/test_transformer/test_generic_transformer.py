@@ -383,6 +383,14 @@ def test_map_transformer_in_pipeline(X) -> None:
     assert pipeline.steps[0][0] == "maptransformer"
 
 
+def test_map_transformer_in_pipeline_polars(X) -> None:
+    pipeline = make_pipeline(MapTransformer([("a", lambda x: x**2)]))
+    result = pipeline.fit_transform(pl.from_pandas(X))
+    expected = np.array([1, 4, 9, 16, 25, 36, 49, 64, 81, 100])
+    assert np.array_equal(result["a"].to_numpy(), expected)
+    assert pipeline.steps[0][0] == "maptransformer"
+
+
 def test_map_transformer_raises_error(X) -> None:
     with pytest.raises(ValueError) as error:
         MapTransformer([("non_existing", lambda x: x**2)]).fit_transform(X)

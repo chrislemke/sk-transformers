@@ -427,6 +427,11 @@ class MapTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
+        if isinstance(X, pl.DataFrame):
+            return X.with_columns(
+                [pl.col(column).map(callback) for column, callback in self.features]
+            )
+
         for feature, callback in self.features:
             X[feature] = X[feature].map(callback)
 
