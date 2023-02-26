@@ -485,9 +485,7 @@ class ColumnDropperTransformer(BaseTransformer):
             pd.DataFrame: Dataframe with columns dropped.
         """
         X = check_ready_to_transform(self, X, self.columns, force_all_finite=False)
-        if isinstance(X, pl.DataFrame):
-            return X.select(pl.exclude(self.columns))
-        return X.drop(self.columns, axis=1)
+        return X.drop(columns=self.columns)
 
 
 class NaNTransformer(BaseTransformer):
