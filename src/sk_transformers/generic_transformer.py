@@ -916,28 +916,17 @@ class AllowedValuesTransformer(BaseTransformer):
             pd.DataFrame: Dataframe with replaced values.
         """
         X = check_ready_to_transform(
-            self,
-            X,
-            [feature[0] for feature in self.features],
+            self, X, [feature[0] for feature in self.features], return_polars=True
         )
 
-        if isinstance(X, pl.DataFrame):
-            return X.with_columns(
-                [
-                    pl.col(column)
-                    .map_dict(
-                        {
-                            allowed_value: allowed_value
-                            for allowed_value in allowed_values
-                        }
-                    )
-                    .cast(type(replacement))
-                    .fill_null(replacement)
-                    for column, allowed_values, replacement in self.features
-                ]
-            )
-
-        for column, allowed_values, replacement in self.features:
-            X.loc[~X[column].isin(allowed_values), column] = replacement
-
-        return X
+        return X.with_columns(
+            [
+                pl.col(column)
+                .map_dict(
+                    {allowed_value: allowed_value for allowed_value in allowed_values}
+                )
+                .cast(type(replacement))
+                .fill_null(replacement)
+                for column, allowed_values, replacement in self.features
+            ]
+        ).to_pandas()
