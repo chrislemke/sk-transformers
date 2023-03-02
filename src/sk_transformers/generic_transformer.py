@@ -1,6 +1,5 @@
 import numbers
 import re
-import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import numpy as np
@@ -22,7 +21,7 @@ class ColumnEvalTransformer(BaseTransformer):
 
     X = pd.DataFrame({"foo": ["a", "b", "c"], "bar": [1, 2, 3]})
     transformer = ColumnEvalTransformer(
-        [("foo", "str.upper()"), ("bar", "swifter.apply(lambda x: x + 1)")] # swifter is optional. But it speed up the process!
+        [("foo", "str.upper()"), ("bar", "apply(lambda x: x + 1)")]
     )
     transformer.fit_transform(X)
     ```
@@ -45,9 +44,7 @@ class ColumnEvalTransformer(BaseTransformer):
 
     __slots__ = ("features",)
 
-    def __init__(
-        self, features: List[Union[Tuple[str, str], Tuple[str, str, str]]]
-    ) -> None:
+    def __init__(self, features: list[Tuple[str, str] | Tuple[str, str, str]]) -> None:
         super().__init__()
         self.features = features
 
@@ -64,38 +61,25 @@ class ColumnEvalTransformer(BaseTransformer):
             X,
             [feature[0] for feature in self.features],
             force_all_finite="allow-nan",
+            return_polars=True,
         )
 
         for eval_tuple in self.features:
             column = eval_tuple[0]
             eval_func = eval_tuple[1]
-            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore
+            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore # pylint: disable=unused-variable
 
             if eval_func[0] == ".":
                 raise ValueError(
                     "The provided `eval_func` must not start with a dot! Just write e.g. `str.len()` instead of `.str.len()`."
                 )
 
-            if "apply" in eval_func and "swifter" not in eval_func:
-                warnings.warn(
-                    """
-                    Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
-                    E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
-                    This will speed up your code. Read more about it here: https://github.com/jmcarpenter2/swifter.
-                    """
-                )
-
             try:
-                if isinstance(X, pl.DataFrame):
-                    X = X.with_columns(
-                        eval(  # pylint: disable=eval-used # nosec
-                            f"pl.col({'column'}).{eval_func}.alias({'new_column'})"
-                        )
+                X = X.with_columns(
+                    eval(  # pylint: disable=eval-used # nosec
+                        f"pl.col({'column'}).{eval_func}.alias({'new_column'})"
                     )
-                else:
-                    X[new_column] = eval(  # pylint: disable=eval-used # nosec
-                        f"X[{'column'}].{eval_func}"
-                    )
+                )
             except ValueError as e:
                 if str(e) == "Columns must be same length as key":
                     raise ValueError(
@@ -111,7 +95,7 @@ class ColumnEvalTransformer(BaseTransformer):
                     f"The Pandas Series `{column}` does not has the attribute `{eval_func.replace('(', '').replace(')', '')}`!"
                 ) from e
 
-        return X
+        return X.to_pandas()
 
 
 class DtypeTransformer(BaseTransformer):

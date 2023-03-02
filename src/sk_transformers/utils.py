@@ -1,4 +1,4 @@
-from typing import Any, List, Optional, Tuple, Union
+from typing import Any, Optional, Tuple
 
 import pandas as pd
 import polars as pl
@@ -9,14 +9,15 @@ from sklearn.utils.validation import check_array, check_is_fitted
 def check_ready_to_transform(
     transformer: Any,
     X: pd.DataFrame,
-    features: Union[str, List[str]],
-    force_all_finite: Union[bool, str] = True,
-    dtype: Optional[Union[str, List[str]]] = None,
-) -> pd.DataFrame:
+    features: str | list[str],
+    force_all_finite: bool | str = True,
+    dtype: Optional[str | list[str]] = None,
+    return_polars: bool = False,
+) -> pd.DataFrame | pl.DataFrame:
     """
     Args:
         transformer (Any): The transformer that calls this function. It must be a subclass of `BaseEstimator` from scikit-learn.
-        X (pandas.DataFrame): pandas dataframe or NumPy array. The input to check and copy or transform.
+        X (pandas.DataFrame): `pandas` dataframe. The input to check and copy or transform.
         features (Optional[Union[str, List[str]]]): The features to check if they are in the dataframe.
         force_all_finite (Union[bool, str]): Whether to raise an error on np.inf and np.nan in X. The possibilities are:
             - True: Force all values of array to be finite.
@@ -41,9 +42,9 @@ def check_ready_to_transform(
     if isinstance(features, str):
         features = [features]
 
-    if not isinstance(X, (pd.DataFrame, pl.DataFrame)):
+    if not isinstance(X, pd.DataFrame):
         raise ValueError(
-            f"{transformer.__class__.__name__}: X must be a `pandas` or `polars` dataframe!"
+            f"{transformer.__class__.__name__}: X must be a `pandas` dataframe!"
         )
     if X.shape[0] == 0:
         raise ValueError(f"{transformer.__class__.__name__}: X must not be empty!")
@@ -72,16 +73,6 @@ def check_ready_to_transform(
         )
     check_is_fitted(transformer, "fitted_")
 
-    if isinstance(X, pl.DataFrame):
-        X_tmp_pl = X.select([col for col in X.columns if col in set(features)])
-        non_included_features = [c for c in X.columns if c not in features]
-        if non_included_features:
-            X_tmp_pl = pl.concat(
-                [X_tmp_pl, X.select(non_included_features)], how="horizontal"
-            )
-
-        return X_tmp_pl
-
     X_tmp = X[
         dict.fromkeys(X[features]).keys()
     ].copy()  # `dict.fromkeys` was chosen instead of `set` to maintain the order of the entries.
@@ -101,7 +92,7 @@ def check_ready_to_transform(
     if non_included_features:
         X_tmp = pd.concat([X_tmp, X[non_included_features]], axis=1)
 
-    return X_tmp
+    return pl.from_pandas(X_tmp) if return_polars else X_tmp
 
 
 def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
@@ -132,7 +123,7 @@ def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
 
 
 def prepare_categorical_data(
-    X: pd.DataFrame, categories: List[Tuple[str, int]]
+    X: pd.DataFrame, categories: list[Tuple[str, int]]
 ) -> pd.DataFrame:
     """Checks for the validity of the categorical features inside the
     dataframe. And prepares the data for further processing by changing the
