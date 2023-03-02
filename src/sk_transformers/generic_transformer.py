@@ -817,18 +817,29 @@ class LeftJoinTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, Union[pd.Series, pd.DataFrame]]]): A list of tuples
+        features (list[Tuple[str, Union[pd.Series, pd.DataFrame]]]): A list of tuples
             where the first element is the name of the column
             and the second element is the look-up dataframe or series.
     """
 
     __slots__ = ("features",)
 
-    def __init__(
-        self, features: List[Tuple[str, Union[pd.Series, pd.DataFrame]]]
-    ) -> None:
+    def __init__(self, features: list[Tuple[str, pd.Series | pd.DataFrame]]) -> None:
         super().__init__()
         self.features = features
+
+    @staticmethod
+    def __prepare_lookup_df(df: pd.Series | pd.DataFrame, prefix: str) -> pd.DataFrame:
+        if isinstance(df, pd.Series):
+            df.name = df.name if df.name else "lookup"
+            df = df.to_frame()
+
+        if df.index.name is None:
+            df.index.name = prefix
+
+        df.columns = [df.index.name + "_" + column for column in df.columns]
+
+        return df
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Perform a left-join on the given columns of a dataframe with another
@@ -845,28 +856,18 @@ class LeftJoinTransformer(BaseTransformer):
             X,
             [feature[0] for feature in self.features],
             force_all_finite="allow-nan",
+            return_polars=True,
         )
 
-        if isinstance(X, pl.DataFrame):
-            for column, lookup_df in self.features:
-                X = X.join(lookup_df, on=column, how="left")
-            return X
-
         for column, lookup_df in self.features:
-            lookup_df = LeftJoinTransformer.__prefix_df_column_names(lookup_df, column)
-            X = pd.merge(X, lookup_df, how="left", left_on=column, right_index=True)
-
-        return X
-
-    @staticmethod
-    def __prefix_df_column_names(
-        df: Union[pd.Series, pd.DataFrame], prefix: str
-    ) -> Union[pd.Series, pd.DataFrame]:
-        if isinstance(df, pd.Series):
-            df.name = prefix + "_" + (df.name if df.name else "lookup")
-        elif isinstance(df, pd.DataFrame):
-            df.columns = [prefix + "_" + column for column in df.columns]
-        return df
+            X = X.join(
+                pl.from_pandas(
+                    self.__prepare_lookup_df(lookup_df, column), include_index=True
+                ),
+                on=column,
+                how="left",
+            )
+        return X.to_pandas()
 
 
 class AllowedValuesTransformer(BaseTransformer):
@@ -894,7 +895,7 @@ class AllowedValuesTransformer(BaseTransformer):
     ```
 
     Args:
-        features (List[Tuple[str, List[Any], Any]]): List of tuples where
+        features (list[Tuple[str, list[Any], Any]]): List of tuples where
             the first element is the column name,
             the second element is the list of allowed values in the column, and
             the third element is the value to replace disallowed values in the column.
@@ -902,7 +903,7 @@ class AllowedValuesTransformer(BaseTransformer):
 
     __slots__ = ("features",)
 
-    def __init__(self, features: List[Tuple[str, List[Any], Any]]) -> None:
+    def __init__(self, features: list[Tuple[str, list[Any], Any]]) -> None:
         super().__init__()
         self.features = features
 
