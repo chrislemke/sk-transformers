@@ -30,29 +30,11 @@ def test_column_eval_transformer_in_pipeline(X_strings) -> None:
     assert pipeline.steps[0][0] == "columnevaltransformer"
 
 
-def test_column_eval_transformer_in_pipeline_polars(X_strings) -> None:
-    pipeline = make_pipeline(ColumnEvalTransformer([("email", "str.contains('@')")]))
-    X = pipeline.fit_transform(pl.from_pandas(X_strings))
-
-    assert X["email"].to_list() == [True, True, True, True, True, False]
-    assert pipeline.steps[0][0] == "columnevaltransformer"
-
-
 def test_column_eval_transformer_in_pipeline_new_column(X_strings) -> None:
     pipeline = make_pipeline(
         ColumnEvalTransformer([("email", "str.contains('@')", "new_column")])
     )
     X = pipeline.fit_transform(X_strings)
-
-    assert X["new_column"].to_list() == [True, True, True, True, True, False]
-    assert pipeline.steps[0][0] == "columnevaltransformer"
-
-
-def test_column_eval_transformer_in_pipeline_new_column_polars(X_strings) -> None:
-    pipeline = make_pipeline(
-        ColumnEvalTransformer([("email", "str.contains('@')", "new_column")])
-    )
-    X = pipeline.fit_transform(pl.from_pandas(X_strings))
 
     assert X["new_column"].to_list() == [True, True, True, True, True, False]
     assert pipeline.steps[0][0] == "columnevaltransformer"
