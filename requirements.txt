@@ -678,7 +678,7 @@ nest-asyncio==1.5.6 ; python_version >= "3.8" and python_version < "3.11" \
 nodeenv==1.7.0 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:27083a7b96a25f2f5e1d8cb4b6317ee8aeda3bdd121394e5ac54e498028a042e \
     --hash=sha256:e0e7f7dfb85fc5394c6fe1e8fa98131a2473e04311a45afb6508f7cf1836fa2b
-numpy==1.23.5 ; python_version < "3.11" and python_version >= "3.8" \
+numpy==1.23.5 ; python_version >= "3.8" and python_version < "3.11" \
     --hash=sha256:01dd17cbb340bf0fc23981e52e1d18a9d4050792e8fb8363cecbf066a84b827d \
     --hash=sha256:06005a2ef6014e9956c09ba07654f9837d9e26696a0470e42beedadb78c11b07 \
     --hash=sha256:09b7847f7e83ca37c6e627682f145856de331049013853f344f37b0c9690e3df \

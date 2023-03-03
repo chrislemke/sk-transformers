@@ -198,7 +198,13 @@ class AggregateTransformer(BaseTransformer):
     __slots__ = ("features",)
 
     def __init__(
-        self, features: list[Tuple[str, Tuple[str, str | Callable], str]]
+        self,
+        features: List[
+            Tuple[
+                str | List[str],
+                Tuple[str, str | Callable, str] | List[Tuple[str, str | Callable, str]],
+            ]
+        ],
     ) -> None:
         super().__init__()
         self.features = features
@@ -234,7 +240,7 @@ class AggregateTransformer(BaseTransformer):
                 for agg_feature in agg_features:
                     func = agg_feature[1]
                     if isinstance(func, str) is False:
-                        func = func.__name__
+                        func = func.__name__  # type: ignore
                     if func == "<lambda>":
                         warnings.warn(
                             """
