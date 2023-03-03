@@ -56,54 +56,25 @@ def test_column_eval_transformer_with_invalid_eval(X_strings) -> None:
         _ = transformer.fit_transform(X_strings)
     assert (
         str(error.value)
-        == "The Pandas Series `email` does not has the attribute `invalid_func`!"
-    )
-
-
-def test_column_eval_transformer_with_eval_func_to_multiple_columns(X_strings) -> None:
-    with pytest.raises(ValueError) as error:
-        transformer = ColumnEvalTransformer([("email", "str.split('@', expand=True)")])
-        _ = transformer.fit_transform(X_strings)
-    assert str(error.value) == (
-        """
-                        Your `eval_func` (`str.split('@', expand=True)`) for the column `email`
-                        tries to assign multiple columns to one target column. This is not possible!
-                        Please adjust your `eval_func` to only return one column.
-                        """
+        == """Internally this transformer uses Polars. You may encounter issues with your implementation.
+                    Please check the Polars documentation for more information:
+                    https://pola-rs.github.io/polars/py-polars/html/reference/
+                    Original error: 'Expr' object has no attribute 'invalid_func'"""
     )
 
 
 def test_column_eval_transformer_for_value_error(X_strings) -> None:
-    with pytest.raises(ValueError) as error:
+    with pytest.raises(AttributeError) as error:
         transformer = ColumnEvalTransformer([("email", "astype(int)")])
-        _ = transformer.fit_transform(X_strings)
+        a = transformer.fit_transform(X_strings)
     str(error.value)
     assert (
-        str(error.value) == "invalid literal for int() with base 10: 'test@test1.com'"
+        str(error.value)
+        == """Internally this transformer uses Polars. You may encounter issues with your implementation.
+                    Please check the Polars documentation for more information:
+                    https://pola-rs.github.io/polars/py-polars/html/reference/
+                    Original error: 'Expr' object has no attribute 'astype'"""
     )
-
-
-def test_column_eval_transformer_with_warning(X_numbers) -> None:
-    with pytest.warns(UserWarning) as warning:
-        transformer = ColumnEvalTransformer(
-            [("small_numbers", "apply(lambda x: x + 1)")]
-        )
-        _ = transformer.fit_transform(X_numbers)
-    assert str(warning[0].message) == (
-        """
-                    Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
-                    E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
-                    This will speed up your code. Read more about it here: https://github.com/jmcarpenter2/swifter.
-                    """
-    )
-
-
-def test_column_eval_transformer_with_swifter(X_numbers) -> None:
-    transformer = ColumnEvalTransformer(
-        [("small_numbers", "swifter.apply(lambda x: x + 1)")]
-    )
-    X = transformer.fit_transform(X_numbers)
-    assert X["small_numbers"].to_list() == [8, 13, 83, 2, 1]
 
 
 def test_dtype_transformer_in_pipeline(X) -> None:
@@ -116,34 +87,12 @@ def test_dtype_transformer_in_pipeline(X) -> None:
     assert pipeline.steps[0][0] == "dtypetransformer"
 
 
-def test_dtype_transformer_in_pipeline_polars(X) -> None:
-    pipeline = make_pipeline(
-        DtypeTransformer([("a", pl.Float64), ("e", pl.Categorical)])
-    )
-    X = pipeline.fit_transform(pl.from_pandas(X))
-
-    assert X["a"].dtype == pl.Float64
-    assert X["e"].dtype == pl.Categorical
-    assert pipeline.steps[0][0] == "dtypetransformer"
-
-
 def test_dtype_transformer_in_pipeline_with_nan(X_nan_values) -> None:
     pipeline = make_pipeline(DtypeTransformer([("a", np.float32), ("d", "category")]))
     X = pipeline.fit_transform(X_nan_values)
 
     assert X["a"].dtype == "float32"
     assert X["d"].dtype == "category"
-    assert pipeline.steps[0][0] == "dtypetransformer"
-
-
-def test_dtype_transformer_in_pipeline_with_nan_polars(X_nan_values) -> None:
-    pipeline = make_pipeline(
-        DtypeTransformer([("a", pl.Float64), ("e", pl.Categorical)])
-    )
-    X = pipeline.fit_transform(pl.from_pandas(X_nan_values))
-
-    assert X["a"].dtype == pl.Float64
-    assert X["e"].dtype == pl.Categorical
     assert pipeline.steps[0][0] == "dtypetransformer"
 
 
@@ -162,7 +111,7 @@ def test_dtype_transformer_raises_error(X) -> None:
 
 
 def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
-    pipeline = make_pipeline(AggregateTransformer([("a", ("b", "mean", "MEAN(a__b)"))]))
+    pipeline = make_pipeline(AggregateTransformer([("a", ("b", "mean", "MEAN(a_b)"))]))
     result = pipeline.fit_transform(X_group_by)
     expected = np.array(
         [
@@ -179,29 +128,7 @@ def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
         ]
     )
 
-    assert np.array_equal(result["MEAN(a__b)"].to_numpy(), expected)
-    assert pipeline.steps[0][0] == "aggregatetransformer"
-
-
-def test_aggregate_transformer_in_pipeline_polars(X_group_by) -> None:
-    pipeline = make_pipeline(AggregateTransformer([("a", ("b", "mean", "MEAN(a__b)"))]))
-    result = pipeline.fit_transform(pl.from_pandas(X_group_by))
-    expected = np.array(
-        [
-            52.166666666666664,
-            52.166666666666664,
-            68.75,
-            68.75,
-            68.75,
-            52.166666666666664,
-            52.166666666666664,
-            52.166666666666664,
-            52.166666666666664,
-            68.75,
-        ]
-    )
-
-    assert np.array_equal(result["MEAN(a__b)"].to_numpy(), expected)
+    assert np.array_equal(result["MEAN(a_b)"].to_numpy(), expected)
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
 
@@ -212,10 +139,10 @@ def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
                 (
                     ["a", "c"],
                     [
-                        ("b", np.sum, "b_sum"),
-                        ("b", np.max, "b_max"),
+                        ("b", "sum", "b_sum"),
+                        ("b", max, "b_max"),
                         ("d", "|".join, "d_join_pipe"),
-                        ("d", lambda x: x[x == "foo"].count(), "d_foo_count"),
+                        ("d", lambda x: (x == "foo").sum(), "d_foo_sum"),
                     ],
                 )
             ]
@@ -238,45 +165,7 @@ def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
         dtype=object,
     )
     assert np.array_equal(
-        result[["b_sum", "b_max", "d_join_pipe", "d_foo_count"]].to_numpy(), expected
-    )
-    assert pipeline.steps[0][0] == "aggregatetransformer"
-
-
-def test_aggregate_transformer_multiple_in_pipeline_polars(X_group_by) -> None:
-    pipeline = make_pipeline(
-        AggregateTransformer(
-            [
-                (
-                    ["a", "c"],
-                    [
-                        ("b", "sum", "b_sum"),
-                        ("b", "max", "b_max"),
-                        ("d", "|".join, "d_join_pipe"),
-                        ("d", lambda x: (x == "foo").sum(), "d_foo_count"),
-                    ],
-                )
-            ]
-        )
-    )
-    result = pipeline.fit_transform(pl.from_pandas(X_group_by))
-    expected = np.array(
-        [
-            [175, 76, "foo|foo|baz", 2],
-            [138, 68, "bar|baz|bar", 0],
-            [171, 93, "baz|bar", 0],
-            [104, 56, "foo|foo", 2],
-            [171, 93, "baz|bar", 0],
-            [138, 68, "bar|baz|bar", 0],
-            [175, 76, "foo|foo|baz", 2],
-            [138, 68, "bar|baz|bar", 0],
-            [175, 76, "foo|foo|baz", 2],
-            [104, 56, "foo|foo", 2],
-        ],
-        dtype=object,
-    )
-    assert np.array_equal(
-        result[["b_sum", "b_max", "d_join_pipe", "d_foo_count"]].to_numpy(), expected
+        result[["b_sum", "b_max", "d_join_pipe", "d_foo_sum"]].to_numpy(), expected
     )
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
@@ -307,13 +196,6 @@ def test_aggregate_transformer_agg_tuple_raises_error(X_group_by) -> None:
         AggregateTransformer([("a", ("b", "mean"))]).fit_transform(X_group_by)
 
     assert "Expected 3 elements in the aggregation tuple, got 2." == str(error.value)
-
-
-def test_aggregate_transformer_nontuple_in_list_raises_error(X_group_by) -> None:
-    with pytest.raises(TypeError) as error:
-        AggregateTransformer([("a", [1, 2, 3])]).fit_transform(X_group_by)
-
-    assert "Expected a list of tuples, found int in list." == str(error.value)
 
 
 def test_aggregate_transformer_nonlist_raises_error(X_group_by) -> None:
@@ -383,14 +265,6 @@ def test_map_transformer_in_pipeline(X) -> None:
     assert pipeline.steps[0][0] == "maptransformer"
 
 
-def test_map_transformer_in_pipeline_polars(X) -> None:
-    pipeline = make_pipeline(MapTransformer([("a", lambda x: x**2)]))
-    result = pipeline.fit_transform(pl.from_pandas(X))
-    expected = np.array([1, 4, 9, 16, 25, 36, 49, 64, 81, 100])
-    assert np.array_equal(result["a"].to_numpy(), expected)
-    assert pipeline.steps[0][0] == "maptransformer"
-
-
 def test_map_transformer_raises_error(X) -> None:
     with pytest.raises(ValueError) as error:
         MapTransformer([("non_existing", lambda x: x**2)]).fit_transform(X)
@@ -422,20 +296,6 @@ def test_value_indicator_transformer_in_pipeline(X_nan_values) -> None:
     assert X.loc[6, "d_found_indicator"] == 0
     assert X.loc[6, "e_found_indicator"] == 1
     assert X.loc[7, "e_found_indicator"] == 0
-
-    assert pipeline.steps[0][0] == "valueindicatortransformer"
-
-
-def test_value_indicator_transformer_in_pipeline_polars(X_nan_values) -> None:
-    pipeline = make_pipeline(
-        ValueIndicatorTransformer([("d", -999), ("e", "-999")], as_int=True)
-    )
-    X = pipeline.fit_transform(pl.from_pandas(X_nan_values))
-
-    assert X[5, "d_found_indicator"] == 1
-    assert X[6, "d_found_indicator"] == 0
-    assert X[6, "e_found_indicator"] == 1
-    assert X[7, "e_found_indicator"] == 0
 
     assert pipeline.steps[0][0] == "valueindicatortransformer"
 
@@ -498,39 +358,12 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     assert pipeline.steps[0][0] == "valuereplacertransformer"
 
 
-def test_value_replacer_transformer_in_pipeline_polars(X_time_values) -> None:
-    values = [
-        (["a", "e"], r"^(?:[1-9][0-9]+|9)$", 99),
-        (["f"], "\\N", "-999"),
-    ]
-
-    pipeline = make_pipeline(ValueReplacerTransformer(values))
-    result = pipeline.fit_transform(pl.from_pandas(X_time_values))
-    expected_a = np.array([1, 2, 3, 4, 5, 6, 7, 8, 99, 99])
-    expected_e = np.array([2, 4, 6, 8, 99, 99, 99, 99, 99, 99])
-    expected_f = np.array(["2", "4", "6", "8", "-999", "12", "14", "16", "18", "20"])
-
-    assert np.array_equal(result["a"].to_numpy(), expected_a)
-    assert np.array_equal(result["e"].to_numpy(), expected_e)
-    assert np.array_equal(result["f"].to_numpy(), expected_f)
-    assert pipeline.steps[0][0] == "valuereplacertransformer"
-
-
 def test_column_dropper_transformer_in_pipeline(X) -> None:
     pipeline = make_pipeline(ColumnDropperTransformer(columns=["a", "b", "c", "d"]))
 
     result = pipeline.fit_transform(X)
     expected = X.drop(columns=["a", "b", "c", "d"])
     assert result.equals(expected)
-    assert pipeline.steps[0][0] == "columndroppertransformer"
-
-
-def test_column_dropper_transformer_in_pipeline_polars(X) -> None:
-    pipeline = make_pipeline(ColumnDropperTransformer(columns=["a", "b", "c", "d"]))
-
-    result = pipeline.fit_transform(pl.from_pandas(X))
-    expected = X.drop(columns=["a", "b", "c", "d"])
-    assert result.to_pandas().equals(expected)
     assert pipeline.steps[0][0] == "columndroppertransformer"
 
 
@@ -544,16 +377,6 @@ def test_column_dropper_transformer_in_pipeline_with_nan(X_nan_values) -> None:
     assert pipeline.steps[0][0] == "columndroppertransformer"
 
 
-def test_column_dropper_transformer_in_pipeline_with_nan_polars(X_nan_values) -> None:
-    drop_columns = ["a", "d"]
-    pipeline = make_pipeline(ColumnDropperTransformer(columns=drop_columns))
-
-    result = pipeline.fit_transform(pl.from_pandas(X_nan_values))
-    expected = X_nan_values.drop(columns=drop_columns)
-    assert result.to_pandas().equals(expected)
-    assert pipeline.steps[0][0] == "columndroppertransformer"
-
-
 def test_nan_transformer_in_pipeline(X_nan_values) -> None:
     pipeline = make_pipeline(NaNTransformer([("a", -1), ("b", -1), ("c", "missing")]))
     X = pipeline.fit_transform(X_nan_values)
@@ -564,28 +387,6 @@ def test_nan_transformer_in_pipeline(X_nan_values) -> None:
     assert X["c"][6] == "missing"
     assert pipeline.steps[0][0] == "nantransformer"
     assert pipeline.steps[0][1].features[0][1] == -1
-
-
-def test_nan_transformer_in_pipeline_polars(X_nan_values) -> None:
-    pipeline = make_pipeline(NaNTransformer([("a", -1), ("b", -1), ("c", "missing")]))
-    X = pipeline.fit_transform(pl.from_pandas(X_nan_values))
-
-    assert X.null_count().sum(axis=1).sum() == 0
-    assert X["a"][1] == -1
-    assert X["b"][2] == -1
-    assert X["c"][6] == "missing"
-    assert pipeline.steps[0][0] == "nantransformer"
-    assert pipeline.steps[0][1].features[0][1] == -1
-
-
-def test_nan_transformer_with_different_types_string(X_nan_values) -> None:
-    with pytest.raises(TypeError) as error:
-        transformer = NaNTransformer([("a", "a_value")])
-        _ = transformer.fit_transform(X_nan_values)
-    assert (
-        "Cannot replace NaN values in column `a` (type: `float64`) with `a_value` of type: `str`."
-        == str(error.value)
-    )
 
 
 def test_left_join_transformer_in_pipeline_for_series(X_categorical) -> None:

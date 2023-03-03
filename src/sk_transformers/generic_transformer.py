@@ -1,8 +1,7 @@
-import numbers
 import re
+import warnings
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
-import numpy as np
 import pandas as pd
 import polars as pl
 from sklearn.preprocessing import FunctionTransformer
@@ -12,16 +11,21 @@ from sk_transformers.utils import check_ready_to_transform
 
 
 class ColumnEvalTransformer(BaseTransformer):
-    """Provides the possibility to use Pandas methods on columns.
+    """Provides the possibility to use Pandas methods on columns. Internally
+    this transformer uses Polars. You may encounter issues with your
+    implementation. Please check the Polars documentation for more information:
+    https://pola-rs.github.io/polars/py-polars/html/reference/
 
     Example:
     ```python
     import pandas as pd
     from sk_transformers import ColumnEvalTransformer
 
+    # In this example we use Polars implementation of Pandas `str.upper()`: `str.to_uppercase()`.
+
     X = pd.DataFrame({"foo": ["a", "b", "c"], "bar": [1, 2, 3]})
     transformer = ColumnEvalTransformer(
-        [("foo", "str.upper()"), ("bar", "apply(lambda x: x + 1)")]
+        [("foo", "str.to_uppercase()"), ("bar", "apply(lambda x: x + 1)")]
     )
     transformer.fit_transform(X)
     ```
@@ -80,20 +84,13 @@ class ColumnEvalTransformer(BaseTransformer):
                         f"pl.col({'column'}).{eval_func}.alias({'new_column'})"
                     )
                 )
-            except ValueError as e:
-                if str(e) == "Columns must be same length as key":
-                    raise ValueError(
-                        f"""
-                        Your `eval_func` (`{eval_func}`) for the column `{column}`
-                        tries to assign multiple columns to one target column. This is not possible!
-                        Please adjust your `eval_func` to only return one column.
-                        """
-                    ) from e
-                raise e
-            except AttributeError as e:
+            except AttributeError as error:
                 raise AttributeError(
-                    f"The Pandas Series `{column}` does not has the attribute `{eval_func.replace('(', '').replace(')', '')}`!"
-                ) from e
+                    f"""Internally this transformer uses Polars. You may encounter issues with your implementation.
+                    Please check the Polars documentation for more information:
+                    https://pola-rs.github.io/polars/py-polars/html/reference/
+                    Original error: {error}"""
+                ) from error
 
         return X.to_pandas()
 
@@ -123,7 +120,7 @@ class DtypeTransformer(BaseTransformer):
 
     __slots__ = ("features",)
 
-    def __init__(self, features: List[Tuple[str, Union[str, type]]]) -> None:
+    def __init__(self, features: list[Tuple[str, str | type]]) -> None:
         super().__init__()
         self.features = features
 
@@ -144,11 +141,6 @@ class DtypeTransformer(BaseTransformer):
             force_all_finite="allow-nan",
         )
 
-        if isinstance(X, pl.DataFrame):
-            return X.with_columns(
-                [pl.col(column).cast(dtype) for column, dtype in self.features]  # type: ignore[arg-type]
-            )
-
         for column, dtype in self.features:
             X[column] = X[column].astype(dtype)
         return X
@@ -156,11 +148,14 @@ class DtypeTransformer(BaseTransformer):
 
 class AggregateTransformer(BaseTransformer):
     """This transformer uses Pandas `groupby` method and `aggregate` to apply
-    function on a column grouped by another column. Read more about Pandas [`ag
-    gregate`](https://pandas.pydata.org/docs/reference/api/pandas.DataFrame.agg
-    regate.html) method to understand how to use function for aggregation.
-    Other than Pandas function this transformer only support functions and
-    string-names.
+    function on a column grouped by another column. Read more about Pandas
+    `aggregate` method to understand how to use function for aggregation. Other
+    than Pandas function this transformer only support functions and string-
+    names.
+
+    Internally this transformer uses Polars. You may encounter issues with your implementation.
+    Please check the Polars documentation for more information:
+    https://pola-rs.github.io/polars/py-polars/html/reference/
 
     Example:
     ```python
@@ -204,20 +199,18 @@ class AggregateTransformer(BaseTransformer):
 
     def __init__(
         self,
-        features: List[
+        features: list[
             Tuple[
-                Union[str, List[str]],
-                Union[
-                    Tuple[str, Union[str, Callable], str],
-                    List[Tuple[str, Union[str, Callable], str]],
-                ],
+                str,
+                list[str] | Tuple[str, Callable | str, str],
+                list[Tuple[str, str | str, str],],
             ]
         ],
     ) -> None:
         super().__init__()
         self.features = features
 
-    def __get_list_of_features(self) -> List[str]:
+    def __get_list_of_features(self) -> list[str]:
         feature_list = []
 
         for groupby_columns, agg_features in self.features:
@@ -244,9 +237,21 @@ class AggregateTransformer(BaseTransformer):
 
             if isinstance(agg_features, tuple):
                 agg_features = [agg_features]
-
             if isinstance(agg_features, list):
                 for agg_feature in agg_features:
+                    func = agg_feature[1]
+                    if isinstance(func, str) is False:
+                        func = func.__name__
+                    if func == "<lambda>":
+                        warnings.warn(
+                            """
+                        Internally this transformer uses Polars. You may encounter issues with your lambda implementation.
+                        Please check the documentation for correct syntax and functionality:
+                        https://pola-rs.github.io/polars-book/user-guide/dsl/custom_functions.html
+                        """,
+                            SyntaxWarning,
+                        )
+
                     if isinstance(agg_feature, tuple):
                         if len(agg_feature) != 3:
                             raise IndexError(
@@ -276,40 +281,24 @@ class AggregateTransformer(BaseTransformer):
             self,
             X,
             self.__get_list_of_features(),
+            return_polars=True,
         )
-
-        if isinstance(X, pl.DataFrame):
-            for groupby_columns, agg_features in self.features:
-                if isinstance(agg_features, tuple):
-                    agg_features = [agg_features]
-
-                agg_df = X.groupby(groupby_columns).agg(
-                    [
-                        getattr(pl, agg_func)(agg_column).alias(agg_new_column)
-                        if isinstance(agg_func, str)
-                        else pl.col(agg_column).apply(agg_func).alias(agg_new_column)
-                        for (agg_column, agg_func, agg_new_column) in agg_features
-                    ]
-                )
-
-                X = X.join(agg_df, on=groupby_columns)
-
-            return X
 
         for groupby_columns, agg_features in self.features:
             if isinstance(agg_features, tuple):
                 agg_features = [agg_features]
 
-            agg_dict = {
-                agg_new_column: pd.NamedAgg(column=agg_column, aggfunc=agg_func)
-                for (agg_column, agg_func, agg_new_column) in agg_features
-            }
-
-            agg_df = X.groupby(groupby_columns).aggregate(**agg_dict, engine="cython")
-
+            agg_df = X.groupby(groupby_columns).agg(
+                [
+                    getattr(pl, agg_func)(agg_column).alias(agg_new_column)
+                    if isinstance(agg_func, str)
+                    else pl.col(agg_column).apply(agg_func).alias(agg_new_column)
+                    for (agg_column, agg_func, agg_new_column) in agg_features
+                ]
+            )
             X = X.join(agg_df, on=groupby_columns)
 
-        return X
+        return X.to_pandas()
 
 
 class FunctionsTransformer(BaseTransformer):
@@ -348,7 +337,7 @@ class FunctionsTransformer(BaseTransformer):
     __slots__ = ("features",)
 
     def __init__(
-        self, features: List[Tuple[str, Callable, Optional[Dict[str, Any]]]]
+        self, features: list[Tuple[str, Callable, Optional[Dict[str, Any]]]]
     ) -> None:
         super().__init__()
         self.features = features
@@ -375,9 +364,11 @@ class FunctionsTransformer(BaseTransformer):
 
 class MapTransformer(BaseTransformer):
     """This transformer iterates over all columns in the `features` list and
-    applies the given callback to the column. For this it uses the [`pandas.Ser
-    ies.map`](https://pandas.pydata.org/docs/reference/api/pandas.Series.map.ht
-    ml) method.
+    applies the given callback to the column.
+
+    Internally this transformer uses Polars. You may encounter issues with your implementation.
+    Please check the Polars documentation for more information:
+    https://pola-rs.github.io/polars/py-polars/html/reference/
 
     Example:
     ```python
@@ -403,7 +394,7 @@ class MapTransformer(BaseTransformer):
     # pylint: disable=duplicate-code
     __slots__ = ("features",)
 
-    def __init__(self, features: List[Tuple[str, Callable]]) -> None:
+    def __init__(self, features: list[Tuple[str, Callable]]) -> None:
         super().__init__()
         self.features = features
 
@@ -417,17 +408,27 @@ class MapTransformer(BaseTransformer):
             pandas.DataFrame: The dataframe containing
                 the new column together with the non-transformed original columns.
         """
-        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
-        if isinstance(X, pl.DataFrame):
-            return X.with_columns(
-                [pl.col(column).map(callback) for column, callback in self.features]
-            )
+        for _, func in self.features:
+            if isinstance(func, str) is False:
+                func = func.__name__
+            if func == "<lambda>":
+                warnings.warn(
+                    """
+                        Internally this transformer uses Polars. You may encounter issues with your lambda implementations.
+                        Please check the documentation for correct syntax and functionality:
+                        https://pola-rs.github.io/polars-book/user-guide/dsl/custom_functions.html
+                        """,
+                    SyntaxWarning,
+                )
 
-        for feature, callback in self.features:
-            X[feature] = X[feature].map(callback)
+        X = check_ready_to_transform(
+            self, X, [feature[0] for feature in self.features], return_polars=True
+        )
 
-        return X
+        return X.with_columns(
+            [pl.col(column).map(callback) for column, callback in self.features]
+        ).to_pandas()
 
 
 class ColumnDropperTransformer(BaseTransformer):
@@ -455,7 +456,7 @@ class ColumnDropperTransformer(BaseTransformer):
 
     __slots__ = ("columns",)
 
-    def __init__(self, columns: Union[str, List[str]]) -> None:
+    def __init__(self, columns: str | list[str]) -> None:
         super().__init__()
         self.columns = columns
 
@@ -503,7 +504,7 @@ class NaNTransformer(BaseTransformer):
 
     __slots__ = ("features",)
 
-    def __init__(self, features: List[Tuple[str, Any]]) -> None:
+    def __init__(self, features: list[Tuple[str, Any]]) -> None:
         super().__init__()
         self.features = features
 
@@ -521,28 +522,17 @@ class NaNTransformer(BaseTransformer):
             X,
             [feature[0] for feature in self.features],
             force_all_finite="allow-nan",
+            return_polars=True,
         )
 
-        if isinstance(X, pl.DataFrame):
-            feature_dict = dict(self.features)
-            select_expr = []
-            for feature in X.columns:
-                if feature in feature_dict.keys():
-                    select_expr.append(pl.col(feature).fill_null(feature_dict[feature]))
-                else:
-                    select_expr.append(pl.col(feature))
-            return X.select(select_expr)
-
-        for feature, value in self.features:
-            value_is_number = isinstance(value, numbers.Number)
-            feature_is_number = np.issubdtype(X[feature].dtype, np.number)
-
-            if value_is_number != feature_is_number:
-                raise TypeError(
-                    f"Cannot replace NaN values in column `{feature}` (type: `{X[feature].dtype.name}`) with `{value}` of type: `{type(value).__name__}`."
-                )
-
-        return X.fillna(dict(self.features))
+        feature_dict = dict(self.features)
+        select_expr = []
+        for feature in X.columns:
+            if feature in feature_dict.keys():
+                select_expr.append(pl.col(feature).fill_null(feature_dict[feature]))
+            else:
+                select_expr.append(pl.col(feature))
+        return X.select(select_expr).to_pandas()
 
 
 class ValueIndicatorTransformer(BaseTransformer):
@@ -581,7 +571,7 @@ class ValueIndicatorTransformer(BaseTransformer):
         "as_int",
     )
 
-    def __init__(self, features: List[Tuple[str, Any]], as_int: bool = False) -> None:
+    def __init__(self, features: list[Tuple[str, Any]], as_int: bool = False) -> None:
         super().__init__()
         self.features = features
         self.as_int = as_int
@@ -602,23 +592,17 @@ class ValueIndicatorTransformer(BaseTransformer):
             X,
             [feature[0] for feature in self.features],
             force_all_finite="allow-nan",
+            return_polars=True,
         )
 
-        if isinstance(X, pl.DataFrame):
-            return X.with_columns(
-                [
-                    (pl.col(column) == indicator)
-                    .cast(pl.Int32 if self.as_int else pl.Boolean)
-                    .suffix("_found_indicator")
-                    for column, indicator in self.features
-                ]
-            )
-
-        for column, indicator in self.features:
-            X[f"{column}_found_indicator"] = (X[column] == indicator).astype(
-                int if self.as_int else bool
-            )
-        return X
+        return X.with_columns(
+            [
+                (pl.col(column) == indicator)
+                .cast(pl.Int32 if self.as_int else pl.Boolean)
+                .suffix("_found_indicator")
+                for column, indicator in self.features
+            ]
+        ).to_pandas()
 
 
 class QueryTransformer(BaseTransformer):
@@ -650,7 +634,7 @@ class QueryTransformer(BaseTransformer):
 
     __slots__ = ("queries",)
 
-    def __init__(self, queries: List[str]) -> None:
+    def __init__(self, queries: list[str]) -> None:
         super().__init__()
         self.queries = queries
 
@@ -710,7 +694,6 @@ class ValueReplacerTransformer(BaseTransformer):
     4  1900-01-01
     ```
 
-
     Args:
         features (List[Tuple[List[str], str, Any]]): List of tuples containing the column names as a list,
             the value to replace (can be a regex), and the replacement value.
@@ -734,35 +717,6 @@ class ValueReplacerTransformer(BaseTransformer):
         X = check_ready_to_transform(
             self, X, [feature[0][0] for feature in self.features]
         )
-
-        if isinstance(X, pl.DataFrame):
-            return (
-                X.with_columns(
-                    [
-                        pl.col(column)
-                        .cast(pl.Utf8)
-                        .str.replace(
-                            value,
-                            replacement,
-                            literal=not ValueReplacerTransformer.__check_for_regex(
-                                value
-                            ),
-                        )
-                        .alias(f"{column}_replaced")
-                        .cast(X[column].dtype)
-                        for columns, value, replacement in self.features
-                        for column in columns
-                    ]
-                )
-                .drop([column for columns, _, _ in self.features for column in columns])
-                .rename(
-                    {
-                        f"{column}_replaced": column
-                        for columns, _, _ in self.features
-                        for column in columns
-                    }
-                )
-            )
 
         for columns, value, replacement in self.features:
             for column in columns:

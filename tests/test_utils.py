@@ -22,7 +22,7 @@ def test_check_ready_to_transform_for_not_dataframe() -> None:
     with pytest.raises(ValueError) as error:
         check_ready_to_transform(None, np.ndarray([1, 2, 3]), ["a"])
 
-    assert "NoneType: X must be a `pandas` or `polars` dataframe!" == str(error.value)
+    assert "NoneType: X must be a `pandas` dataframe!" == str(error.value)
 
 
 def test_check_ready_to_transform_for_wrong_column() -> None:
