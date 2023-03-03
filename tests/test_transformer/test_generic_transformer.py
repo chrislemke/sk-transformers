@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import polars as pl
 import pytest
 from sklearn.pipeline import make_pipeline
 
@@ -66,7 +65,7 @@ def test_column_eval_transformer_with_invalid_eval(X_strings) -> None:
 def test_column_eval_transformer_for_value_error(X_strings) -> None:
     with pytest.raises(AttributeError) as error:
         transformer = ColumnEvalTransformer([("email", "astype(int)")])
-        a = transformer.fit_transform(X_strings)
+        _ = transformer.fit_transform(X_strings)
     str(error.value)
     assert (
         str(error.value)

@@ -1,6 +1,6 @@
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import pandas as pd
 import polars as pl
@@ -198,19 +198,12 @@ class AggregateTransformer(BaseTransformer):
     __slots__ = ("features",)
 
     def __init__(
-        self,
-        features: list[
-            Tuple[
-                str,
-                list[str] | Tuple[str, Callable | str, str],
-                list[Tuple[str, str | str, str],],
-            ]
-        ],
+        self, features: list[Tuple[str, Tuple[str, str | Callable], str]]
     ) -> None:
         super().__init__()
         self.features = features
 
-    def __get_list_of_features(self) -> list[str]:
+    def __get_list_of_features(self) -> List[str]:
         feature_list = []
 
         for groupby_columns, agg_features in self.features:
@@ -411,8 +404,8 @@ class MapTransformer(BaseTransformer):
 
         for _, func in self.features:
             if isinstance(func, str) is False:
-                func = func.__name__
-            if func == "<lambda>":
+                func = func.__name__  # type: ignore
+            if func == "<lambda>":  # type: ignore
                 warnings.warn(
                     """
                         Internally this transformer uses Polars. You may encounter issues with your lambda implementations.
