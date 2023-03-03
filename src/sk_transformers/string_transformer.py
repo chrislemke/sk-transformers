@@ -3,6 +3,7 @@ import ipaddress
 import itertools
 import re
 import unicodedata
+import warnings
 from difflib import SequenceMatcher
 from typing import Callable, Optional, Tuple
 
@@ -384,14 +385,14 @@ class StringSlicerTransformer(BaseTransformer):
     from sk_transformers import StringSlicerTransformer
 
     X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
-    transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
+    transformer = StringSlicerTransformer([("foo", (1, 3)), ("bar", (2,))])
     transformer.fit_transform(X)
     ```
     ```
        foo  bar foo_slice bar_slice
-    0  abc  jkl        ac        jk
-    1  def  mno        df        mn
-    2  ghi  pqr        gi        pq
+    0  abc  jkl        bc        jk
+    1  def  mno        ef        mn
+    2  ghi  pqr        hi        pq
     ```
 
     Args:
@@ -438,6 +439,11 @@ class StringSlicerTransformer(BaseTransformer):
                 if len(slice_args) > 1
                 else slice_args[0]
             )
+
+            if len(slice_args) == 3:
+                warnings.warn(
+                    "StringSlicerTransformer currently does not support increments.\n Only the first two elements of the slice tuple will be considered."
+                )
 
             X = X.with_columns(
                 pl.col(column)

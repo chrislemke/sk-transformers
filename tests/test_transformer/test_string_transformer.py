@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 from sklearn.pipeline import make_pipeline
 
 from sk_transformers import (
@@ -162,6 +163,15 @@ def test_string_slicer_transformer_new_column_name_in_pipeline(X_strings):
 
     assert "new_email_slice" in result.columns
     assert pipeline.steps[0][0] == "stringslicertransformer"
+
+
+def test_string_slicer_transformer_tuple_size_raise_warning(X_strings) -> None:
+    with pytest.warns(UserWarning) as warning:
+        transformer = StringSlicerTransformer([("email", (5, 10, 2))])
+        _ = transformer.fit_transform(X_strings)
+    assert str(warning[0].message) == (
+        "StringSlicerTransformer currently does not support increments.\n Only the first two elements of the slice tuple will be considered."
+    )
 
 
 def test_string_splitter_transformer_in_pipeline(X_strings):
