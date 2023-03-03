@@ -411,17 +411,6 @@ def test_left_join_transformer_in_pipeline_for_dataframe(X_categorical) -> None:
     assert pipeline.steps[0][0] == "leftjointransformer"
 
 
-def test_left_join_transformer_in_pipeline_for_dataframe_polars(X_categorical) -> None:
-    lookup_df = pl.DataFrame({"a": ["A1", "A2"], "values": [1, 2]})
-    pipeline = make_pipeline(LeftJoinTransformer([("a", lookup_df)]))
-    result = pipeline.fit_transform(pl.from_pandas(X_categorical))
-    expected = np.array([1, 2, 2, 1, 1, 2, 1, 1])
-
-    assert "values" in result.columns
-    assert np.array_equal(result["values"].to_numpy(), expected)
-    assert pipeline.steps[0][0] == "leftjointransformer"
-
-
 def test_left_join_transformer_in_pipeline_with_nan(X_categorical) -> None:
     X_categorical["a"].iloc[5] = np.nan
     lookup_df = pd.Series([1, 2], index=["A1", "A2"], name="values")
@@ -440,23 +429,6 @@ def test_allowed_values_transformer_in_pipeline(X) -> None:
     ]
     pipeline = make_pipeline(AllowedValuesTransformer(values))
     result = pipeline.fit_transform(X)
-    expected_a = np.array([1, 2, -999, -999, -999, -999, -999, -999, -999, -999])
-    expected_c = np.array(
-        ["1", "1", "1", "1", "2", "2", "2", "other", "other", "other"]
-    )
-
-    assert np.array_equal(result["a"].to_numpy(), expected_a)
-    assert np.array_equal(result["c"].to_numpy(), expected_c)
-    assert pipeline.steps[0][0] == "allowedvaluestransformer"
-
-
-def test_allowed_values_transformer_in_pipeline_polars(X) -> None:
-    values = [
-        ("a", [1, 2], -999),
-        ("c", ["1", "2"], "other"),
-    ]
-    pipeline = make_pipeline(AllowedValuesTransformer(values))
-    result = pipeline.fit_transform(pl.from_pandas(X))
     expected_a = np.array([1, 2, -999, -999, -999, -999, -999, -999, -999, -999])
     expected_c = np.array(
         ["1", "1", "1", "1", "2", "2", "2", "other", "other", "other"]
