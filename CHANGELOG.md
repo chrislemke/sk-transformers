@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.2](https://github.com/chrislemke/sk-transformers/compare/v0.10.1...v0.10.2) (2023-03-09)
+
+
+### Bug Fixes
+
+* broken dependencies ([3fa0a19](https://github.com/chrislemke/sk-transformers/commit/3fa0a1979ec8858623f9297d2057674950dd71dc))
+
 ## [0.10.1](https://github.com/chrislemke/sk-transformers/compare/v0.10.0...v0.10.1) (2023-03-09)
 
 
