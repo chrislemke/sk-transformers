@@ -14,8 +14,6 @@ class BaseTransformer(BaseEstimator, TransformerMixin):
     `fit` method.
     """
 
-    __slots__ = ("fitted_",)
-
     def __init__(self) -> None:
         self.fitted_ = False
 
