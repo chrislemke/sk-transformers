@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.3](https://github.com/chrislemke/sk-transformers/compare/v0.10.2...v0.10.3) (2023-03-10)
+
+
+### Maintenance
+
+* remove slots for compatibility reasons ([2a58219](https://github.com/chrislemke/sk-transformers/commit/2a58219e030447fbcb11476130f7a79bfd56a846))
+
 ## [0.10.2](https://github.com/chrislemke/sk-transformers/compare/v0.10.1...v0.10.2) (2023-03-09)
 
 
