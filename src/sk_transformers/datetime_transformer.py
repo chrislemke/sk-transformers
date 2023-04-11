@@ -173,7 +173,7 @@ class DurationCalculatorTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: The transformed DataFrame.
         """
-        X = check_ready_to_transform(self, X, List(self.features), return_polars=True)
+        X = check_ready_to_transform(self, X, list(self.features), return_polars=True)
 
         if self.unit == "seconds":
             return X.with_columns(
