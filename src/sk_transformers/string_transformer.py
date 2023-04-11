@@ -43,13 +43,6 @@ class IPAddressEncoderTransformer(BaseTransformer):
         error_value (Union[int, float]): Value if parsing fails.
     """
 
-    __slots__ = (
-        "features",
-        "ip4_divisor",
-        "ip6_divisor",
-        "error_value",
-    )
-
     def __init__(
         self,
         features: list[str],
@@ -124,8 +117,6 @@ class EmailTransformer(BaseTransformer):
     Args:
         features (list[str]): List of features which should be transformed.
     """
-
-    __slots__ = ("features",)
 
     def __init__(self, features: list[str]) -> None:
         super().__init__()
@@ -233,8 +224,6 @@ class StringSimilarityTransformer(BaseTransformer):
         features (Tuple[str, str]): The two columns that contain the strings for which the similarity should be calculated.
     """
 
-    __slots__ = ("features",)
-
     def __init__(self, features: Tuple[str, str]) -> None:
         super().__init__()
         self.features = features
@@ -300,13 +289,6 @@ class PhoneTransformer(BaseTransformer):
         country_code_divisor (flat): Divider for `country_code`.
         error_value (str): Value to use if the phone number is invalid or the parsing fails.
     """
-
-    __slots__ = (
-        "features",
-        "national_number_divisor",
-        "country_code_divisor",
-        "error_value",
-    )
 
     def __init__(
         self,
@@ -399,9 +381,6 @@ class StringSlicerTransformer(BaseTransformer):
         features (list[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]], Optional[str]]]): The arguments to the `slice` function, for each feature.
     """
 
-    # pylint: disable=duplicate-code
-    __slots__ = ("features",)
-
     def __init__(
         self,
         features: list[
@@ -480,8 +459,6 @@ class StringSplitterTransformer(BaseTransformer):
             and a third optional element is the desired number of splits.
             If the third element is not provided or is equal to 0 or -1, maximum number of splits are made.
     """
-
-    __slots__ = ("features",)
 
     def __init__(
         self,

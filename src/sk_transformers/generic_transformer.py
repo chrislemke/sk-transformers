@@ -118,8 +118,6 @@ class DtypeTransformer(BaseTransformer):
         features (List[Tuple[str, Union[str, type]]]): List of tuples containing the column name and the dtype (`str` or `type`).
     """
 
-    __slots__ = ("features",)
-
     def __init__(self, features: list[Tuple[str, str | type]]) -> None:
         super().__init__()
         self.features = features
@@ -194,8 +192,6 @@ class AggregateTransformer(BaseTransformer):
             the second element is the aggregation function as a string or function object,
             and the third element is the name of the new aggregated column.
     """
-
-    __slots__ = ("features",)
 
     def __init__(
         self,
@@ -333,8 +329,6 @@ class FunctionsTransformer(BaseTransformer):
             As well as a dictionary passed to the function as `kwargs`.
     """
 
-    __slots__ = ("features",)
-
     def __init__(
         self, features: list[Tuple[str, Callable, Optional[Dict[str, Any]]]]
     ) -> None:
@@ -389,9 +383,6 @@ class MapTransformer(BaseTransformer):
         features (List[Tuple[str, Callable]]): List of tuples containing the name of the
             column to apply the callback on and the callback itself.
     """
-
-    # pylint: disable=duplicate-code
-    __slots__ = ("features",)
 
     def __init__(self, features: list[Tuple[str, Callable]]) -> None:
         super().__init__()
@@ -453,8 +444,6 @@ class ColumnDropperTransformer(BaseTransformer):
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
     """
 
-    __slots__ = ("columns",)
-
     def __init__(self, columns: str | list[str]) -> None:
         super().__init__()
         self.columns = columns
@@ -500,8 +489,6 @@ class NaNTransformer(BaseTransformer):
     Raises:
         TypeError: If the value to replace NaN with is not a number, but the column is a number or vice versa.
     """
-
-    __slots__ = ("features",)
 
     def __init__(self, features: list[Tuple[str, Any]]) -> None:
         super().__init__()
@@ -565,11 +552,6 @@ class ValueIndicatorTransformer(BaseTransformer):
             name and the second value represents the value to check for.
     """
 
-    __slots__ = (
-        "features",
-        "as_int",
-    )
-
     def __init__(self, features: list[Tuple[str, Any]], as_int: bool = False) -> None:
         super().__init__()
         self.features = features
@@ -630,8 +612,6 @@ class QueryTransformer(BaseTransformer):
     Args:
         queries (List[str]): List of query string to evaluate to the dataframe.
     """
-
-    __slots__ = ("queries",)
 
     def __init__(self, queries: list[str]) -> None:
         super().__init__()
@@ -697,8 +677,6 @@ class ValueReplacerTransformer(BaseTransformer):
         features (List[Tuple[List[str], str, Any]]): List of tuples containing the column names as a list,
             the value to replace (can be a regex), and the replacement value.
     """
-
-    __slots__ = ("features",)
 
     def __init__(self, features: List[Tuple[List[str], Any, Any]]) -> None:
         super().__init__()
@@ -853,8 +831,6 @@ class AllowedValuesTransformer(BaseTransformer):
             the second element is the list of allowed values in the column, and
             the third element is the value to replace disallowed values in the column.
     """
-
-    __slots__ = ("features",)
 
     def __init__(self, features: list[Tuple[str, list[Any], Any]]) -> None:
         super().__init__()

@@ -37,13 +37,6 @@ class DateColumnsTransformer(BaseTransformer):
         date_elements ([list[str]]): List of date elements to extract.
     """
 
-    __slots__ = (
-        "features",
-        "date_format",
-        "date_elements",
-        "errors",
-    )
-
     def __init__(  # pylint: disable=dangerous-default-value
         self,
         features: list[str],
@@ -160,12 +153,6 @@ class DurationCalculatorTransformer(BaseTransformer):
         new_column_name (str): The name of the output column.
     """
 
-    __slots__ = (
-        "features",
-        "unit",
-        "new_column_name",
-    )
-
     def __init__(
         self, features: Tuple[str, str], unit: str, new_column_name: str
     ) -> None:
@@ -231,11 +218,6 @@ class TimestampTransformer(BaseTransformer):
         features (list[str]): List of features which should be transformed.
         date_format (str): Format of the date column. Defaults to "%Y-%m-%d".
     """
-
-    __slots__ = (
-        "features",
-        "date_format",
-    )
 
     def __init__(
         self,

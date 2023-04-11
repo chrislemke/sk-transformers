@@ -1,5 +1,59 @@
 # Changelog
 
+## [0.10.3](https://github.com/chrislemke/sk-transformers/compare/v0.10.2...v0.10.3) (2023-03-10)
+
+
+### Maintenance
+
+* remove slots for compatibility reasons ([2a58219](https://github.com/chrislemke/sk-transformers/commit/2a58219e030447fbcb11476130f7a79bfd56a846))
+
+## [0.10.2](https://github.com/chrislemke/sk-transformers/compare/v0.10.1...v0.10.2) (2023-03-09)
+
+
+### Bug Fixes
+
+* broken dependencies ([3fa0a19](https://github.com/chrislemke/sk-transformers/commit/3fa0a1979ec8858623f9297d2057674950dd71dc))
+
+## [0.10.1](https://github.com/chrislemke/sk-transformers/compare/v0.10.0...v0.10.1) (2023-03-09)
+
+
+### Features
+
+* rich for better error messages ([9cd9569](https://github.com/chrislemke/sk-transformers/commit/9cd9569a30212b5577489d5fc16f7466ad2d6cb9))
+
+
+### Bug Fixes
+
+* make tuples flexible in string transformers ([#77](https://github.com/chrislemke/sk-transformers/issues/77)) ([b02ccdb](https://github.com/chrislemke/sk-transformers/commit/b02ccdb8f170441657a01f653c22e10635521d17))
+* support for 2-arg np math functions in MathExpTrans ([#83](https://github.com/chrislemke/sk-transformers/issues/83)) ([52f2d17](https://github.com/chrislemke/sk-transformers/commit/52f2d1777ff4b1b2974d4727b0368f790ec1e4d4))
+* warning implementation ([#80](https://github.com/chrislemke/sk-transformers/issues/80)) ([406862a](https://github.com/chrislemke/sk-transformers/commit/406862aeeb7d756a2a0f077356e8ac6d0d8ac1b5))
+
+
+### Documentation
+
+* fix missing training_objective in example notebook ([f8f5d2f](https://github.com/chrislemke/sk-transformers/commit/f8f5d2f7668e433916000f82bbc87658c51277ba))
+
+
+### Security
+
+* update dependencies due to security issue with ipython ([bc8d0f0](https://github.com/chrislemke/sk-transformers/commit/bc8d0f0ca933521613699fb7cccd6c98835431a9))
+
+
+### CI/CD
+
+* add pre-commit-hooks-safety ([5c50988](https://github.com/chrislemke/sk-transformers/commit/5c50988f95336dc8f34d7807358daa6c72ed2547))
+* fix issue of double running release action ([d5ba926](https://github.com/chrislemke/sk-transformers/commit/d5ba926366aa3e0fd1851e9d389f6270ed4f2e7a))
+* fix issue with autoupdate from pre-commit ([267bb03](https://github.com/chrislemke/sk-transformers/commit/267bb034e08d3bea98e07b3376fc8c8f74edb2ee))
+* pre-commit autoupdate ([3699230](https://github.com/chrislemke/sk-transformers/commit/36992309db45ae820f59f909d0a05cc61c308bb6))
+* update pre-commit ([c82aa1f](https://github.com/chrislemke/sk-transformers/commit/c82aa1f42155e55f79106537fb5c169c955bf6e7))
+
+
+### Maintenance
+
+* improve aggregate_transformer ([#79](https://github.com/chrislemke/sk-transformers/issues/79)) ([ae94ac0](https://github.com/chrislemke/sk-transformers/commit/ae94ac06317f3f0ece5bcd7a7c7a8b9a706da96a))
+* remove deep_transformer module ([#92](https://github.com/chrislemke/sk-transformers/issues/92)) ([27687e8](https://github.com/chrislemke/sk-transformers/commit/27687e8c02bfa8b518167fa63e385a71fda3cb17))
+* start using __slots__ ([#89](https://github.com/chrislemke/sk-transformers/issues/89)) ([0cb3f5a](https://github.com/chrislemke/sk-transformers/commit/0cb3f5a0236a966139cd81e752f54dd51774dee7))
+
 ## [0.10.0](https://github.com/chrislemke/sk-transformers/compare/v0.9.1...v0.10.0) (2023-01-26)
 
 
