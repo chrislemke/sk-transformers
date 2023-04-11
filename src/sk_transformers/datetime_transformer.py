@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, List, Tuple
 
 import pandas as pd
 import polars as pl
@@ -27,22 +27,22 @@ class DateColumnsTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[str]): List of columns to transform.
+        features (List[str]): List of columns to transform.
         date_format (str): Date format. Defaults to `%Y-%m-%d`.
         errors (str): How to handle errors in `pd.to_datetime`. Defaults to `raise`.
             available values: `ignore`, `raise`, `coerce`.
             If `raise`, then invalid parsing will raise an exception.
             If `coerce`, then invalid parsing will be set as `NaT`.
             If `ignore`, then invalid parsing will return the input.
-        date_elements ([list[str]]): List of date elements to extract.
+        date_elements ([List[str]]): List of date elements to extract.
     """
 
     def __init__(  # pylint: disable=dangerous-default-value
         self,
-        features: list[str],
+        features: List[str],
         date_format: str = "%Y-%m-%d",
         errors: str = "raise",
-        date_elements: list[str] = [
+        date_elements: List[str] = [
             "year",
             "month",
             "day",
@@ -173,7 +173,7 @@ class DurationCalculatorTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: The transformed DataFrame.
         """
-        X = check_ready_to_transform(self, X, list(self.features), return_polars=True)
+        X = check_ready_to_transform(self, X, List(self.features), return_polars=True)
 
         if self.unit == "seconds":
             return X.with_columns(
@@ -215,13 +215,13 @@ class TimestampTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[str]): List of features which should be transformed.
+        features (List[str]): List of features which should be transformed.
         date_format (str): Format of the date column. Defaults to "%Y-%m-%d".
     """
 
     def __init__(
         self,
-        features: list[str],
+        features: List[str],
         date_format: str = "%Y-%m-%d",
     ) -> None:
         super().__init__()

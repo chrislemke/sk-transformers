@@ -5,7 +5,7 @@ import re
 import unicodedata
 import warnings
 from difflib import SequenceMatcher
-from typing import Callable, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 import pandas as pd
 import phonenumbers
@@ -37,7 +37,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[str]): List of features which should be transformed.
+        features (List[str]): List of features which should be transformed.
         ip4_divisor (float): Divisor for IPv4 addresses.
         ip6_divisor (float): Divisor for IPv6 addresses.
         error_value (Union[int, float]): Value if parsing fails.
@@ -45,7 +45,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
 
     def __init__(
         self,
-        features: list[str],
+        features: List[str],
         ip4_divisor: float = 1e10,
         ip6_divisor: float = 1e48,
         error_value: Union[int, float] = -999,
@@ -115,10 +115,10 @@ class EmailTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[str]): List of features which should be transformed.
+        features (List[str]): List of features which should be transformed.
     """
 
-    def __init__(self, features: list[str]) -> None:
+    def __init__(self, features: List[str]) -> None:
         super().__init__()
         self.features = features
 
@@ -284,7 +284,7 @@ class PhoneTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[str]): List of features which should be transformed.
+        features (List[str]): List of features which should be transformed.
         national_number_divisor (float): Divider `national_number`.
         country_code_divisor (flat): Divider for `country_code`.
         error_value (str): Value to use if the phone number is invalid or the parsing fails.
@@ -292,7 +292,7 @@ class PhoneTransformer(BaseTransformer):
 
     def __init__(
         self,
-        features: list[str],
+        features: List[str],
         national_number_divisor: float = 1e9,
         country_code_divisor: float = 1e2,
         error_value: str = "-999",
@@ -314,7 +314,7 @@ class PhoneTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        function_list: list[Callable] = [
+        function_list: List[Callable] = [
             lambda x: PhoneTransformer.__phone_to_float(
                 "national_number",
                 x,
@@ -326,7 +326,7 @@ class PhoneTransformer(BaseTransformer):
             ),
         ]
 
-        phone_number_attr_list: list[str] = ["national_number", "country_code"]
+        phone_number_attr_list: List[str] = ["national_number", "country_code"]
 
         return X.with_columns(
             [
@@ -378,12 +378,12 @@ class StringSlicerTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]], Optional[str]]]): The arguments to the `slice` function, for each feature.
+        features (List[Tuple[str, Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]], Optional[str]]]): The arguments to the `slice` function, for each feature.
     """
 
     def __init__(
         self,
-        features: list[
+        features: List[
             Tuple[
                 str,
                 Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
@@ -453,7 +453,7 @@ class StringSplitterTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[Tuple[str, str, Optional[int]]]): A list of tuples where
+        features (List[Tuple[str, str, Optional[int]]]): A list of tuples where
             the first element is the name of the feature,
             the second element is the string separator,
             and a third optional element is the desired number of splits.
@@ -462,7 +462,7 @@ class StringSplitterTransformer(BaseTransformer):
 
     def __init__(
         self,
-        features: list[
+        features: List[
             Tuple[
                 str,
                 str,
@@ -492,7 +492,7 @@ class StringSplitterTransformer(BaseTransformer):
             self, X, [feature[0] for feature in self.features], return_polars=True
         )
 
-        max_possible_splits_list: list[int] = [
+        max_possible_splits_list: List[int] = [
             X[column].str.count_match(separator).max()  # type: ignore
             for column, separator, _ in self.features
         ]

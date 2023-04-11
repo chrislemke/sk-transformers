@@ -335,7 +335,7 @@ class FunctionsTransformer(BaseTransformer):
     """
 
     def __init__(
-        self, features: list[Tuple[str, Callable, Optional[Dict[str, Any]]]]
+        self, features: List[Tuple[str, Callable, Optional[Dict[str, Any]]]]
     ) -> None:
         super().__init__()
         self.features = features
@@ -389,7 +389,7 @@ class MapTransformer(BaseTransformer):
             column to apply the callback on and the callback itself.
     """
 
-    def __init__(self, features: list[Tuple[str, Callable]]) -> None:
+    def __init__(self, features: List[Tuple[str, Callable]]) -> None:
         super().__init__()
         self.features = features
 
@@ -448,7 +448,7 @@ class ColumnDropperTransformer(BaseTransformer):
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
     """
 
-    def __init__(self, columns: Union[str, list[str]]) -> None:
+    def __init__(self, columns: Union[str, List[str]]) -> None:
         super().__init__()
         self.columns = columns
 
@@ -494,7 +494,7 @@ class NaNTransformer(BaseTransformer):
         TypeError: If the value to replace NaN with is not a number, but the column is a number or vice versa.
     """
 
-    def __init__(self, features: list[Tuple[str, Any]]) -> None:
+    def __init__(self, features: List[Tuple[str, Any]]) -> None:
         super().__init__()
         self.features = features
 
@@ -556,7 +556,7 @@ class ValueIndicatorTransformer(BaseTransformer):
             name and the second value represents the value to check for.
     """
 
-    def __init__(self, features: list[Tuple[str, Any]], as_int: bool = False) -> None:
+    def __init__(self, features: List[Tuple[str, Any]], as_int: bool = False) -> None:
         super().__init__()
         self.features = features
         self.as_int = as_int
@@ -617,7 +617,7 @@ class QueryTransformer(BaseTransformer):
         queries (List[str]): List of query string to evaluate to the dataframe.
     """
 
-    def __init__(self, queries: list[str]) -> None:
+    def __init__(self, queries: List[str]) -> None:
         super().__init__()
         self.queries = queries
 
@@ -752,7 +752,7 @@ class LeftJoinTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[Tuple[str, Union[pd.Series, pd.DataFrame]]]): A list of tuples
+        features (List[Tuple[str, Union[pd.Series, pd.DataFrame]]]): A list of tuples
             where the first element is the name of the column
             and the second element is the look-up dataframe or series.
     """
@@ -760,7 +760,7 @@ class LeftJoinTransformer(BaseTransformer):
     __slots__ = ("features",)
 
     def __init__(
-        self, features: list[Tuple[str, Union[pd.Series, pd.DataFrame]]]
+        self, features: List[Tuple[str, Union[pd.Series, pd.DataFrame]]]
     ) -> None:
         super().__init__()
         self.features = features
@@ -834,13 +834,13 @@ class AllowedValuesTransformer(BaseTransformer):
     ```
 
     Args:
-        features (list[Tuple[str, list[Any], Any]]): List of tuples where
+        features (List[Tuple[str, List[Any], Any]]): List of tuples where
             the first element is the column name,
             the second element is the list of allowed values in the column, and
             the third element is the value to replace disallowed values in the column.
     """
 
-    def __init__(self, features: list[Tuple[str, list[Any], Any]]) -> None:
+    def __init__(self, features: List[Tuple[str, List[Any], Any]]) -> None:
         super().__init__()
         self.features = features
 

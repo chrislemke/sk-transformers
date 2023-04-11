@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple, Union
+from typing import Any, List, Optional, Tuple, Union
 
 import pandas as pd
 import polars as pl
@@ -9,9 +9,9 @@ from sklearn.utils.validation import check_array, check_is_fitted
 def check_ready_to_transform(
     transformer: Any,
     X: pd.DataFrame,
-    features: Union[str, list[str]],
+    features: Union[str, List[str]],
     force_all_finite: Union[bool, str] = True,
-    dtype: Optional[Union[str, list[str]]] = None,
+    dtype: Optional[Union[str, List[str]]] = None,
     return_polars: bool = False,
 ) -> Union[pd.DataFrame, pl.DataFrame]:
     """
@@ -123,7 +123,7 @@ def check_data(X: pd.DataFrame, y: pd.Series, check_nans: bool = True) -> None:
 
 
 def prepare_categorical_data(
-    X: pd.DataFrame, categories: list[Tuple[str, int]]
+    X: pd.DataFrame, categories: List[Tuple[str, int]]
 ) -> pd.DataFrame:
     """Checks for the validity of the categorical features inside the
     dataframe. And prepares the data for further processing by changing the
