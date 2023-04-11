@@ -1,6 +1,6 @@
 import re
 import warnings
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 import polars as pl
@@ -48,7 +48,9 @@ class ColumnEvalTransformer(BaseTransformer):
 
     __slots__ = ("features",)
 
-    def __init__(self, features: list[Tuple[str, str] | Tuple[str, str, str]]) -> None:
+    def __init__(
+        self, features: List[Union[Tuple[str, str], Tuple[str, str, str]]]
+    ) -> None:
         super().__init__()
         self.features = features
 
@@ -118,7 +120,7 @@ class DtypeTransformer(BaseTransformer):
         features (List[Tuple[str, Union[str, type]]]): List of tuples containing the column name and the dtype (`str` or `type`).
     """
 
-    def __init__(self, features: list[Tuple[str, str | type]]) -> None:
+    def __init__(self, features: List[Tuple[str, Union[str, type]]]) -> None:
         super().__init__()
         self.features = features
 
@@ -197,8 +199,11 @@ class AggregateTransformer(BaseTransformer):
         self,
         features: List[
             Tuple[
-                str | List[str],
-                Tuple[str, str | Callable, str] | List[Tuple[str, str | Callable, str]],
+                Union[str, List[str]],
+                Union[
+                    Tuple[str, Union[str, Callable], str],
+                    List[Tuple[str, Union[str, Callable], str]],
+                ],
             ]
         ],
     ) -> None:
@@ -444,7 +449,7 @@ class ColumnDropperTransformer(BaseTransformer):
         columns (Union[str, List[str]]): Columns to drop. Either a single column name or a list of column names.
     """
 
-    def __init__(self, columns: str | list[str]) -> None:
+    def __init__(self, columns: Union[str, list[str]]) -> None:
         super().__init__()
         self.columns = columns
 
@@ -755,12 +760,16 @@ class LeftJoinTransformer(BaseTransformer):
 
     __slots__ = ("features",)
 
-    def __init__(self, features: list[Tuple[str, pd.Series | pd.DataFrame]]) -> None:
+    def __init__(
+        self, features: list[Tuple[str, Union[pd.Series, pd.DataFrame]]]
+    ) -> None:
         super().__init__()
         self.features = features
 
     @staticmethod
-    def __prepare_lookup_df(df: pd.Series | pd.DataFrame, prefix: str) -> pd.DataFrame:
+    def __prepare_lookup_df(
+        df: Union[pd.Series, pd.DataFrame], prefix: str
+    ) -> pd.DataFrame:
         if isinstance(df, pd.Series):
             df.name = df.name if df.name else "lookup"
             df = df.to_frame()

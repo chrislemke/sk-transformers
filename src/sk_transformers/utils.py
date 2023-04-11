@@ -1,4 +1,4 @@
-from typing import Any, Optional, Tuple
+from typing import Any, Optional, Tuple, Union
 
 import pandas as pd
 import polars as pl
@@ -9,11 +9,11 @@ from sklearn.utils.validation import check_array, check_is_fitted
 def check_ready_to_transform(
     transformer: Any,
     X: pd.DataFrame,
-    features: str | list[str],
-    force_all_finite: bool | str = True,
-    dtype: Optional[str | list[str]] = None,
+    features: Union[str, list[str]],
+    force_all_finite: Union[bool, str] = True,
+    dtype: Optional[Union[str, list[str]]] = None,
     return_polars: bool = False,
-) -> pd.DataFrame | pl.DataFrame:
+) -> Union[pd.DataFrame, pl.DataFrame]:
     """
     Args:
         transformer (Any): The transformer that calls this function. It must be a subclass of `BaseEstimator` from scikit-learn.

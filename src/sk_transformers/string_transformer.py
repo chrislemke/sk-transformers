@@ -5,7 +5,7 @@ import re
 import unicodedata
 import warnings
 from difflib import SequenceMatcher
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional, Tuple, Union
 
 import pandas as pd
 import phonenumbers
@@ -48,7 +48,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         features: list[str],
         ip4_divisor: float = 1e10,
         ip6_divisor: float = 1e48,
-        error_value: int | float = -999,
+        error_value: Union[int, float] = -999,
     ) -> None:
         super().__init__()
         self.features = features
@@ -82,7 +82,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
     def __to_float(
         ip4_devisor: float,
         ip6_devisor: float,
-        error_value: int | float,
+        error_value: Union[int, float],
         ip_address: str,
     ) -> float:
         try:
@@ -386,7 +386,7 @@ class StringSlicerTransformer(BaseTransformer):
         features: list[
             Tuple[
                 str,
-                Tuple[int] | Tuple[int, int] | Tuple[int, int, int],
+                Union[Tuple[int], Tuple[int, int], Tuple[int, int, int]],
                 Optional[str],
             ]
         ],
