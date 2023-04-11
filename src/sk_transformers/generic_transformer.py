@@ -403,7 +403,6 @@ class MapTransformer(BaseTransformer):
             pandas.DataFrame: The dataframe containing
                 the new column together with the non-transformed original columns.
         """
-
         for _, func in self.features:
             if isinstance(func, str) is False:
                 func = func.__name__  # type: ignore
