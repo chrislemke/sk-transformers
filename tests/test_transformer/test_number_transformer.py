@@ -2,7 +2,7 @@ import numpy as np
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers import MathExpressionTransformer
+from sk_transformers import GeoDistanceTransformer, MathExpressionTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
@@ -118,3 +118,23 @@ def test_math_expression_transformer_in_pipeline_with_non_existing_column(
                 """ == str(
         error.value
     )
+
+
+def test_geo_distance_transformer_in_pipeline(X_coordinates):
+    pipeline = make_pipeline(
+        GeoDistanceTransformer(
+            [("latitude_1", "longitude_1", "latitude_2", "longitude_2")]
+        )
+    )
+    result = pipeline.fit_transform(X_coordinates)
+    expected = [
+        432.523369,
+        432.523369,
+        0.000000,
+        485.975293,
+        339.730537,
+        600.208154,
+    ]
+
+    assert pipeline.steps[0][0] == "geodistancetransformer"
+    assert np.allclose(result["distance_latitude_1_latitude_2"], expected)
