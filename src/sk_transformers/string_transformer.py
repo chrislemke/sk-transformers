@@ -3,12 +3,13 @@ import ipaddress
 import itertools
 import re
 import unicodedata
+import warnings
 from difflib import SequenceMatcher
-from typing import List, Optional, Tuple, Union
+from typing import Callable, List, Optional, Tuple, Union
 
 import pandas as pd
 import phonenumbers
-import swifter  # pylint: disable=unused-import
+import polars as pl
 
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
@@ -64,7 +65,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe.
         """
-        X = check_ready_to_transform(self, X, self.features)
+        X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
         function = functools.partial(
             IPAddressEncoderTransformer.__to_float,
@@ -72,10 +73,10 @@ class IPAddressEncoderTransformer(BaseTransformer):
             self.ip6_divisor,
             self.error_value,
         )
-        for column in self.features:
-            X[column] = X[column].map(function)
 
-        return X
+        return X.with_columns(
+            [pl.col(column).apply(function) for column in self.features]
+        ).to_pandas()
 
     @staticmethod
     def __to_float(
@@ -131,29 +132,47 @@ class EmailTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Transformed dataframe containing the extra columns.
         """
-        X = check_ready_to_transform(self, X, self.features)
+        X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        for column in self.features:
-            X[f"{column}_domain"] = (
-                X[column].str.split("@").str[1].str.split(".").str[0]
+        for column in self.features:  # pylint: disable=duplicate-code
+            X = X.with_columns(
+                pl.col(column)
+                .str.split_exact("@", 1)
+                .struct.rename_fields(["username", "domain"])
+                .alias("email_parts"),
+            ).unnest("email_parts")
+
+            X = (
+                X.with_columns(
+                    pl.col("domain")
+                    .str.split_exact(".", 1)
+                    .struct.rename_fields([f"{column}_domain", "subdomain"])
+                    .alias("domain_parts"),
+                )
+                .unnest("domain_parts")
+                .drop(["domain", "subdomain"])
             )
 
-            X[column] = X[column].str.split("@").str[0]
+            expr = [
+                pl.col("username")
+                .apply(EmailTransformer.__num_of_digits)
+                .alias(f"{column}_num_of_digits"),
+                pl.col("username")
+                .apply(EmailTransformer.__num_of_letters)
+                .alias(f"{column}_num_of_letters"),
+                pl.col("username")
+                .apply(EmailTransformer.__num_of_special_characters)
+                .alias(f"{column}_num_of_special_chars"),
+                pl.col("username")
+                .apply(EmailTransformer.__num_of_repeated_characters)
+                .alias(f"{column}_num_of_repeated_chars"),
+                pl.col("username")
+                .apply(EmailTransformer.__num_of_words)
+                .alias(f"{column}_num_of_words"),
+            ]
 
-            X[f"{column}_num_of_digits"] = X[column].map(
-                EmailTransformer.__num_of_digits
-            )
-            X[f"{column}_num_of_letters"] = X[column].map(
-                EmailTransformer.__num_of_letters
-            )
-            X[f"{column}_num_of_special_chars"] = X[column].map(
-                EmailTransformer.__num_of_special_characters
-            )
-            X[f"{column}_num_of_repeated_chars"] = X[column].map(
-                EmailTransformer.__num_of_repeated_characters
-            )
-            X[f"{column}_num_of_words"] = X[column].map(EmailTransformer.__num_of_words)
-        return X
+            X = X.with_columns(expr).drop(column).rename({"username": column})
+        return X.to_pandas()
 
     @staticmethod
     def __num_of_digits(string: str) -> int:
@@ -218,18 +237,18 @@ class StringSimilarityTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-        X = check_ready_to_transform(self, X, list(self.features))
+        X = check_ready_to_transform(self, X, list(self.features), return_polars=True)
 
-        X[f"{self.features[0]}_{self.features[1]}_similarity"] = X[
-            [self.features[0], self.features[1]]
-        ].swifter.apply(
-            lambda x: StringSimilarityTransformer.__similar(
-                StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
-                StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
-            ),
-            axis=1,
-        )
-        return X
+        return X.with_columns(
+            pl.struct([self.features[0], self.features[1]])
+            .apply(
+                lambda x: StringSimilarityTransformer.__similar(
+                    StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
+                    StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
+                )
+            )
+            .alias(f"{self.features[0]}_{self.features[1]}_similarity")
+        ).to_pandas()
 
     @staticmethod
     def __similar(a: str, b: str) -> float:
@@ -293,24 +312,31 @@ class PhoneTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe containing the extra column with the calculated similarity.
         """
-        X = check_ready_to_transform(self, X, self.features)
+        X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        for column in self.features:
-            X[f"{column}_national_number"] = X[column].swifter.apply(
-                lambda x: PhoneTransformer.__phone_to_float(
-                    "national_number",
-                    x,
-                    int(self.national_number_divisor),
-                    self.error_value,
-                )
-            )
-            X[f"{column}_country_code"] = X[column].swifter.apply(
-                lambda x: PhoneTransformer.__phone_to_float(
-                    "country_code", x, int(self.country_code_divisor), self.error_value
-                )
-            )
+        function_list: List[Callable] = [
+            lambda x: PhoneTransformer.__phone_to_float(
+                "national_number",
+                x,
+                int(self.national_number_divisor),
+                self.error_value,
+            ),
+            lambda x: PhoneTransformer.__phone_to_float(
+                "country_code", x, int(self.country_code_divisor), self.error_value
+            ),
+        ]
 
-        return X
+        phone_number_attr_list: List[str] = ["national_number", "country_code"]
+
+        return X.with_columns(
+            [
+                pl.col(column).apply(function).alias(f"{column}_{phone_number_attr}")
+                for column in self.features
+                for function, phone_number_attr in zip(
+                    function_list, phone_number_attr_list
+                )
+            ]
+        ).to_pandas()
 
     @staticmethod
     def __phone_to_float(
@@ -341,14 +367,14 @@ class StringSlicerTransformer(BaseTransformer):
     from sk_transformers import StringSlicerTransformer
 
     X = pd.DataFrame({"foo": ["abc", "def", "ghi"], "bar": ["jkl", "mno", "pqr"]})
-    transformer = StringSlicerTransformer([("foo", (0, 3, 2)), ("bar", (2,))])
+    transformer = StringSlicerTransformer([("foo", (1, 3)), ("bar", (2,))])
     transformer.fit_transform(X)
     ```
     ```
        foo  bar foo_slice bar_slice
-    0  abc  jkl        ac        jk
-    1  def  mno        df        mn
-    2  ghi  pqr        gi        pq
+    0  abc  jkl        bc        jk
+    1  def  mno        ef        mn
+    2  ghi  pqr        hi        pq
     ```
 
     Args:
@@ -377,15 +403,33 @@ class StringSlicerTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Original dataframe with sliced strings in specified features.
         """
-        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(
+            self, X, [feature[0] for feature in self.features], return_polars=True
+        )
 
         for slice_tuple in self.features:
             column = slice_tuple[0]
             slice_args = slice_tuple[1]
             slice_column = slice_tuple[2] if len(slice_tuple) == 3 else column
-            X[slice_column] = [x[slice(*slice_args)] for x in X[column]]
 
-        return X
+            slice_offset = slice_args[0] if len(slice_args) > 1 else 0
+            slice_length = (
+                (slice_args[1] - slice_args[0])  # type: ignore[misc]
+                if len(slice_args) > 1
+                else slice_args[0]
+            )
+
+            if len(slice_args) == 3:
+                warnings.warn(
+                    "StringSlicerTransformer currently does not support increments.\n Only the first two elements of the slice tuple will be considered."
+                )
+
+            X = X.with_columns(
+                pl.col(column)
+                .str.slice(offset=slice_offset, length=slice_length)
+                .alias(slice_column)  # type: ignore[arg-type]
+            )
+        return X.to_pandas()
 
 
 class StringSplitterTransformer(BaseTransformer):
@@ -422,12 +466,17 @@ class StringSplitterTransformer(BaseTransformer):
             Tuple[
                 str,
                 str,
-                Optional[int],
+                int,
             ]
         ],
     ) -> None:
         super().__init__()
-        self.features = features
+        self.features = [
+            (split_tuple[0], split_tuple[1], split_tuple[2])
+            if len(split_tuple) == 3
+            else (split_tuple[0], split_tuple[1], -1)
+            for split_tuple in features
+        ]
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Splits the strings based on a separator character.
@@ -439,20 +488,38 @@ class StringSplitterTransformer(BaseTransformer):
             pandas.DataFrame: Dataframe containing additional columns containing
                 each split part of the string.
         """
-        X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
+        X = check_ready_to_transform(
+            self, X, [feature[0] for feature in self.features], return_polars=True
+        )
 
-        for split_tuple in self.features:
-            column = split_tuple[0]
-            separator = split_tuple[1]
+        max_possible_splits_list: List[int] = [
+            X[column].str.count_match(separator).max()  # type: ignore
+            for column, separator, _ in self.features
+        ]
 
-            max_possible_splits = X[column].str.count(separator).max()
-            maxsplit = split_tuple[2] if len(split_tuple) == 3 else max_possible_splits
-            if maxsplit in [0, -1] or maxsplit > max_possible_splits:
-                maxsplit = max_possible_splits
-
-            split_column_names = [f"{column}_part_{i+1}" for i in range(maxsplit + 1)]
-            X[split_column_names] = X[column].str.split(
-                separator, n=maxsplit, expand=True
+        select_with_expr = [
+            pl.col(column)
+            .str.splitn(by=separator, n=max_possible_split + 1)
+            .struct.rename_fields(
+                [column + f"_part_{i}" for i in range(1, max_possible_split + 2)]
             )
+            .alias(column + "_alias")
+            if maxsplit in [0, -1] or maxsplit > max_possible_split
+            else (
+                pl.col(column)
+                .str.splitn(by=separator, n=maxsplit + 1)
+                .struct.rename_fields(
+                    [column + f"_part_{i}" for i in range(1, maxsplit + 2)]
+                )
+                .alias(column + "_alias")
+            )
+            for (column, separator, maxsplit), max_possible_split in zip(
+                self.features, max_possible_splits_list
+            )
+        ]
 
-        return X
+        return (
+            X.with_columns(select_with_expr)
+            .unnest([column + "_alias" for column, _, _ in self.features])
+            .to_pandas()
+        )

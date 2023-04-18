@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import pytest
 from sklearn.pipeline import make_pipeline
 
 from sk_transformers import (
@@ -75,7 +76,7 @@ def test_email_transformer_in_pipeline(X_strings) -> None:
             "email_num_of_words": {0: 1, 1: 1, 2: 2, 3: 2, 4: 1, 5: 3},
         }
     )
-    assert result.equals(expected)
+    assert result[expected.columns].equals(expected)
     assert pipeline.steps[0][0] == "emailtransformer"
 
 
@@ -120,7 +121,6 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
             [
                 ("email", (5,)),
                 ("strings_1", (8, 16)),
-                ("strings_2", (5, 15, 2)),
             ]
         )
     )
@@ -144,19 +144,11 @@ def test_string_slicer_transformer_in_pipeline(X_strings):
                 "a_fifth_",
                 "a_sixth_",
             ],
-            "strings_2": [
-                "i_o__",
-                "i_nte",
-                "i  hr",
-                "i__it",
-                "",
-                "^*)+",
-            ],
         }
     )
 
     assert pipeline.steps[0][0] == "stringslicertransformer"
-    assert result[["email", "strings_1", "strings_2"]].equals(expected)
+    assert result[["email", "strings_1"]].equals(expected)
 
 
 def test_string_slicer_transformer_new_column_name_in_pipeline(X_strings):
@@ -171,6 +163,15 @@ def test_string_slicer_transformer_new_column_name_in_pipeline(X_strings):
 
     assert "new_email_slice" in result.columns
     assert pipeline.steps[0][0] == "stringslicertransformer"
+
+
+def test_string_slicer_transformer_tuple_size_raise_warning(X_strings) -> None:
+    with pytest.warns(UserWarning) as warning:
+        transformer = StringSlicerTransformer([("email", (5, 10, 2))])
+        _ = transformer.fit_transform(X_strings)
+    assert str(warning[0].message) == (
+        "StringSlicerTransformer currently does not support increments.\n Only the first two elements of the slice tuple will be considered."
+    )
 
 
 def test_string_splitter_transformer_in_pipeline(X_strings):

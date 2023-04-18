@@ -1,7 +1,7 @@
-from datetime import datetime
-from typing import List, Tuple
+from typing import Dict, List, Tuple
 
 import pandas as pd
+import polars as pl
 
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
@@ -78,43 +78,49 @@ class DateColumnsTransformer(BaseTransformer):
             pandas.DataFrame: Dataframe with transformed columns.
         """
 
-        X = check_ready_to_transform(self, X, self.features)
+        X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        for column in self.features:
-            X[column] = pd.to_datetime(
-                X[column], format=self.date_format, errors=self.errors
+        for column in self.features:  # pylint: disable=duplicate-code
+            X = X.with_columns(
+                pl.col(column)
+                .str.strptime(pl.Datetime, fmt=self.date_format)
+                .alias(column + "_datetime")
             )
-            if "year" in self.date_elements:
-                X[f"{column}_year"] = X[column].dt.year
-            if "month" in self.date_elements:
-                X[f"{column}_month"] = X[column].dt.month
-            if "day" in self.date_elements:
-                X[f"{column}_day"] = X[column].dt.day
-            if "day_of_week" in self.date_elements:
-                X[f"{column}_day_of_week"] = X[column].dt.dayofweek
-            if "day_of_year" in self.date_elements:
-                X[f"{column}_day_of_year"] = X[column].dt.dayofyear
-            if "week_of_year" in self.date_elements:
-                X[f"{column}_week_of_year"] = X[column].dt.isocalendar().week
-            if "quarter" in self.date_elements:
-                X[f"{column}_quarter"] = X[column].dt.quarter
-            if "is_leap_year" in self.date_elements:
-                X[f"{column}_is_leap_year"] = X[column].dt.is_leap_year
-            if "is_month_start" in self.date_elements:
-                X[f"{column}_is_month_start"] = X[column].dt.is_month_start
-            if "is_month_end" in self.date_elements:
-                X[f"{column}_is_month_end"] = X[column].dt.is_month_end
-            if "is_quarter_start" in self.date_elements:
-                X[f"{column}_is_quarter_start"] = X[column].dt.is_quarter_start
-            if "is_quarter_end" in self.date_elements:
-                X[f"{column}_is_quarter_end"] = X[column].dt.is_quarter_end
-            if "is_year_start" in self.date_elements:
-                X[f"{column}_is_year_start"] = X[column].dt.is_year_start
-            if "is_year_end" in self.date_elements:
-                X[f"{column}_is_year_end"] = X[column].dt.is_year_end
-            if "is_weekend" in self.date_elements:
-                X[f"{column}_is_weekend"] = X[column].dt.dayofweek.isin([5, 6])
-        return X
+
+            date_element_dict: Dict[str, pl.Expr] = {
+                "year": pl.col(f"{column}_datetime").dt.year(),
+                "month": pl.col(f"{column}_datetime").dt.month(),
+                "day": pl.col(f"{column}_datetime").dt.day(),
+                "day_of_week": pl.col(f"{column}_datetime").dt.weekday() - 1,
+                "day_of_year": pl.col(f"{column}_datetime").dt.ordinal_day(),
+                "week_of_year": pl.col(f"{column}_datetime").dt.week(),
+                "quarter": pl.col(f"{column}_datetime").dt.quarter(),
+                "is_leap_year": pl.col(f"{column}_datetime").dt.year() % 4 == 0,
+                "is_month_start": pl.col(f"{column}_datetime").dt.day() == 1,
+                "is_month_end": pl.col(f"{column}_datetime")
+                .dt.day()
+                .is_in([28, 29, 30, 31]),
+                "is_quarter_start": pl.col(f"{column}_datetime")
+                .dt.ordinal_day()
+                .is_in([1, 91, 183, 275]),
+                "is_quarter_end": pl.col(f"{column}_datetime")
+                .dt.ordinal_day()
+                .is_in([90, 182, 274, 365]),
+                "is_year_start": pl.col(f"{column}_datetime").dt.ordinal_day() == 1,
+                "is_year_end": pl.col(f"{column}_datetime")
+                .dt.ordinal_day()
+                .is_in([365, 366]),
+                "is_weekend": pl.col(f"{column}_datetime").dt.weekday().is_in([6, 7]),
+            }
+
+            X = X.with_columns(
+                [
+                    date_element_dict[element].alias(f"{column}_{element}")
+                    for element in self.date_elements
+                ]
+            ).drop(f"{column}_datetime")
+
+        return X.to_pandas()
 
 
 class DurationCalculatorTransformer(BaseTransformer):
@@ -167,18 +173,25 @@ class DurationCalculatorTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: The transformed DataFrame.
         """
-        X = check_ready_to_transform(self, X, list(self.features))
+        X = check_ready_to_transform(self, X, list(self.features), return_polars=True)
 
-        duration_series = pd.to_datetime(
-            X[self.features[1]], utc=True, errors="raise"
-        ) - pd.to_datetime(X[self.features[0]], utc=True, errors="raise")
-
-        X[self.new_column_name] = (
-            duration_series.dt.days
-            if self.unit == "days"
-            else duration_series.dt.total_seconds()
-        )
-        return X
+        if self.unit == "seconds":
+            return X.with_columns(
+                (
+                    pl.col(self.features[1]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                    - pl.col(self.features[0]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                )
+                .dt.seconds()
+                .alias(self.new_column_name)
+            ).to_pandas()
+        return X.with_columns(
+            (
+                pl.col(self.features[1]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                - pl.col(self.features[0]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+            )
+            .dt.days()
+            .alias(self.new_column_name)
+        ).to_pandas()
 
 
 class TimestampTransformer(BaseTransformer):
@@ -224,11 +237,14 @@ class TimestampTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Dataframe with transformed columns.
         """
-        X = check_ready_to_transform(self, X, self.features)
+        X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        for column in self.features:
-            X[column] = pd.to_datetime(
-                X[column], format=self.date_format, errors="raise"
-            )
-            X[column] = (X[column] - datetime(1970, 1, 1)).dt.total_seconds()
-        return X
+        return X.with_columns(
+            [
+                pl.col(column)
+                .str.strptime(pl.Datetime, self.date_format)
+                .dt.timestamp("ms")
+                / 1000
+                for column in self.features
+            ]
+        ).to_pandas()

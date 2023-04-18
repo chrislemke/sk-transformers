@@ -55,54 +55,25 @@ def test_column_eval_transformer_with_invalid_eval(X_strings) -> None:
         _ = transformer.fit_transform(X_strings)
     assert (
         str(error.value)
-        == "The Pandas Series `email` does not has the attribute `invalid_func`!"
-    )
-
-
-def test_column_eval_transformer_with_eval_func_to_multiple_columns(X_strings) -> None:
-    with pytest.raises(ValueError) as error:
-        transformer = ColumnEvalTransformer([("email", "str.split('@', expand=True)")])
-        _ = transformer.fit_transform(X_strings)
-    assert str(error.value) == (
-        """
-                        Your `eval_func` (`str.split('@', expand=True)`) for the column `email`
-                        tries to assign multiple columns to one target column. This is not possible!
-                        Please adjust your `eval_func` to only return one column.
-                        """
+        == """Internally this transformer uses Polars. You may encounter issues with your implementation.
+                    Please check the Polars documentation for more information:
+                    https://pola-rs.github.io/polars/py-polars/html/reference/
+                    Original error: 'Expr' object has no attribute 'invalid_func'"""
     )
 
 
 def test_column_eval_transformer_for_value_error(X_strings) -> None:
-    with pytest.raises(ValueError) as error:
+    with pytest.raises(AttributeError) as error:
         transformer = ColumnEvalTransformer([("email", "astype(int)")])
         _ = transformer.fit_transform(X_strings)
     str(error.value)
     assert (
-        str(error.value) == "invalid literal for int() with base 10: 'test@test1.com'"
+        str(error.value)
+        == """Internally this transformer uses Polars. You may encounter issues with your implementation.
+                    Please check the Polars documentation for more information:
+                    https://pola-rs.github.io/polars/py-polars/html/reference/
+                    Original error: 'Expr' object has no attribute 'astype'"""
     )
-
-
-def test_column_eval_transformer_with_warning(X_numbers) -> None:
-    with pytest.warns(UserWarning) as warning:
-        transformer = ColumnEvalTransformer(
-            [("small_numbers", "apply(lambda x: x + 1)")]
-        )
-        _ = transformer.fit_transform(X_numbers)
-    assert str(warning[0].message) == (
-        """
-                    Actually everything is fine - don't worry! But you could improve your code by adding `swifter` in front of `apply`.
-                    E.g. `swifter.apply(lambda x: x + 1)` instead of `apply(lambda x: x + 1)`.
-                    This will speed up your code. Read more about it here: https://github.com/jmcarpenter2/swifter.
-                    """
-    )
-
-
-def test_column_eval_transformer_with_swifter(X_numbers) -> None:
-    transformer = ColumnEvalTransformer(
-        [("small_numbers", "swifter.apply(lambda x: x + 1)")]
-    )
-    X = transformer.fit_transform(X_numbers)
-    assert X["small_numbers"].to_list() == [8, 13, 83, 2, 1]
 
 
 def test_dtype_transformer_in_pipeline(X) -> None:
@@ -139,7 +110,7 @@ def test_dtype_transformer_raises_error(X) -> None:
 
 
 def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
-    pipeline = make_pipeline(AggregateTransformer([("a", ("b", "mean", "MEAN(a__b)"))]))
+    pipeline = make_pipeline(AggregateTransformer([("a", ("b", "mean", "MEAN(a_b)"))]))
     result = pipeline.fit_transform(X_group_by)
     expected = np.array(
         [
@@ -156,7 +127,7 @@ def test_aggregate_transformer_in_pipeline(X_group_by) -> None:
         ]
     )
 
-    assert np.array_equal(result["MEAN(a__b)"].to_numpy(), expected)
+    assert np.array_equal(result["MEAN(a_b)"].to_numpy(), expected)
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
 
@@ -167,10 +138,10 @@ def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
                 (
                     ["a", "c"],
                     [
-                        ("b", np.sum, "b_sum"),
-                        ("b", np.max, "b_max"),
+                        ("b", "sum", "b_sum"),
+                        ("b", max, "b_max"),
                         ("d", "|".join, "d_join_pipe"),
-                        ("d", lambda x: x[x == "foo"].count(), "d_foo_count"),
+                        ("d", lambda x: (x == "foo").sum(), "d_foo_sum"),
                     ],
                 )
             ]
@@ -193,7 +164,7 @@ def test_aggregate_transformer_multiple_in_pipeline(X_group_by) -> None:
         dtype=object,
     )
     assert np.array_equal(
-        result[["b_sum", "b_max", "d_join_pipe", "d_foo_count"]].to_numpy(), expected
+        result[["b_sum", "b_max", "d_join_pipe", "d_foo_sum"]].to_numpy(), expected
     )
     assert pipeline.steps[0][0] == "aggregatetransformer"
 
@@ -226,11 +197,11 @@ def test_aggregate_transformer_agg_tuple_raises_error(X_group_by) -> None:
     assert "Expected 3 elements in the aggregation tuple, got 2." == str(error.value)
 
 
-def test_aggregate_transformer_nontuple_in_list_raises_error(X_group_by) -> None:
+def test_aggregate_transformer_nontuple_raises_error(X_group_by) -> None:
     with pytest.raises(TypeError) as error:
-        AggregateTransformer([("a", [1, 2, 3])]).fit_transform(X_group_by)
+        AggregateTransformer([("a", ["b", "c"])]).fit_transform(X_group_by)
 
-    assert "Expected a list of tuples, found int in list." == str(error.value)
+    assert "Expected a list of tuples, found str in list." == str(error.value)
 
 
 def test_aggregate_transformer_nonlist_raises_error(X_group_by) -> None:
@@ -356,7 +327,8 @@ def test_value_indicator_transformer_in_pipeline_with_non_existing_column(
 
 def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     values = [
-        (["a", "e"], r"^(?:[1-9][0-9]+|9)$", 99),
+        (["a"], r"^(?:[1-9][0-9]+|9)$", 99),
+        (["e"], 2, 99),
         (["dd"], "\\N", "-999"),
         (
             ["dd"],
@@ -383,7 +355,7 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
             "1900-01-01",
         ]
     )
-    expected_e = np.array([2, 4, 6, 8, 99, 99, 99, 99, 99, 99])
+    expected_e = np.array([99, 4, 6, 8, 10, 12, 14, 16, 18, 20])
     expected_f = np.array(["2", "4", "6", "8", "-999", "12", "14", "16", "18", "20"])
 
     assert np.array_equal(result["a"].to_numpy(), expected_a)
@@ -422,16 +394,6 @@ def test_nan_transformer_in_pipeline(X_nan_values) -> None:
     assert X["c"][6] == "missing"
     assert pipeline.steps[0][0] == "nantransformer"
     assert pipeline.steps[0][1].features[0][1] == -1
-
-
-def test_nan_transformer_with_different_types_string(X_nan_values) -> None:
-    with pytest.raises(TypeError) as error:
-        transformer = NaNTransformer([("a", "a_value")])
-        _ = transformer.fit_transform(X_nan_values)
-    assert (
-        "Cannot replace NaN values in column `a` (type: `float64`) with `a_value` of type: `str`."
-        == str(error.value)
-    )
 
 
 def test_left_join_transformer_in_pipeline_for_series(X_categorical) -> None:

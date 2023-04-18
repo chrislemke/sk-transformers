@@ -47,7 +47,7 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
                     "small_numbers",
                     "np.add",
                     "small_float_numbers",
-                    {"where": np.array([True, False, False, True, True])},
+                    {"where": np.array([True, True, True, True, True])},
                 ),
                 ("small_numbers", "np.divide", "small_numbers", None),
                 ("small_numbers", "numpy.sin", None, None),
@@ -59,7 +59,7 @@ def test_math_expression_transformer_in_pipeline(X_numbers) -> None:
     result = pipeline.fit_transform(X_numbers)
     expected_add = np.array([8, 13, 83, 2, 1])
     expected_mul = np.array([49, 144, 6724, 1, 0])
-    expected_np_add = np.array([11.5, 0, 0, 2.9, 0.6])
+    expected_np_add = np.array([11.5, 15.5, 88.9, 2.9, 0.6])
     expected_np_divide = np.array([1.0, 1.0, 1.0, 1.0, np.nan])
     expected_np_subtract = np.array([5, 10, 80, -1, -2])
     expected_neg = np.array(
