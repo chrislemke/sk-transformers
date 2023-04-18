@@ -37,7 +37,7 @@ Discussions = "https://github.com/chrislemke/sk-transformers/discussions"
 Contributing = "https://github.com/chrislemke/sk-transformers/blob/main/docs/CONTRIBUTING.md"
 
 [tool.poetry.dependencies]
-python = ">=3.8,<3.11"
+python = ">=3.8,<3.12"
 
 feature-engine = "^1.5.2"
 ipywidgets = "^8.0.4"

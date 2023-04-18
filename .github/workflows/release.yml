@@ -80,4 +80,4 @@ jobs:
           body: |
             ℹ️ ℹ️ ℹ️
             This pull request was created automatically by a GitHub Action to fast-forward-merge the `main` branch into `develop`.
-            it will be automatically merged. You don't need to do anything. Have a 🍪 and enjoy this automation!
+            it will be automatically merged. You just have to *approve* it!. Have a 🍪 and enjoy this automation!
