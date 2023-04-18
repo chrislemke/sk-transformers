@@ -196,3 +196,43 @@ def X_categorical() -> pd.DataFrame:
 @pytest.fixture()
 def y_categorical() -> pd.Series:
     return pd.Series([1, 1, 0, 1, 0, 0, 0, 0])
+
+
+@pytest.fixture()
+def X_coordinates() -> pd.DataFrame:
+    return pd.DataFrame(
+        {
+            "latitude_1": [
+                52.380001,
+                50.033333,
+                48.353802,
+                48.353802,
+                51.289501,
+                53.63040161,
+            ],
+            "longitude_1": [
+                13.5225,
+                8.570556,
+                11.7861,
+                11.7861,
+                6.76678,
+                9.988229752,
+            ],
+            "latitude_2": [
+                50.033333,
+                52.380001,
+                48.353802,
+                51.289501,
+                53.63040161,
+                48.353802,
+            ],
+            "longitude_2": [
+                8.570556,
+                13.5225,
+                11.7861,
+                6.76678,
+                9.988229752,
+                11.7861,
+            ],
+        }
+    )
