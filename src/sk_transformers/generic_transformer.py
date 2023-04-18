@@ -239,6 +239,16 @@ class AggregateTransformer(BaseTransformer):
                 agg_features = [agg_features]
             if isinstance(agg_features, list):
                 for agg_feature in agg_features:
+                    if isinstance(agg_feature, tuple):
+                        if len(agg_feature) != 3:
+                            raise IndexError(
+                                f"Expected 3 elements in the aggregation tuple, got {len(agg_feature)}."
+                            )
+                    else:
+                        raise TypeError(
+                            f"Expected a list of tuples, found {type(agg_feature).__name__} in list."
+                        )
+
                     func = agg_feature[1]
                     if isinstance(func, str) is False:
                         func = func.__name__  # type: ignore
@@ -252,15 +262,6 @@ class AggregateTransformer(BaseTransformer):
                             SyntaxWarning,
                         )
 
-                    if isinstance(agg_feature, tuple):
-                        if len(agg_feature) != 3:
-                            raise IndexError(
-                                f"Expected 3 elements in the aggregation tuple, got {len(agg_feature)}."
-                            )
-                    else:
-                        raise TypeError(
-                            f"Expected a list of tuples, found {type(agg_feature).__name__} in list."
-                        )
             else:
                 raise TypeError(
                     f"Expected a list or tuple of aggregations, got {type(agg_features).__name__}."

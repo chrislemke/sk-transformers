@@ -197,6 +197,13 @@ def test_aggregate_transformer_agg_tuple_raises_error(X_group_by) -> None:
     assert "Expected 3 elements in the aggregation tuple, got 2." == str(error.value)
 
 
+def test_aggregate_transformer_nontuple_raises_error(X_group_by) -> None:
+    with pytest.raises(TypeError) as error:
+        AggregateTransformer([("a", ["b", "c"])]).fit_transform(X_group_by)
+
+    assert "Expected a list of tuples, found str in list." == str(error.value)
+
+
 def test_aggregate_transformer_nonlist_raises_error(X_group_by) -> None:
     with pytest.raises(TypeError) as error:
         AggregateTransformer([("a", "b")]).fit_transform(X_group_by)
@@ -320,7 +327,8 @@ def test_value_indicator_transformer_in_pipeline_with_non_existing_column(
 
 def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
     values = [
-        (["a", "e"], r"^(?:[1-9][0-9]+|9)$", 99),
+        (["a"], r"^(?:[1-9][0-9]+|9)$", 99),
+        (["e"], 2, 99),
         (["dd"], "\\N", "-999"),
         (
             ["dd"],
@@ -347,7 +355,7 @@ def test_value_replacer_transformer_in_pipeline(X_time_values) -> None:
             "1900-01-01",
         ]
     )
-    expected_e = np.array([2, 4, 6, 8, 99, 99, 99, 99, 99, 99])
+    expected_e = np.array([99, 4, 6, 8, 10, 12, 14, 16, 18, 20])
     expected_f = np.array(["2", "4", "6", "8", "-999", "12", "14", "16", "18", "20"])
 
     assert np.array_equal(result["a"].to_numpy(), expected_a)
