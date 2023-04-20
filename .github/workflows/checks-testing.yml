@@ -53,4 +53,4 @@ jobs:
           mypy --config-file=pyproject.toml .
           bandit -r ./python/sk_transformers/*
           ruff ./python/sk_transformers ./tests/python
-          pytest --cov src/sk_transformers --cov-fail-under=90 --cov-report term-missing
+          pytest --cov tests/python --cov-fail-under=90 --cov-report term-missing

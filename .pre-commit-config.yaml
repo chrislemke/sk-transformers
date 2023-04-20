@@ -9,6 +9,7 @@ ci:
   autoupdate_branch: "develop"
   autoupdate_commit_msg: "ci: pre-commit autoupdate"
   autoupdate_schedule: weekly
+  skip: [cargo-check]
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
