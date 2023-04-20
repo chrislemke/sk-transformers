@@ -1,12 +1,11 @@
 import numpy as np
 import pytest
-from sklearn.pipeline import make_pipeline
-
-from sk_transformers import (
+from sk_transformers.datetime_transformer import (
     DateColumnsTransformer,
     DurationCalculatorTransformer,
     TimestampTransformer,
 )
+from sklearn.pipeline import make_pipeline
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

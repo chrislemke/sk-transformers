@@ -1,3 +1,8 @@
+[project]
+name = "sk-transformers"
+readme = "docs/README.md"
+license = { text = "MIT" }
+
 [tool.poetry]
 name = "sk-transformers"
 version = "0.10.3"
@@ -8,6 +13,8 @@ readme = "docs/README.md"
 packages = [{ include = "sk_transformers", from = "src" }]
 include = ["CHANGELOG.md"]
 classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
     "Intended Audience :: Science/Research",
     "Natural Language :: English",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -79,8 +86,12 @@ optional = true
 optional = true
 
 [build-system]
-requires = ["poetry-core>=1.4.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["maturin>=0.14,<0.15"]
+build-backend = "maturin"
+
+[tool.maturin]
+python-source = "python"
+features = ["pyo3/extension-module"]
 
 [tool.pytest.ini_options]
 testpaths = [

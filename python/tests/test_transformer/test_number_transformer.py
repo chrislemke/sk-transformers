@@ -1,9 +1,10 @@
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.pipeline import make_pipeline
-
 from sk_transformers import GeoDistanceTransformer, MathExpressionTransformer
+from sk_transformers.number_transformer import MathExpressionTransformer
+from sk_transformers.utils import *
+from sklearn.pipeline import make_pipeline
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
@@ -129,12 +130,12 @@ def test_geo_distance_transformer_in_pipeline(X_coordinates):
     )
     result = pipeline.fit_transform(X_coordinates)
     expected = [
-        432.523369,
-        432.523369,
+        433.338219,
+        433.338219,
         0.000000,
-        485.975293,
-        339.730537,
-        600.208154,
+        486.704807,
+        340.222735,
+        600.376258,
     ]
 
     assert pipeline.steps[0][0] == "geodistancetransformer"

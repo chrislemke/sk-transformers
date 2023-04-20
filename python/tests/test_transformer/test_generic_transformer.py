@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.pipeline import make_pipeline
-
 from sk_transformers import (
     AggregateTransformer,
     AllowedValuesTransformer,
@@ -17,6 +15,7 @@ from sk_transformers import (
     ValueIndicatorTransformer,
     ValueReplacerTransformer,
 )
+from sklearn.pipeline import make_pipeline
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
