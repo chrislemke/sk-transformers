@@ -523,3 +523,60 @@ class StringSplitterTransformer(BaseTransformer):
             .unnest([column + "_alias" for column, _, _ in self.features])
             .to_pandas()
         )
+
+
+class StringCombinationTransformer(BaseTransformer):
+    """Concatenates two string columns with a separator in between, but the
+    concatenated strings are in alphabetical order. This is useful to get
+    combinations of two strings regardless of the columns they belong in. For
+    example, a place `A` in a `departure` column, and a place `B` in a
+    `arrival` column and vice verse would both be treated as a `AB` in a new
+    `route` column.
+
+    Example:
+    ```python
+    import pandas as pd
+    from sk_transformers import StringCombinationTransformer
+
+    X = pd.DataFrame({"foo": ["a", "b", "c"], "bar": ["b", "a", "a"]})
+    transformer = StringCombinationTransformer([("foo", "bar", "_")])
+    transformer.fit_transform(X)
+    ```
+    ```
+      foo bar foo_bar_combi
+    0   a   b           a_b
+    1   b   a           a_b
+    2   c   a           a_c
+    ```
+
+    Args:
+        features (List[Tuple[str, str, str]]): A list of tuples containing the names of the two columns to be
+            concatenated along with the separator.
+    """
+
+    def __init__(self, features: List[Tuple[str, str, str]]) -> None:
+        super().__init__()
+        self.features = features
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """Contatenates two string columns after ordering them alphabetically
+        first.
+
+        Args:
+            X (pandas.DataFrame): DataFrame to transform.
+
+        Returns:
+            pandas.DataFrame: Dataframe containing the additional columns.
+        """
+        X = check_ready_to_transform(
+            self,
+            X,
+            [feature[i] for feature in self.features for i in [0, 1]],
+        )
+
+        for column1, column2, separator in self.features:
+            X[f"{column1}_{column2}_combi"] = (X[column1] < X[column2]) * (
+                X[column1] + separator + X[column2]
+            ) + (X[column1] >= X[column2]) * (X[column2] + separator + X[column1])
+
+        return X
