@@ -1,8 +1,6 @@
 import numpy as np
 import pandas as pd
 import pytest
-from sklearn.pipeline import make_pipeline
-
 from sk_transformers import (
     EmailTransformer,
     IPAddressEncoderTransformer,
@@ -11,6 +9,7 @@ from sk_transformers import (
     StringSlicerTransformer,
     StringSplitterTransformer,
 )
+from sklearn.pipeline import make_pipeline
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 

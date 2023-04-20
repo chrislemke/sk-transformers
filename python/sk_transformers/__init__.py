@@ -1,12 +1,17 @@
-from rich.traceback import install
+from .sk_transformers import *
 
-from sk_transformers.datetime_transformer import (
+__doc__ = sk_transformers.__doc__
+if hasattr(sk_transformers, "__all__"):
+    __all__ = sk_transformers.__all__
+
+
+from .datetime_transformer import (
     DateColumnsTransformer,
     DurationCalculatorTransformer,
     TimestampTransformer,
 )
-from sk_transformers.encoder_transformer import MeanEncoderTransformer
-from sk_transformers.generic_transformer import (
+from .encoder_transformer import MeanEncoderTransformer
+from .generic_transformer import (
     AggregateTransformer,
     AllowedValuesTransformer,
     ColumnDropperTransformer,
@@ -20,11 +25,8 @@ from sk_transformers.generic_transformer import (
     ValueIndicatorTransformer,
     ValueReplacerTransformer,
 )
-from sk_transformers.number_transformer import (
-    GeoDistanceTransformer,
-    MathExpressionTransformer,
-)
-from sk_transformers.string_transformer import (
+from .number_transformer import GeoDistanceTransformer, MathExpressionTransformer
+from .string_transformer import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     PhoneTransformer,
@@ -32,5 +34,3 @@ from sk_transformers.string_transformer import (
     StringSlicerTransformer,
     StringSplitterTransformer,
 )
-
-install(show_locals=True)

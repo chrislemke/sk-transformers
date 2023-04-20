@@ -4,8 +4,8 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 import numpy as np
 import pandas as pd
+import sk_transformers
 from numpy.typing import NDArray
-
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
@@ -184,7 +184,7 @@ class GeoDistanceTransformer(BaseTransformer):
 
         for coordinates in self.features:
             X[f"distance_{coordinates[0]}_{coordinates[2]}"] = pd.Series(
-                GeoDistanceTransformer.__distance_function(
+                sk_transformers.distance_function(
                     X[coordinates[0]].to_numpy(),
                     X[coordinates[1]].to_numpy(),
                     X[coordinates[2]].to_numpy(),
@@ -193,44 +193,3 @@ class GeoDistanceTransformer(BaseTransformer):
             )
 
         return X
-
-    @staticmethod
-    def __distance_function(
-        latitude_1: NDArray,
-        longitude_1: NDArray,
-        latitude_2: NDArray,
-        longitude_2: NDArray,
-    ) -> NDArray:
-        """Calculates the distance (in kilometer) between two points on the
-        earth.
-
-        Args:
-            latitude_1 (NDArray): Latitude of the first point.
-            longitude_1 (NDArray): Longitude of the first point.
-            latitude_2 (NDArray): Latitude of the second point.
-            longitude_2 (NDArray): Longitude of the second point.
-
-        Returns:
-            NDArray[numpy.float16]: Distance between the two points in kilometer.
-        """
-
-        latitude_1_radians = np.radians(latitude_1)
-        longitude_1_radians = np.radians(longitude_1)
-        latitude_2_radians = np.radians(latitude_2)
-        longitude_2_radians = np.radians(longitude_2)
-
-        diff_latitude = latitude_2_radians - latitude_1_radians
-        diff_longitude = longitude_2_radians - longitude_1_radians
-
-        return (
-            2
-            * 6373
-            * np.arcsin(
-                np.sqrt(
-                    np.sin(diff_latitude / 2) ** 2
-                    + np.cos(latitude_1_radians)
-                    * np.cos(latitude_2_radians)
-                    * np.sin(diff_longitude / 2) ** 2
-                )
-            )
-        )
