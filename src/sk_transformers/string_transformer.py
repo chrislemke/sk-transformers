@@ -227,25 +227,25 @@ class StringSimilarityTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, list(self.features), return_polars=True)
 
         return X.with_columns(
-            pl.struct([self.features[0], self.features[1]])
+            pl.struct(
+                [
+                    pl.col(self.features[0]).str.strip().str.to_lowercase(),
+                    pl.col(self.features[1]).str.strip().str.to_lowercase(),
+                ]
+            )
             .apply(
                 lambda x: SequenceMatcher(
                     None,
-                    StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
-                    StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
+                    unicodedata.normalize("NFKD", x[self.features[0]])
+                    .encode("utf8", "strict")
+                    .decode("utf8"),
+                    unicodedata.normalize("NFKD", x[self.features[1]])
+                    .encode("utf8", "strict")
+                    .decode("utf8"),
                 ).ratio()
             )
             .alias(f"{self.features[0]}_{self.features[1]}_similarity")
         ).to_pandas()
-
-    @staticmethod
-    def __normalize_string(string: str) -> str:
-        string = str(string).strip().lower()
-        return (
-            unicodedata.normalize("NFKD", string)
-            .encode("utf8", "strict")
-            .decode("utf8")
-        )
 
 
 class PhoneTransformer(BaseTransformer):
