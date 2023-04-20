@@ -43,8 +43,6 @@ jobs:
           python-version: ${{ matrix.python-version }}
       - uses: syphar/restore-virtualenv@v1
         id: cache-virtualenv
-        with:
-          requirement_files: pyproject.toml
       - name: Install dependencies and project
         run: |
           pip install maturin
