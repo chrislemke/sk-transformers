@@ -183,6 +183,11 @@ class GeoDistanceTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, [feature[0] for feature in self.features])
 
         for coordinates in self.features:
+            GeoDistanceTransformer.__check_latitudes(X[coordinates[0]])
+            GeoDistanceTransformer.__check_longitudes(X[coordinates[1]])
+            GeoDistanceTransformer.__check_latitudes(X[coordinates[2]])
+            GeoDistanceTransformer.__check_longitudes(X[coordinates[3]])
+
             X[f"distance_{coordinates[0]}_{coordinates[2]}"] = pd.Series(
                 GeoDistanceTransformer.__distance_function(
                     X[coordinates[0]].to_numpy(),
@@ -234,3 +239,13 @@ class GeoDistanceTransformer(BaseTransformer):
                 )
             )
         )
+
+    @staticmethod
+    def __check_latitudes(x: pd.Series) -> None:
+        if ((x > 90) | (x < -90)).sum() > 0:
+            raise ValueError("Invalid values for latitude.")
+
+    @staticmethod
+    def __check_longitudes(x: pd.Series) -> None:
+        if ((x > 180) | (x < -180)).sum() > 0:
+            raise ValueError("Invalid values for longitude.")

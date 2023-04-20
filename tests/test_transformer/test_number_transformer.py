@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import pytest
 from sklearn.pipeline import make_pipeline
 
@@ -138,3 +139,33 @@ def test_geo_distance_transformer_in_pipeline(X_coordinates):
 
     assert pipeline.steps[0][0] == "geodistancetransformer"
     assert np.allclose(result["distance_latitude_1_latitude_2"], expected)
+
+
+def test_geo_distance_transformer_invalid_latitude(X_coordinates):
+    X_coordinates = X_coordinates.append(
+        pd.DataFrame(
+            [[200, 100, 20, -100]],
+            columns=["latitude_1", "longitude_1", "latitude_2", "longitude_2"],
+            index=[6],
+        )
+    )
+    with pytest.raises(ValueError) as error:
+        GeoDistanceTransformer(
+            [("latitude_1", "longitude_1", "latitude_2", "longitude_2")]
+        ).fit_transform(X_coordinates)
+    assert "Invalid values for latitude." == str(error.value)
+
+
+def test_geo_distance_transformer_invalid_longitude(X_coordinates):
+    X_coordinates = X_coordinates.append(
+        pd.DataFrame(
+            [[20, 200, 20, 100]],
+            columns=["latitude_1", "longitude_1", "latitude_2", "longitude_2"],
+            index=[6],
+        )
+    )
+    with pytest.raises(ValueError) as error:
+        GeoDistanceTransformer(
+            [("latitude_1", "longitude_1", "latitude_2", "longitude_2")]
+        ).fit_transform(X_coordinates)
+    assert "Invalid values for longitude." == str(error.value)
