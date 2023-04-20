@@ -64,7 +64,6 @@ pytest-cov = "4.0.0"
 [tool.poetry.group.dev.dependencies]
 black = {extras = ["jupyter"], version = "^23.1.0"}
 bandit = "^1.7.4"
-isort = "^5.12.0"
 mypy = "^1.0.0"
 ruff = "^0.0.262"
 pre-commit = "^3.0.4"
@@ -100,7 +99,7 @@ testpaths = [
 ]
 
 [tool.ruff]
-ignore = ["E402","E501"]
+ignore = ["E501"]
 line-length = 88
 target-version = "py38"
 exclude = [
@@ -136,9 +135,3 @@ warn_return_any = false
 warn_unused_ignores = false
 no_namespace_packages = true
 exclude = ["tests", "docs"]
-
-[tool.isort]
-profile = "black"
-skip_glob = ["docs/*"]
-src_paths = ["src/sk_transformers", "tests"]
-extend_skip = [".md", ".yml", ".yaml"]
