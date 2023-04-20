@@ -155,19 +155,22 @@ class EmailTransformer(BaseTransformer):
 
             expr = [
                 pl.col("username")
-                .apply(EmailTransformer.__num_of_digits)
+                .str.count_match(r"\d")
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_digits"),
                 pl.col("username")
-                .apply(EmailTransformer.__num_of_letters)
+                .str.count_match(r"[a-zA-Z]")
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_letters"),
                 pl.col("username")
-                .apply(EmailTransformer.__num_of_special_characters)
+                .str.count_match(r"[^A-Za-z0-9]")
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_special_chars"),
                 pl.col("username")
                 .apply(EmailTransformer.__num_of_repeated_characters)
                 .alias(f"{column}_num_of_repeated_chars"),
-                pl.col("username")
-                .apply(EmailTransformer.__num_of_words)
+                (pl.col("username").str.count_match(r"[.\-_]") + 1)
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_words"),
             ]
 
@@ -175,24 +178,8 @@ class EmailTransformer(BaseTransformer):
         return X.to_pandas()
 
     @staticmethod
-    def __num_of_digits(string: str) -> int:
-        return sum(map(str.isdigit, string))
-
-    @staticmethod
-    def __num_of_letters(string: str) -> int:
-        return sum(map(str.isalpha, string))
-
-    @staticmethod
-    def __num_of_special_characters(string: str) -> int:
-        return len(re.findall(r"[^A-Za-z0-9]", string))
-
-    @staticmethod
     def __num_of_repeated_characters(string: str) -> int:
         return max(len("".join(g)) for _, g in itertools.groupby(string))
-
-    @staticmethod
-    def __num_of_words(string: str) -> int:
-        return len(re.findall(r"[.\-_]", string)) + 1
 
 
 class StringSimilarityTransformer(BaseTransformer):
