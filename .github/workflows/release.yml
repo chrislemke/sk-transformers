@@ -135,7 +135,7 @@ jobs:
 
   deploy-docs:
     name: Deploy documentation
-    needs: deploy-package
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -155,7 +155,7 @@ jobs:
 
   fast-forward-merge-pr:
     name: Create fast-forward merge PR
-    needs: deploy-package
+    needs: release
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
