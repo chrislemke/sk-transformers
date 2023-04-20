@@ -9,7 +9,6 @@ ci:
   autoupdate_branch: "develop"
   autoupdate_commit_msg: "ci: pre-commit autoupdate"
   autoupdate_schedule: weekly
-  skip: [poetry-lock]
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
@@ -119,10 +118,3 @@ repos:
     rev: 0.6.1
     hooks:
       - id: nbstripout
-
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.4.0
-    hooks:
-      - id: poetry-check
-      - id: poetry-lock
-        language_version: 3.10.8

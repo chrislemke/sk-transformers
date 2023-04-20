@@ -37,38 +37,32 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
-      - uses: actions/checkout@v3
-      - name: Install poetry
-        run: |
-          curl -O -sSL https://install.python-poetry.org/install-poetry.py
-          python install-poetry.py -y --version 1.4.2
-          echo "PATH=${HOME}/.poetry/bin:${PATH}" >> $GITHUB_ENV
-          rm install-poetry.py
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
+          cache: "pip"
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
+          cache: "pip"
       - name: Install dependencies and project
         run: |
-          poetry env use ${{ matrix.python-version }}
-          poetry install --with test
+          pip install maturing
+          pip install "sk-transformers[dev]"
+
       - name: Check with black
         run: |
-          poetry run black --check ./python/sk_transformers  ./tests/python
+          black --check ./python/sk_transformers  ./tests/python
       - name: Check with mypy
         run: |
-          poetry run mypy --config-file=pyproject.toml .
+          mypy --config-file=pyproject.toml .
       - name: Check with bandit
         run: |
-          poetry run bandit -r ./python/sk_transformers/*
+          bandit -r ./python/sk_transformers/*
       - name: Lint with ruff
         run: |
-          poetry run ruff ./python/sk_transformers ./tests/python
+          ruff ./python/sk_transformers ./tests/python
       - name: Test with pytest
         run: |
-          poetry run pytest --cov src/sk_transformers --cov-fail-under=90 --cov-report term-missing
+          pytest --cov src/sk_transformers --cov-fail-under=90 --cov-report term-missing

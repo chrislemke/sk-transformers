@@ -1,17 +1,14 @@
 [project]
 name = "sk-transformers"
 readme = "docs/README.md"
-license = { text = "MIT" }
-
-[tool.poetry]
-name = "sk-transformers"
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
 version = "0.10.3"
 description = "A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
-authors = ["Christopher Lemke <1@lemke.ai>"]
-license = "MIT"
-readme = "docs/README.md"
-packages = [{ include = "sk_transformers", from = "python" }]
-include = ["CHANGELOG.md"]
+authors = [
+  {email = "1@lemke.ai"},
+  {name = "Chris Lemke"}
+]
 classifiers = [
     "Programming Language :: Rust",
     "Programming Language :: Python :: Implementation :: CPython",
@@ -33,57 +30,50 @@ keywords = [
     "data science",
     "artificial intelligence"
 ]
+
+dependencies = [
+    "feature-engine ~=1.5.2",
+    "ipywidgets ~=8.0.4",
+    "joblib ~=1.2.0",
+    "numpy ~=1.23.5",
+    "pandas ~=1.5.2",
+    "phonenumbers ~=8.13.4",
+    "scikit-learn ~=1.2.0",
+    "polars ~=0.16.7",
+    "pyarrow ~=11.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest ~=7.2.0",
+    "pytest-cov ~=4.0.0"
+]
+
+dev = [
+    "black[jupyter]",
+    "bandit ~=1.7.4",
+    "mypy ~=1.0.0",
+    "ruff ~=0.0.262",
+    "pre-commit ~=3.0.4",
+    "nbstripout ~=0.6.1",
+    "ssort ~=0.11.6",
+    "maturin ~=0.14.17",
+]
+
+docs = [
+    "mkdocs ==1.4.2",
+    "mkdocstrings[python] ==0.19.1",
+    "mkdocs-material ==9.0.2",
+]
+
+[project.urls]
 homepage = "https://chrislemke.github.io/sk-transformers/"
 documentation = "https://chrislemke.github.io/sk-transformers/"
 repository = "https://github.com/chrislemke/sk-transformers/"
-
-[tool.poetry.urls]
 Changelog = "https://github.com/chrislemke/sk-transformers/blob/main/CHANGELOG.md"
 Issues = "https://github.com/chrislemke/sk-transformers/issues"
 Discussions = "https://github.com/chrislemke/sk-transformers/discussions"
 Contributing = "https://github.com/chrislemke/sk-transformers/blob/main/docs/CONTRIBUTING.md"
-
-[tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-
-feature-engine = "^1.5.2"
-ipywidgets = "^8.0.4"
-joblib = "1.2.0"
-numpy = "1.23.5"
-pandas = "^1.5.2"
-phonenumbers = "^8.13.4"
-scikit-learn = "^1.2.0"
-rich = "^13.3.1"
-polars = "^0.16.7"
-pyarrow = "^11.0.0"
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.2.0"
-pytest-cov = "4.0.0"
-
-[tool.poetry.group.dev.dependencies]
-black = {extras = ["jupyter"], version = "^23.1.0"}
-bandit = "^1.7.4"
-mypy = "^1.0.0"
-ruff = "^0.0.262"
-pre-commit = "^3.0.4"
-nbstripout = "^0.6.1"
-ssort = "^0.11.6"
-maturin = "^0.14.17"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = "1.4.2"
-mkdocstrings = {extras = ["python"], version = "0.19.1"}
-mkdocs-material = "9.0.2"
-
-[tool.poetry.group.dev]
-optional = false
-
-[tool.poetry.group.test]
-optional = true
-
-[tool.poetry.group.docs]
-optional = true
 
 [build-system]
 requires = ["maturin>=0.14,<0.15"]
