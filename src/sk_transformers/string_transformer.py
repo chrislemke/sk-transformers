@@ -229,17 +229,14 @@ class StringSimilarityTransformer(BaseTransformer):
         return X.with_columns(
             pl.struct([self.features[0], self.features[1]])
             .apply(
-                lambda x: StringSimilarityTransformer.__similar(
+                lambda x: SequenceMatcher(
+                    None,
                     StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
                     StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
-                )
+                ).ratio()
             )
             .alias(f"{self.features[0]}_{self.features[1]}_similarity")
         ).to_pandas()
-
-    @staticmethod
-    def __similar(a: str, b: str) -> float:
-        return SequenceMatcher(None, a, b).ratio()
 
     @staticmethod
     def __normalize_string(string: str) -> str:
