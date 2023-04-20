@@ -1,11 +1,7 @@
 import numpy as np
 import pytest
 from sk_transformers import GeoDistanceTransformer, MathExpressionTransformer
-from sk_transformers.number_transformer import MathExpressionTransformer
-from sk_transformers.utils import *
 from sklearn.pipeline import make_pipeline
-
-# pylint: disable=missing-function-docstring, missing-class-docstring
 
 
 def test_math_expression_transformer_no_np_method(X_numbers) -> None:

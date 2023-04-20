@@ -11,8 +11,6 @@ from sk_transformers import (
 )
 from sklearn.pipeline import make_pipeline
 
-# pylint: disable=missing-function-docstring, missing-class-docstring
-
 
 def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
     pipeline = make_pipeline(IPAddressEncoderTransformer(["ip_address"]))

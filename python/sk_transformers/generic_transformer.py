@@ -72,7 +72,8 @@ class ColumnEvalTransformer(BaseTransformer):
         for eval_tuple in self.features:
             column = eval_tuple[0]
             eval_func = eval_tuple[1]
-            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore # pylint: disable=unused-variable
+            # ruff: noqa:F841
+            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore
 
             if eval_func[0] == ".":
                 raise ValueError(
@@ -81,7 +82,7 @@ class ColumnEvalTransformer(BaseTransformer):
 
             try:
                 X = X.with_columns(
-                    eval(  # pylint: disable=eval-used # nosec
+                    eval(  # nosec
                         f"pl.col({'column'}).{eval_func}.alias({'new_column'})"
                     )
                 )

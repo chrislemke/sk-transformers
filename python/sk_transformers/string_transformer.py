@@ -86,10 +86,11 @@ class IPAddressEncoderTransformer(BaseTransformer):
     ) -> float:
         try:
             return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
-        except:  # pylint: disable=bare-except
+        # ruff: noqa: E722
+        except:
             try:
                 return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
-            except:  # pylint: disable=bare-except
+            except:
                 return error_value
 
 
@@ -133,7 +134,7 @@ class EmailTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        for column in self.features:  # pylint: disable=duplicate-code
+        for column in self.features:
             X = X.with_columns(
                 pl.col(column)
                 .str.split_exact("@", 1)
@@ -346,10 +347,10 @@ class PhoneTransformer(BaseTransformer):
         phone = re.sub(r"^00", "+", phone)
         try:
             return float(getattr(phonenumbers.parse(phone, None), attribute)) / divisor
-        except:  # pylint: disable=W0702
+        except:
             try:
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
-            except:  # pylint: disable=W0702
+            except:
                 return float(error_value)
 
 

@@ -2,8 +2,6 @@ import numpy as np
 from sk_transformers import MeanEncoderTransformer
 from sklearn.pipeline import make_pipeline
 
-# pylint: disable=missing-function-docstring, missing-class-docstring
-
 
 def test_mean_encoder_in_pipeline(X_categorical, y_categorical) -> None:
     pipeline = make_pipeline(MeanEncoderTransformer())

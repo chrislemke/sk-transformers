@@ -3,8 +3,6 @@ import pytest
 from sklearn.preprocessing import OrdinalEncoder, StandardScaler
 from sklearn.tree import DecisionTreeClassifier
 
-# pylint: disable=missing-function-docstring
-
 
 @pytest.fixture()
 def clf() -> DecisionTreeClassifier:
