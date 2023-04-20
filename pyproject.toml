@@ -10,7 +10,7 @@ description = "A collection of various pandas & scikit-learn compatible transfor
 authors = ["Christopher Lemke <1@lemke.ai>"]
 license = "MIT"
 readme = "docs/README.md"
-packages = [{ include = "sk_transformers", from = "src" }]
+packages = [{ include = "sk_transformers", from = "python" }]
 include = ["CHANGELOG.md"]
 classifiers = [
     "Programming Language :: Rust",
