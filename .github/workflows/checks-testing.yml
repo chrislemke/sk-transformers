@@ -49,6 +49,7 @@ jobs:
       - name: Install dependencies and project
         run: |
           pip install maturing
+          maturin develop
           pip install "sk-transformers[dev]"
 
       - name: Check with black
