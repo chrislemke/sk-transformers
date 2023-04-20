@@ -1,8 +1,9 @@
 import numpy as np
+import pandas as pd
 import pytest
 from sklearn.pipeline import make_pipeline
 
-from sk_transformers import MathExpressionTransformer
+from sk_transformers import GeoDistanceTransformer, MathExpressionTransformer
 
 # pylint: disable=missing-function-docstring, missing-class-docstring
 
@@ -118,3 +119,53 @@ def test_math_expression_transformer_in_pipeline_with_non_existing_column(
                 """ == str(
         error.value
     )
+
+
+def test_geo_distance_transformer_in_pipeline(X_coordinates):
+    pipeline = make_pipeline(
+        GeoDistanceTransformer(
+            [("latitude_1", "longitude_1", "latitude_2", "longitude_2")]
+        )
+    )
+    result = pipeline.fit_transform(X_coordinates)
+    expected = [
+        432.523369,
+        432.523369,
+        0.000000,
+        485.975293,
+        339.730537,
+        600.208154,
+    ]
+
+    assert pipeline.steps[0][0] == "geodistancetransformer"
+    assert np.allclose(result["distance_latitude_1_latitude_2"], expected)
+
+
+def test_geo_distance_transformer_invalid_latitude(X_coordinates):
+    X_coordinates = X_coordinates.append(
+        pd.DataFrame(
+            [[200, 100, 20, -100]],
+            columns=["latitude_1", "longitude_1", "latitude_2", "longitude_2"],
+            index=[6],
+        )
+    )
+    with pytest.raises(ValueError) as error:
+        GeoDistanceTransformer(
+            [("latitude_1", "longitude_1", "latitude_2", "longitude_2")]
+        ).fit_transform(X_coordinates)
+    assert "Invalid values for latitude." == str(error.value)
+
+
+def test_geo_distance_transformer_invalid_longitude(X_coordinates):
+    X_coordinates = X_coordinates.append(
+        pd.DataFrame(
+            [[20, 200, 20, 100]],
+            columns=["latitude_1", "longitude_1", "latitude_2", "longitude_2"],
+            index=[6],
+        )
+    )
+    with pytest.raises(ValueError) as error:
+        GeoDistanceTransformer(
+            [("latitude_1", "longitude_1", "latitude_2", "longitude_2")]
+        ).fit_transform(X_coordinates)
+    assert "Invalid values for longitude." == str(error.value)

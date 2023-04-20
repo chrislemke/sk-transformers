@@ -20,7 +20,10 @@ from sk_transformers.generic_transformer import (
     ValueIndicatorTransformer,
     ValueReplacerTransformer,
 )
-from sk_transformers.number_transformer import MathExpressionTransformer
+from sk_transformers.number_transformer import (
+    GeoDistanceTransformer,
+    MathExpressionTransformer,
+)
 from sk_transformers.string_transformer import (
     EmailTransformer,
     IPAddressEncoderTransformer,
