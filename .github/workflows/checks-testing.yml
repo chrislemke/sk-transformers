@@ -41,7 +41,7 @@ jobs:
       - name: Install poetry
         run: |
           curl -O -sSL https://install.python-poetry.org/install-poetry.py
-          python install-poetry.py -y --version 1.3.2
+          python install-poetry.py -y --version 1.4.2
           echo "PATH=${HOME}/.poetry/bin:${PATH}" >> $GITHUB_ENV
           rm install-poetry.py
       - uses: actions/setup-python@v4
@@ -57,21 +57,18 @@ jobs:
         run: |
           poetry env use ${{ matrix.python-version }}
           poetry install --with test
-      - name: Check with isort
-        run: |
-          poetry run isort --check-only .
       - name: Check with black
         run: |
-          poetry run black --check ./src/sk_transformers  ./tests
+          poetry run black --check ./python/sk_transformers  ./tests/python
       - name: Check with mypy
         run: |
           poetry run mypy --config-file=pyproject.toml .
       - name: Check with bandit
         run: |
-          poetry run bandit -r ./src/sk_transformers/*
-      - name: Lint with pylint
+          poetry run bandit -r ./python/sk_transformers/*
+      - name: Lint with ruff
         run: |
-          poetry run pylint --rcfile=pyproject.toml ./src/sk_transformers ./tests
+          poetry run ruff ./python/sk_transformers ./tests/python
       - name: Test with pytest
         run: |
           poetry run pytest --cov src/sk_transformers --cov-fail-under=90 --cov-report term-missing

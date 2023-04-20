@@ -87,11 +87,6 @@ repos:
     hooks:
       - id: ssort
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.3.1
-    hooks:
-      - id: pyupgrade
-
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
@@ -99,14 +94,8 @@ repos:
       - id: black-jupyter
         files: \.ipynb$
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
-    hooks:
-      - id: isort
-        args: ["--profile=black"]
-
   - repo: https://github.com/charliermarsh/ruff-pre-commit
-    rev: 'v0.0.262'
+    rev: "v0.0.262"
     hooks:
       - id: ruff
 
@@ -116,13 +105,13 @@ repos:
       - id: mypy
         args:
           - "--config-file=pyproject.toml"
-        exclude: "python/tests"
+        exclude: "tests"
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
       - id: bandit
-        exclude: "^python/tests/"
+        exclude: "^tests/"
         args:
           - "-r"
 
