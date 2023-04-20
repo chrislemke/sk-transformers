@@ -124,4 +124,4 @@ disallow_any_generics = false
 warn_return_any = false
 warn_unused_ignores = false
 no_namespace_packages = true
-exclude = ["tests", "docs"]
+exclude = ["tests", "docs", "src"]
