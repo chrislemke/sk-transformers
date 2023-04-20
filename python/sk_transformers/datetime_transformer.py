@@ -36,7 +36,7 @@ class DateColumnsTransformer(BaseTransformer):
         date_elements ([List[str]]): List of date elements to extract.
     """
 
-    def __init__(  # pylint: disable=dangerous-default-value
+    def __init__(
         self,
         features: List[str],
         date_format: str = "%Y-%m-%d",
@@ -65,9 +65,7 @@ class DateColumnsTransformer(BaseTransformer):
         self.date_elements = date_elements
         self.errors = errors
 
-    def transform(  # pylint: disable=too-many-branches
-        self, X: pd.DataFrame
-    ) -> pd.DataFrame:
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
         """Transforms columns from the provided dataframe.
 
         Args:
@@ -76,10 +74,9 @@ class DateColumnsTransformer(BaseTransformer):
         Returns:
             pandas.DataFrame: Dataframe with transformed columns.
         """
-
         X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        for column in self.features:  # pylint: disable=duplicate-code
+        for column in self.features:
             X = X.with_columns(
                 pl.col(column)
                 .str.strptime(pl.Datetime, fmt=self.date_format)

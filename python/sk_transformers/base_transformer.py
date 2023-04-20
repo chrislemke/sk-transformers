@@ -1,7 +1,5 @@
 from sklearn.base import BaseEstimator, TransformerMixin
 
-# pylint: disable= missing-function-docstring, unused-argument
-
 
 class BaseTransformer(BaseEstimator, TransformerMixin):
     """Base class for all custom transformers.

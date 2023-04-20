@@ -17,8 +17,6 @@ from sk_transformers import (
 )
 from sklearn.pipeline import make_pipeline
 
-# pylint: disable=missing-function-docstring, missing-class-docstring
-
 
 def test_column_eval_transformer_in_pipeline(X_strings) -> None:
     pipeline = make_pipeline(ColumnEvalTransformer([("email", "str.contains('@')")]))

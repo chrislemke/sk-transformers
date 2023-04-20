@@ -5,7 +5,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import numpy as np
 import pandas as pd
 import sk_transformers
-from numpy.typing import NDArray
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
@@ -189,7 +188,7 @@ class GeoDistanceTransformer(BaseTransformer):
             GeoDistanceTransformer.__check_longitudes(X[coordinates[3]])
 
             X[f"distance_{coordinates[0]}_{coordinates[2]}"] = pd.Series(
-                sk_transformers.distance_function(
+                sk_transformers.distance_function(  # type: ignore
                     X[coordinates[0]].to_numpy(),
                     X[coordinates[1]].to_numpy(),
                     X[coordinates[2]].to_numpy(),

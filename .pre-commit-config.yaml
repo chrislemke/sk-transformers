@@ -69,12 +69,6 @@ repos:
       - id: python-use-type-annotations
       - id: text-unicode-replacement-char
 
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.3.1
-    hooks:
-      - id: python-safety-dependencies-check
-        files: pyproject.toml
-
   - repo: https://github.com/PyCQA/docformatter
     rev: v1.6.0
     hooks:
@@ -111,11 +105,10 @@ repos:
       - id: isort
         args: ["--profile=black"]
 
-  - repo: https://github.com/PyCQA/pylint
-    rev: v3.0.0a6
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: 'v0.0.262'
     hooks:
-      - id: pylint
-        args: ["--rcfile=pyproject.toml"]
+      - id: ruff
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.2.0
@@ -123,13 +116,13 @@ repos:
       - id: mypy
         args:
           - "--config-file=pyproject.toml"
-        exclude: "tests"
+        exclude: "python/tests"
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
       - id: bandit
-        exclude: "^tests/"
+        exclude: "^python/tests/"
         args:
           - "-r"
 
@@ -144,13 +137,3 @@ repos:
       - id: poetry-check
       - id: poetry-lock
         language_version: 3.10.8
-      - id: poetry-export
-        args:
-          [
-            "--with",
-            "dev",
-            "--format",
-            "requirements.txt",
-            "--output",
-            "requirements.txt",
-          ]

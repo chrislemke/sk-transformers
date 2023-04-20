@@ -7,8 +7,6 @@ from sk_transformers.datetime_transformer import (
 )
 from sklearn.pipeline import make_pipeline
 
-# pylint: disable=missing-function-docstring, missing-class-docstring
-
 
 def test_date_columns_transformer_in_pipeline(tiny_date_df):
     pipeline = make_pipeline(DateColumnsTransformer(["a"]))
