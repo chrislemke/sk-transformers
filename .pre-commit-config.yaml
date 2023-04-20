@@ -9,7 +9,7 @@ ci:
   autoupdate_branch: "develop"
   autoupdate_commit_msg: "ci: pre-commit autoupdate"
   autoupdate_schedule: weekly
-  skip: [python-safety-dependencies-check, poetry-lock, poetry-export]
+  skip: [poetry-lock]
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
