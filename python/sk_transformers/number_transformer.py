@@ -197,3 +197,13 @@ class GeoDistanceTransformer(BaseTransformer):
             )
 
         return X
+
+    @staticmethod
+    def __check_latitudes(x: pd.Series) -> None:
+        if ((x > 90) | (x < -90)).sum() > 0:
+            raise ValueError("Invalid values for latitude.")
+
+    @staticmethod
+    def __check_longitudes(x: pd.Series) -> None:
+        if ((x > 180) | (x < -180)).sum() > 0:
+            raise ValueError("Invalid values for longitude.")
