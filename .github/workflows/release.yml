@@ -114,8 +114,13 @@ jobs:
   release:
     name: Release
     runs-on: ubuntu-latest
-    if: "startsWith(github.ref, 'refs/tags/')"
-    needs: [linux, windows, macos, sdist]
+    needs:
+      [
+        deploy-package_linux,
+        deploy-package_windows,
+        deploy-package_macos,
+        sdist,
+      ]
     steps:
       - uses: actions/download-artifact@v3
         with:
