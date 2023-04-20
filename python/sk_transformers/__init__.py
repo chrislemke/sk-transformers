@@ -32,6 +32,7 @@ from .string_transformer import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     PhoneTransformer,
+    StringCombinationTransformer,
     StringSimilarityTransformer,
     StringSlicerTransformer,
     StringSplitterTransformer,

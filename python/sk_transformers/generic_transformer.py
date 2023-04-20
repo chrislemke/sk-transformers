@@ -50,7 +50,7 @@ class ColumnEvalTransformer(BaseTransformer):
     def __init__(
         self, features: List[Union[Tuple[str, str], Tuple[str, str, str]]]
     ) -> None:
-        super().__init__()
+        super().__init__()  # pylint: disable=duplicate-code
         self.features = features
 
     def transform(self, X: pd.DataFrame) -> pd.DataFrame:

@@ -5,6 +5,7 @@ from sk_transformers import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     PhoneTransformer,
+    StringCombinationTransformer,
     StringSimilarityTransformer,
     StringSlicerTransformer,
     StringSplitterTransformer,
@@ -228,3 +229,14 @@ def test_string_splitter_transformer_zero_maxsplits_in_pipeline(X_strings):
 
     assert "strings_2_part_5" in result.columns
     assert pipeline.steps[0][0] == "stringsplittertransformer"
+
+
+def test_string_combination_transformer_in_pipeline(X_categorical):
+    pipeline = make_pipeline(StringCombinationTransformer([("a", "e", "_")]))
+    result = pipeline.fit_transform(X_categorical)
+    expected = pd.Series(
+        ["A_A1", "A2_B", "A2_C", "A1_D", "A1_E", "A2_F", "A1_G", "A1_H"],
+        name="a_e_combi",
+    )
+    assert np.array_equal(result["a_e_combi"], expected)
+    assert pipeline.steps[0][0] == "stringcombinationtransformer"
