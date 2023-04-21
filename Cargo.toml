@@ -8,7 +8,7 @@ description = "In this project Rust is used to provide a performative backend fo
 documentation = "https://chrislemke.github.io/sk-transformers/"
 authors = ["Chris Lemke", "Fnu Lnu <1@lemke.ai>"]
 keywords = ["gamedev", "graphics"]
-rust-version = "1.69.0"
+rust-version = "1.68.2"
 publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
