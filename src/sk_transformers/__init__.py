@@ -28,6 +28,7 @@ from sk_transformers.string_transformer import (
     EmailTransformer,
     IPAddressEncoderTransformer,
     PhoneTransformer,
+    StringCombinationTransformer,
     StringSimilarityTransformer,
     StringSlicerTransformer,
     StringSplitterTransformer,
