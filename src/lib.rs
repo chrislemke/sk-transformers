@@ -26,7 +26,7 @@ fn distance_function<'a>(
             location_1
                 .distance_to(&location_2)
                 .map(|distance| distance.meters() / 1000.0)
-                .map_err(|err| PyErr::new::<PyValueError, _>(err))
+                .map_err(PyErr::new::<PyValueError, _>)
         })
         .collect::<Result<Vec<f64>, PyErr>>()?;
 
@@ -39,4 +39,64 @@ fn distance_function<'a>(
 fn sk_transformers(_py: Python, m: &PyModule) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(distance_function, m)?)?;
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use ndarray::Array1;
+
+    #[test]
+    fn test_distance_function() {
+        pyo3::prepare_freethreaded_python();
+
+        let result = Python::with_gil(|py: Python| {
+            let latitudes_1 = vec![
+                52.380001,
+                50.033333,
+                48.353802,
+                48.353802,
+                51.289501,
+                53.63040161,
+            ];
+            let longitudes_1 = vec![13.5225, 8.570556, 11.7861, 11.7861, 6.76678, 9.988229752];
+            let latitudes_2 = vec![
+                50.033333,
+                52.380001,
+                48.353802,
+                51.289501,
+                53.63040161,
+                48.353802,
+            ];
+            let longitudes_2 = vec![8.570556, 13.5225, 11.7861, 6.76678, 9.988229752, 11.7861];
+
+            let latitudes_1 = Array1::from(latitudes_1);
+            let longitudes_1 = Array1::from(longitudes_1);
+            let latitudes_2 = Array1::from(latitudes_2);
+            let longitudes_2 = Array1::from(longitudes_2);
+
+            let latitudes_1_py = latitudes_1.into_pyarray(py).readonly().to_owned();
+            let longitudes_1_py = longitudes_1.into_pyarray(py).readonly().to_owned();
+            let latitudes_2_py = latitudes_2.into_pyarray(py).readonly().to_owned();
+            let longitudes_2_py = longitudes_2.into_pyarray(py).readonly().to_owned();
+
+            distance_function(
+                latitudes_1_py,
+                longitudes_1_py,
+                latitudes_2_py,
+                longitudes_2_py,
+            )
+        })
+        .unwrap();
+
+        let expected_distances: Vec<f64> = vec![
+            433.338219, 433.338219, 0.000000, 486.704807, 340.222735, 600.376258,
+        ];
+        let computed_distances: Vec<f64> =
+            Python::with_gil(|py| unsafe { result.as_ref(py).as_array().to_vec() });
+
+        for (expected, computed) in expected_distances.iter().zip(computed_distances.iter()) {
+            assert!((expected - computed).abs() < 1e-6, "Mismatch in distances");
+        }
+    }
 }

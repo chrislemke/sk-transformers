@@ -9,7 +9,7 @@ ci:
   autoupdate_branch: "develop"
   autoupdate_commit_msg: "ci: pre-commit autoupdate"
   autoupdate_schedule: weekly
-  skip: [cargo-check, fmt]
+  skip: [cargo-check, fmt, clippy]
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
@@ -105,13 +105,13 @@ repos:
       - id: mypy
         args:
           - "--config-file=pyproject.toml"
-        exclude: "tests"
+        exclude: "python/tests"
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
       - id: bandit
-        exclude: "^tests/"
+        exclude: "^python/tests/"
         args:
           - "-r"
 
@@ -125,3 +125,4 @@ repos:
     hooks:
       - id: fmt
       - id: cargo-check
+      - id: clippy

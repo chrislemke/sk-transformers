@@ -30,27 +30,44 @@ jobs:
         with:
           category: "/language:${{matrix.language}}"
 
-  testing:
-    name: Checks and tests
+  python_testing:
+    name: Python checks and tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
       - uses: actions/checkout@v3
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+      - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-      - name: Install dependencies and project
+      - name: Run Python checks and tests
         run: |
           python -m venv env
           source env/bin/activate
           pip install maturin
           maturin develop
           pip install "sk-transformers[dev, test]"
-          black --check ./python/sk_transformers  ./tests/python
+          black --check ./python/sk_transformers  ./python/tests
           mypy --config-file=pyproject.toml .
           bandit -r ./python/sk_transformers/*
-          ruff ./python/sk_transformers ./tests/python
-          pytest --cov tests/python --cov-fail-under=90 --cov-report term-missing
+          ruff ./python/sk_transformers ./python/tests
+          pytest --cov python/tests --cov-fail-under=90 --cov-report term-missing
+
+  rust_testing:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Update local toolchain
+        run: |
+          rustup update
+          rustup component add clippy
+      - name: Lint
+        run: |
+          cargo fmt -- --check
+          cargo clippy -- -D warnings
+
+      - name: Test
+        run: |
+          cargo check
+          cargo test --all

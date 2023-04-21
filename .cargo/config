@@ -1,0 +1,5 @@
+[target.aarch64-apple-darwin]
+rustflags = ["-C", "link-arg=-Wl,-rpath,/opt/homebrew/opt/python@3.10/Frameworks/Python.framework/Versions/3.10/lib"]
+
+[target.x86_64-apple-darwin]
+rustflags = ["-C", "link-arg=-Wl,-rpath,/usr/local/Cellar/python@3.10/3.10.10_1/Frameworks/Python.framework/Versions/3.10/lib"]

@@ -1,5 +1,0 @@
-brew "pre-commit"
-brew "black"
-brew "mypy"
-brew "ruff"
-brew "maturin"
