@@ -5,7 +5,7 @@ use pyo3::exceptions::PyValueError;
 use pyo3::prelude::*;
 
 #[pyfunction]
-fn distance_function<'a>(
+pub fn distance_function<'a>(
     latitude_1: PyReadonlyArray1<'a, f64>,
     longitude_1: PyReadonlyArray1<'a, f64>,
     latitude_2: PyReadonlyArray1<'a, f64>,
@@ -33,12 +33,6 @@ fn distance_function<'a>(
     let result = ndarray::Array1::from(distances);
 
     Python::with_gil(|py| Ok(result.into_pyarray(py).to_owned()))
-}
-
-#[pymodule]
-fn sk_transformers(_py: Python, m: &PyModule) -> PyResult<()> {
-    m.add_function(wrap_pyfunction!(distance_function, m)?)?;
-    Ok(())
 }
 
 #[cfg(test)]

@@ -1,5 +1,4 @@
 import functools
-import ipaddress
 import itertools
 import re
 import unicodedata
@@ -10,6 +9,7 @@ from typing import Callable, List, Optional, Tuple, Union
 import pandas as pd
 import phonenumbers
 import polars as pl
+import sk_transformers
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
@@ -67,7 +67,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
         function = functools.partial(
-            IPAddressEncoderTransformer.__to_float,
+            sk_transformers.ip_to_float,  # type: ignore
             self.ip4_divisor,
             self.ip6_divisor,
             self.error_value,
@@ -76,22 +76,6 @@ class IPAddressEncoderTransformer(BaseTransformer):
         return X.with_columns(
             [pl.col(column).apply(function) for column in self.features]
         ).to_pandas()
-
-    @staticmethod
-    def __to_float(
-        ip4_devisor: float,
-        ip6_devisor: float,
-        error_value: Union[int, float],
-        ip_address: str,
-    ) -> float:
-        try:
-            return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
-        # ruff: noqa: E722
-        except:
-            try:
-                return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
-            except:
-                return error_value
 
 
 class EmailTransformer(BaseTransformer):
@@ -331,10 +315,10 @@ class PhoneTransformer(BaseTransformer):
         phone = re.sub(r"^00", "+", phone)
         try:
             return float(getattr(phonenumbers.parse(phone, None), attribute)) / divisor
-        except:
+        except:  # noqa: E722
             try:
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
-            except:
+            except:  # noqa: E722
                 return float(error_value)
 
 
