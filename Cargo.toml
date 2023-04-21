@@ -2,6 +2,14 @@
 name = "sk-transformers"
 version = "0.1.0"
 edition = "2021"
+readme = "docs/README.md"
+license-file = "LICENSE"
+description = "In this project Rust is used to provide a performative backend for the transformers library."
+documentation = "https://chrislemke.github.io/sk-transformers/"
+authors = ["Chris Lemke", "Fnu Lnu <1@lemke.ai>"]
+keywords = ["gamedev", "graphics"]
+rust-version = "1.69.0"
+publish = false
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 [lib]

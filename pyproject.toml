@@ -85,8 +85,18 @@ features = ["pyo3/extension-module"]
 
 [tool.pytest.ini_options]
 testpaths = [
-    "tests"
+    "python/tests"
 ]
+
+[tool.mypy]
+strict = true
+disallow_subclassing_any = false
+ignore_missing_imports = true
+disallow_any_generics = false
+warn_return_any = false
+warn_unused_ignores = false
+no_namespace_packages = true
+exclude = ["python/tests", "docs", "src"]
 
 [tool.ruff]
 ignore = ["E501"]
@@ -115,13 +125,3 @@ exclude = [
     "venv",
     "workflow/src/libs/",
 ]
-
-[tool.mypy]
-strict = true
-disallow_subclassing_any = false
-ignore_missing_imports = true
-disallow_any_generics = false
-warn_return_any = false
-warn_unused_ignores = false
-no_namespace_packages = true
-exclude = ["python/tests", "docs", "src"]

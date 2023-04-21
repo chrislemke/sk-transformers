@@ -62,12 +62,14 @@ jobs:
         run: |
           rustup update
           rustup component add clippy
-      - name: Lint
+      - name: Rust linting
         run: |
           cargo fmt -- --check
           cargo clippy -- -D warnings
 
-      - name: Test
+      - name: Rust testing
         run: |
+          pip install numpy
+          cargo build
           cargo check
           cargo test --all
