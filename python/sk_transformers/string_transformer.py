@@ -155,19 +155,22 @@ class EmailTransformer(BaseTransformer):
 
             expr = [
                 pl.col("username")
-                .apply(EmailTransformer.__num_of_digits)
+                .str.count_match(r"\d")
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_digits"),
                 pl.col("username")
-                .apply(EmailTransformer.__num_of_letters)
+                .str.count_match(r"[a-zA-Z]")
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_letters"),
                 pl.col("username")
-                .apply(EmailTransformer.__num_of_special_characters)
+                .str.count_match(r"[^A-Za-z0-9]")
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_special_chars"),
                 pl.col("username")
                 .apply(EmailTransformer.__num_of_repeated_characters)
                 .alias(f"{column}_num_of_repeated_chars"),
-                pl.col("username")
-                .apply(EmailTransformer.__num_of_words)
+                (pl.col("username").str.count_match(r"[.\-_]") + 1)
+                .cast(pl.Int64)
                 .alias(f"{column}_num_of_words"),
             ]
 
@@ -175,24 +178,8 @@ class EmailTransformer(BaseTransformer):
         return X.to_pandas()
 
     @staticmethod
-    def __num_of_digits(string: str) -> int:
-        return sum(map(str.isdigit, string))
-
-    @staticmethod
-    def __num_of_letters(string: str) -> int:
-        return sum(map(str.isalpha, string))
-
-    @staticmethod
-    def __num_of_special_characters(string: str) -> int:
-        return len(re.findall(r"[^A-Za-z0-9]", string))
-
-    @staticmethod
     def __num_of_repeated_characters(string: str) -> int:
         return max(len("".join(g)) for _, g in itertools.groupby(string))
-
-    @staticmethod
-    def __num_of_words(string: str) -> int:
-        return len(re.findall(r"[.\-_]", string)) + 1
 
 
 class StringSimilarityTransformer(BaseTransformer):
@@ -240,28 +227,25 @@ class StringSimilarityTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, list(self.features), return_polars=True)
 
         return X.with_columns(
-            pl.struct([self.features[0], self.features[1]])
+            pl.struct(
+                [
+                    pl.col(self.features[0]).str.strip().str.to_lowercase(),
+                    pl.col(self.features[1]).str.strip().str.to_lowercase(),
+                ]
+            )
             .apply(
-                lambda x: StringSimilarityTransformer.__similar(
-                    StringSimilarityTransformer.__normalize_string(x[self.features[0]]),
-                    StringSimilarityTransformer.__normalize_string(x[self.features[1]]),
-                )
+                lambda x: SequenceMatcher(
+                    None,
+                    unicodedata.normalize("NFKD", x[self.features[0]])
+                    .encode("utf8", "strict")
+                    .decode("utf8"),
+                    unicodedata.normalize("NFKD", x[self.features[1]])
+                    .encode("utf8", "strict")
+                    .decode("utf8"),
+                ).ratio()
             )
             .alias(f"{self.features[0]}_{self.features[1]}_similarity")
         ).to_pandas()
-
-    @staticmethod
-    def __similar(a: str, b: str) -> float:
-        return SequenceMatcher(None, a, b).ratio()
-
-    @staticmethod
-    def __normalize_string(string: str) -> str:
-        string = str(string).strip().lower()
-        return (
-            unicodedata.normalize("NFKD", string)
-            .encode("utf8", "strict")
-            .decode("utf8")
-        )
 
 
 class PhoneTransformer(BaseTransformer):
