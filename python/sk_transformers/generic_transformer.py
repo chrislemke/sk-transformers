@@ -45,8 +45,6 @@ class ColumnEvalTransformer(BaseTransformer):
         ValueError: If the `eval_func` tries to assign multiple columns to one target column.
     """
 
-    __slots__ = ("features",)
-
     def __init__(
         self, features: List[Union[Tuple[str, str], Tuple[str, str, str]]]
     ) -> None:

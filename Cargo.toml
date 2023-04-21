@@ -5,7 +5,6 @@ edition = "2021"
 readme = "docs/README.md"
 license-file = "LICENSE"
 description = "In this project Rust is used to provide a performative backend for the transformers library."
-documentation = "https://chrislemke.github.io/sk-transformers/"
 authors = ["Chris Lemke", "Chris Lemke <1@lemke.ai>"]
 rust-version = "1.68.2"
 publish = false
