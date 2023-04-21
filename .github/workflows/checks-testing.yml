@@ -37,12 +37,22 @@ jobs:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
+      - name: Cache pip packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - uses: actions/checkout@v3
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
       - name: Run Python checks and tests
         run: |
+          python --version
+          rustc --version
+          cargo tree
           python -m venv env
           source env/bin/activate
           pip install maturin
@@ -55,9 +65,11 @@ jobs:
           pytest --cov python/tests --cov-fail-under=90 --cov-report term-missing
 
   rust_testing:
+    name: Rust checks and tests
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
+      - uses: Swatinem/rust-cache@v2
       - name: Update local toolchain
         run: |
           rustup update
@@ -69,7 +81,11 @@ jobs:
 
       - name: Rust testing
         run: |
-          pip install numpy
+          python -m venv env
+          source env/bin/activate
+          pip install maturin
+          maturin develop
+          pip install sk-transformers
           cargo build
           cargo check
           cargo test --all
