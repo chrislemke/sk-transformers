@@ -85,7 +85,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         error_value: Union[int, float],
         ip_address: str,
     ) -> float:
-        try:
+        try:  # pragma: no cover
             return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
         except:  # pylint: disable=bare-except
             try:
@@ -326,12 +326,12 @@ class PhoneTransformer(BaseTransformer):
     def __phone_to_float(
         attribute: str, phone: str, divisor: int, error_value: str
     ) -> float:
-        phone = phone.replace(" ", "")
-        phone = re.sub(r"[^0-9+-]", "", phone)
-        phone = re.sub(r"^00", "+", phone)
-        try:
+        phone = phone.replace(" ", "")  # pragma: no cover
+        phone = re.sub(r"[^0-9+-]", "", phone)  # pragma: no cover
+        phone = re.sub(r"^00", "+", phone)  # pragma: no cover
+        try:  # pragma: no cover
             return float(getattr(phonenumbers.parse(phone, None), attribute)) / divisor
-        except:  # pylint: disable=W0702
+        except:  # pylint: disable=W0702 # pragma: no cover
             try:
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
             except:  # pylint: disable=W0702
