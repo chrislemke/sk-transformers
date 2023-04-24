@@ -1,5 +1,4 @@
 import functools
-import ipaddress
 import itertools
 import re
 import unicodedata
@@ -7,6 +6,7 @@ import warnings
 from difflib import SequenceMatcher
 from typing import Callable, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
 import phonenumbers
 import polars as pl
@@ -68,30 +68,63 @@ class IPAddressEncoderTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
         function = functools.partial(
-            IPAddressEncoderTransformer.__to_float,
+            IPAddressEncoderTransformer.__ip_to_float,
             self.ip4_divisor,
             self.ip6_divisor,
             self.error_value,
         )
 
         return X.with_columns(
-            [pl.col(column).apply(function) for column in self.features]
+            [pl.col(column).map(function) for column in self.features]
         ).to_pandas()
 
     @staticmethod
-    def __to_float(
+    def __ip_to_float(
         ip4_devisor: float,
         ip6_devisor: float,
         error_value: Union[int, float],
-        ip_address: str,
-    ) -> float:
-        try:  # pragma: no cover
-            return int(ipaddress.IPv4Address(ip_address)) / int(ip4_devisor)
-        except:  # pylint: disable=bare-except
-            try:
-                return int(ipaddress.IPv6Address(ip_address)) / int(ip6_devisor)
-            except:  # pylint: disable=bare-except
-                return error_value
+        ip_address: pl.Series,
+    ) -> pl.Series:  # pragma: no cover
+        ip_df = pl.DataFrame({"ip_addresses": ip_address})
+        ip_df = ip_df.with_columns(
+            [
+                pl.when(ip_address.str.contains(r"^(?:\d{1,3}\.){3}\d{1,3}$"))
+                .then(ip_address)
+                .otherwise("0.0.0.0")  # nosec
+                .alias("ipv4"),
+                pl.when(
+                    ip_address.str.contains(r"^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$")
+                )
+                .then(ip_address)
+                .otherwise("0:0:0:0:0:0:0:0")
+                .alias("ipv6"),
+            ]
+        )
+
+        ip_series_v4 = ip_df["ipv4"]
+        octets = ip_series_v4.str.split(".")
+
+        ip_float_v4 = pl.Series(np.zeros(ip_address.shape[0]))
+        for i in range(4):
+            factor_v4 = 256 ** (3 - i) / ip4_devisor
+            ip_float_v4 += (
+                octets.arr.slice(i, 1).arr.explode().cast(pl.UInt32) * factor_v4
+            )
+
+        ip_series_v6 = ip_df["ipv6"]
+        hextets = ip_series_v6.str.split(":")
+
+        ip_float_v6 = pl.Series(np.zeros(ip_address.shape[0]))
+        for i in range(8):
+            factor_v6 = 65536 ** (7 - i) / ip6_devisor
+            ip_float_v6 += (
+                hextets.arr.slice(i, 1).arr.explode().apply(lambda x: int(x, 16))
+                * factor_v6
+            )
+
+        return (ip_float_v4 + ip_float_v6).map_dict(
+            {0: error_value}, default=pl.first()
+        )
 
 
 class EmailTransformer(BaseTransformer):
@@ -178,7 +211,7 @@ class EmailTransformer(BaseTransformer):
         return X.to_pandas()
 
     @staticmethod
-    def __num_of_repeated_characters(string: str) -> int:
+    def __num_of_repeated_characters(string: str) -> int:  # pragma: no cover
         return max(len("".join(g)) for _, g in itertools.groupby(string))
 
 
