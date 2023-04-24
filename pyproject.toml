@@ -45,7 +45,7 @@ dependencies = [
 
 [project.optional-dependencies]
 test = [
-    "pytest ~=7.2.0",
+    "pytest ~=7.3.1",
     "pytest-cov ~=4.0.0"
 ]
 
@@ -85,7 +85,7 @@ features = ["pyo3/extension-module"]
 
 [tool.pytest.ini_options]
 testpaths = [
-    "python/tests"
+    "tests/python"
 ]
 
 [tool.mypy]
