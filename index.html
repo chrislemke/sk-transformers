@@ -1,0 +1,845 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+      
+      
+        <link rel="next" href="CONTRIBUTING/">
+      
+      <link rel="icon" href="assets/images/icon.png">
+      <meta name="generator" content="mkdocs-1.4.2, mkdocs-material-9.0.2">
+    
+    
+      
+        <title>sk-transformers</title>
+      
+    
+    
+      <link rel="stylesheet" href="assets/stylesheets/main.f56500e0.min.css">
+      
+        
+        <link rel="stylesheet" href="assets/stylesheets/palette.2505c338.min.css">
+      
+      
+
+    
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="assets/_mkdocstrings.css">
+    
+      <link rel="stylesheet" href="stylesheets/extra.css">
+    
+    <script>__md_scope=new URL(".",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent="">
+  
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&"object"==typeof palette.color)for(var key of Object.keys(palette.color))document.body.setAttribute("data-md-color-"+key,palette.color[key])</script>
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#sk-transformers" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="." title="sk-transformers" class="md-header__button md-logo" aria-label="sk-transformers" data-md-component="logo">
+      
+  <img src="assets/images/icon.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            sk-transformers
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Home
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      <form class="md-header__option" data-md-component="palette">
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_1">
+          
+            <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_2" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3Z"/></svg>
+            </label>
+          
+        
+          
+          <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="" data-md-color-accent=""  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_2">
+          
+            <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_1" hidden>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6zm0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4zM7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/></svg>
+            </label>
+          
+        
+      </form>
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/chrislemke/sk-transformers" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="." title="sk-transformers" class="md-nav__button md-logo" aria-label="sk-transformers" data-md-component="logo">
+      
+  <img src="assets/images/icon.png" alt="logo">
+
+    </a>
+    sk-transformers
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/chrislemke/sk-transformers" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    GitHub
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+      
+
+  
+  
+    
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" data-md-toggle="toc" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          Home
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="." class="md-nav__link md-nav__link--active">
+        Home
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-dependencies" class="md-nav__link">
+    installing dependencies
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-transformers" class="md-nav__link">
+    Available transformers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    Contributing
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="CONTRIBUTING/" class="md-nav__link">
+        How to contribute
+      </a>
+    </li>
+  
+
+    
+      
+      
+      
+
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3" type="checkbox" id="__nav_3" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3">
+          API reference
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="API reference" data-md-level="1">
+        <label class="md-nav__title" for="__nav_3">
+          <span class="md-nav__icon md-icon"></span>
+          API reference
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API-reference/utils/" class="md-nav__link">
+        Utils
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+      
+        <input class="md-nav__toggle md-toggle" data-md-toggle="__nav_3_2" type="checkbox" id="__nav_3_2" >
+      
+      
+      
+      
+        <label class="md-nav__link" for="__nav_3_2">
+          Transformer
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <nav class="md-nav" aria-label="Transformer" data-md-level="2">
+        <label class="md-nav__title" for="__nav_3_2">
+          <span class="md-nav__icon md-icon"></span>
+          Transformer
+        </label>
+        <ul class="md-nav__list" data-md-scrollfix>
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API-reference/transformer/base_transformer/" class="md-nav__link">
+        Base transformer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API-reference/transformer/datetime_transformer/" class="md-nav__link">
+        Datetime transformer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API-reference/transformer/encoder_transformer/" class="md-nav__link">
+        Encoder transformer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API-reference/transformer/generic_transformer/" class="md-nav__link">
+        Generic transformer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API-reference/transformer/number_transformer/" class="md-nav__link">
+        Number transformer
+      </a>
+    </li>
+  
+
+            
+          
+            
+              
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="API-reference/transformer/string_transformer/" class="md-nav__link">
+        String transformer
+      </a>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+            
+          
+        </ul>
+      </nav>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#introduction" class="md-nav__link">
+    Introduction
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installation" class="md-nav__link">
+    Installation
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#installing-dependencies" class="md-nav__link">
+    installing dependencies
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#available-transformers" class="md-nav__link">
+    Available transformers
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#usage" class="md-nav__link">
+    Usage
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contributing" class="md-nav__link">
+    Contributing
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+  
+
+
+
+<p><img alt="The Transformer" src="https://raw.githubusercontent.com/chrislemke/sk-transformers/master/docs/assets/images/icon.png" /></p>
+<h1 id="sk-transformers">sk-transformers<a class="headerlink" href="#sk-transformers" title="Permanent link">&para;</a></h1>
+<p><strong><em>A collection of various pandas &amp; scikit-learn compatible transformers for all kinds of preprocessing and feature engineering steps</em></strong> 🛠</p>
+<p><a href="https://github.com/chrislemke/sk-transformers/actions/workflows/checks-testing.yml"><img alt="ChecksAndTesting" src="https://github.com/chrislemke/sk-transformers/actions/workflows/checks-testing.yml/badge.svg" /></a>
+<a href="https://codecov.io/github/chrislemke/sk-transformers"><img alt="codecov" src="https://codecov.io/github/chrislemke/sk-transformers/branch/main/graph/badge.svg?token=LJLXQXX6M8" /></a>
+<a href="https://github.com/chrislemke/sk-transformers/actions/workflows/release.yml"><img alt="Release" src="https://github.com/chrislemke/sk-transformers/actions/workflows/release.yml/badge.svg" /></a>
+<a href="https://pypi.org/project/sk-transformers/"><img alt="pypi" src="https://img.shields.io/pypi/v/sk-transformers" /></a>
+<a href="https://www.python.org/"><img alt="python version" src="https://img.shields.io/pypi/pyversions/sk-transformers?logo=python&amp;logoColor=yellow" /></a>
+<a href="https://pypistats.org/packages/sk-transformers"><img alt="downloads" src="https://img.shields.io/pypi/dm/sk-transformers" /></a>
+<a href="https://chrislemke.github.io/sk-transformers/"><img alt="docs" src="https://img.shields.io/badge/docs-mkdoks%20material-blue" /></a>
+<a href="https://github.com/chrislemke/sk-transformers/blob/main/LICENSE"><img alt="license" src="https://img.shields.io/github/license/chrislemke/sk-transformers" /></a>
+<a href="https://github.com/pre-commit/pre-commit"><img alt="pre-commit" src="https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&amp;logoColor=white" /></a>
+<a href="https://github.com/PyCQA/isort"><img alt="isort" src="https://img.shields.io/badge/%20imports-isort-%231674b1?style=flat&amp;labelColor=ef8336" /></a>
+<a href="https://github.com/psf/black"><img alt="black" src="https://img.shields.io/badge/code%20style-black-000000.svg" /></a>
+<a href="https://github.com/python/mypy"><img alt="mypy" src="http://www.mypy-lang.org/static/mypy_badge.svg" /></a>
+<a href="https://github.com/PyCQA/pylint"><img alt="linting: pylint" src="https://img.shields.io/badge/linting-pylint-yellowgreen" /></a></p>
+<h2 id="introduction">Introduction<a class="headerlink" href="#introduction" title="Permanent link">&para;</a></h2>
+<p>Every tabular data is different. Every column needs to be treated differently. Pandas is already great! And <a href="https://scikit-learn.org/stable/index.html">scikit-learn</a> has a nice <a href="https://scikit-learn.org/stable/data_transforms.html">collection of dataset transformers</a>. But the possibilities of data transformation are infinite. This project tries to provide a brought collection of data transformers that can be easily used together with <a href="https://scikit-learn.org/stable/index.html">scikit-learn</a> - either in a <a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">pipeline</a> or just on its own. See the <a href="#usage">usage chapter</a> for some examples.</p>
+<p>The idea is simple. It is like a well-equipped toolbox 🧰: You always find the tool you need and sometimes you get inspired by seeing a tool you did not know before. Please feel free to <a href="https://chrislemke.github.io/sk-transformers/CONTRIBUTING/">contribute</a> your tools and ideas.</p>
+<p>Check out some examples in the <a href="https://github.com/chrislemke/sk-transformers/blob/main/examples/playground.ipynb">Jupyter notebook</a>.<br>
+<a href="https://colab.research.google.com/github/chrislemke/sk-transformers/blob/main/examples/playground.ipynb"><img alt="Open In Colab" src="https://colab.research.google.com/assets/colab-badge.svg" /></a></p>
+<h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
+<p>If you are using <a href="https://pip.pypa.io/en/stable/">pip</a>, you can install the package with the following command:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>pip<span class="w"> </span>install<span class="w"> </span>sk-transformers
+</code></pre></div></p>
+<p>If you are using <a href="https://python-poetry.org/">Poetry</a>, you can install the package with the following command:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>poetry<span class="w"> </span>add<span class="w"> </span>sk-transformers
+</code></pre></div></p>
+<h2 id="installing-dependencies">installing dependencies<a class="headerlink" href="#installing-dependencies" title="Permanent link">&para;</a></h2>
+<p>With <a href="https://pip.pypa.io/en/stable/">pip</a>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>-r<span class="w"> </span>requirements.txt
+</code></pre></div></p>
+<p>With <a href="https://python-poetry.org/">Poetry</a>:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>poetry<span class="w"> </span>install
+</code></pre></div></p>
+<h2 id="available-transformers">Available transformers<a class="headerlink" href="#available-transformers" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Transformer</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/datetime_transformer/"><code>Datetime transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/datetime_transformer/#sk_transformers.datetime_transformer.DateColumnsTransformer"><code>DateColumnsTransformer</code></a></td>
+<td>Splits a date column into multiple columns.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/datetime_transformer/"><code>Datetime transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/datetime_transformer/#sk_transformers.datetime_transformer.DurationCalculatorTransformer"><code>DurationCalculatorTransformer</code></a></td>
+<td>Calculates the duration between to given dates.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/encoder_transformer/"><code>Encoder transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/encoder_transformer/#sk_transformers.encoder_transformer.MeanEncoderTransformer"><code>MeanEncoderTransformer</code></a></td>
+<td>Scikit-learn API for the <a href="https://feature-engine.readthedocs.io/en/latest/api_doc/encoding/MeanEncoder.html">feature-engine MeanEncoder</a>.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.AggregateTransformer"><code>AggregateTransformer</code></a></td>
+<td>This transformer uses Pandas groupby method and aggregate to apply function on a column grouped by another column.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.AllowedValuesTransformer"><code>AllowedValuesTransformer</code></a></td>
+<td>This transformer replaces values that are <em>not</em> in a list with another value.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.ColumnDropperTransformer"><code>ColumnDropperTransformer</code></a></td>
+<td>Drops columns from a dataframe using Pandas drop method.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.ColumnEvalTransformer"><code>ColumnEvalTransformer</code></a></td>
+<td>Provides the possibility to use Pandas methods on columns.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.DtypeTransformer"><code>DtypeTransformer</code></a></td>
+<td>Transformer that converts a column to a different dtype.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.FunctionsTransformer"><code>FunctionsTransformer</code></a></td>
+<td>This transformer is a plain wrapper around the <a href="https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.FunctionTransformer.html">sklearn.preprocessing.FunctionTransformer</a>.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.LeftJoinTransformer"><code>LeftJoinTransformer</code></a></td>
+<td>Uses Pandas merge function to perform a left-join based on the column of a dataframe and the index of another dataframe. The right dataframe is essentially a lookup table.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.MapTransformer"><code>MapTransformer</code></a></td>
+<td>This transformer iterates over all columns in the <code>features</code> list and applies the given callback to the column. For this it uses the <code>pandas.Series.map</code> method.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.NaNTransformer"><code>NaNTransformer</code></a></td>
+<td>Replace NaN values with a specified value. Internally Pandas fillna method is used.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.QueryTransformer"><code>QueryTransformer</code></a></td>
+<td>Applies a list of queries to a dataframe. If it operates on a dataset used for supervised learning this transformer should be applied on the dataframe containing <code>X</code> and <code>y</code>.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.ValueIndicatorTransformer"><code>ValueIndicatorTransformer</code></a></td>
+<td>Adds a column to a dataframe indicating if a value is equal to a specified value.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/"><code>Generic transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/generic_transformer/#sk_transformers.generic_transformer.ValueReplacerTransformer"><code>ValueReplacerTransformer</code></a></td>
+<td>Uses Pandas replace method to replace values in a column.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/number_transformer/"><code>Number transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/number_transformer/#sk_transformers.number_transformer.MathExpressionTransformer"><code>MathExpressionTransformer</code></a></td>
+<td>Applies an operation to a column and a given value or column. The operation can be any operation from the <code>numpy</code> or <code>operator</code> package.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/number_transformer/"><code>Number transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/number_transformer/#sk_transformers.number_transformer.GeoDistanceTransformer"><code>GeoDistanceTransformer</code></a></td>
+<td>Calculates the distance in kilometers between two places on the earth using the latitudes and longitudes.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/"><code>String transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/#sk_transformers.string_transformer.EmailTransformer"><code>EmailTransformer</code></a></td>
+<td>Transforms an email address into multiple features.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/"><code>String transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/#sk_transformers.string_transformer.IPAddressEncoderTransformer"><code>IPAddressEncoderTransformer</code></a></td>
+<td>Encodes IPv4 and IPv6 strings addresses to a float representation.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/"><code>String transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/#sk_transformers.string_transformer.PhoneTransformer"><code>PhoneTransformer</code></a></td>
+<td>Transforms a phone number into multiple features.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/"><code>String transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/#sk_transformers.string_transformer.StringSimilarityTransformer"><code>StringSimilarityTransformer</code></a></td>
+<td>Calculates the similarity between two strings using the <code>gestalt pattern matching</code> algorithm from the <code>SequenceMatcher</code> class.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/"><code>String transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/#sk_transformers.string_transformer.StringSlicerTransformer"><code>StringSlicerTransformer</code></a></td>
+<td>Slices all entries of specified string features using the slice() function.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/"><code>String transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/#sk_transformers.string_transformer.StringSplitterTransformer"><code>StringSplitterTransformer</code></a></td>
+<td>Splits a string column into multiple columns based on the occurrence of a character.</td>
+</tr>
+<tr>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/"><code>String transformer</code></a></td>
+<td><a href="https://chrislemke.github.io/sk-transformers/API-reference/transformer/string_transformer/#sk_transformers.string_transformer.StringCombinationTransformer"><code>StringCombinationTransformer</code></a></td>
+<td>Contatenates two string columns after ordering them alphabetically first.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="usage">Usage<a class="headerlink" href="#usage" title="Permanent link">&para;</a></h2>
+<p>Let's assume you want to use some method from [NumPy's mathematical functions, to sum up the values of column <code>foo</code> and column <code>bar</code>. You could
+use the <a href="https://chrislemke.github.io/sk-transformers/number_transformer-reference/#sk-transformers.transformer.number_transformer.MathExpressionTransformer"><code>MathExpressionTransformer</code></a>.
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="kn">from</span> <span class="nn">sk_transformers</span> <span class="kn">import</span> <span class="n">MathExpressionTransformer</span>
+<a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]})</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">transformer</span> <span class="o">=</span> <span class="n">MathExpressionTransformer</span><span class="p">([(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;np.sum&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;axis&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})])</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="n">transformer</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">to_numpy</span><span class="p">()</span>
+</code></pre></div>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>array([[1, 4, 5],
+<a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>       [2, 5, 7],
+<a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>       [3, 6, 9]])
+</code></pre></div>
+Even if we only pass one tuple to the transformer - in this example. Like with most other transformers the idea is to simplify preprocessing by giving the possibility to operate on multiple columns at the same time. In this case, the <a href="https://chrislemke.github.io/sk-transformers/number_transformer-reference/#sk-transformers.transformer.number_transformer.MathExpressionTransformer"><code>MathExpressionTransformer</code></a> has created an extra column with the name <code>foo_sum_bar</code>.</p>
+<p>In the next example, we additionally add the <a href="https://chrislemke.github.io/sk-transformers/generic_transformer-reference/#sk_transformers.transformer.generic_transformer.MapTransformer"><code>MapTransformer</code></a>.
+Together with <a href="https://scikit-learn.org/stable/modules/compose.html#combining-estimators">scikit-learn's pipelines</a> it would look like this:
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="kn">from</span> <span class="nn">sk_transformers</span> <span class="kn">import</span> <span class="n">MathExpressionTransformer</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="kn">from</span> <span class="nn">sk_transformers</span> <span class="kn">import</span> <span class="n">MapTransformer</span>
+<a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="kn">from</span> <span class="nn">sklearn.pipeline</span> <span class="kn">import</span> <span class="n">Pipeline</span>
+<a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+<a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">X</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s2">&quot;foo&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="s2">&quot;bar&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]})</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="n">map_step</span> <span class="o">=</span> <span class="n">MapTransformer</span><span class="p">([(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">100</span><span class="p">)])</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="n">sum_step</span> <span class="o">=</span> <span class="n">MathExpressionTransformer</span><span class="p">([(</span><span class="s2">&quot;foo&quot;</span><span class="p">,</span> <span class="s2">&quot;np.sum&quot;</span><span class="p">,</span> <span class="s2">&quot;bar&quot;</span><span class="p">,</span> <span class="p">{</span><span class="s2">&quot;axis&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})])</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="n">pipeline</span> <span class="o">=</span> <span class="n">Pipeline</span><span class="p">([(</span><span class="s2">&quot;map_step&quot;</span><span class="p">,</span> <span class="n">map_step</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;sum_step&quot;</span><span class="p">,</span> <span class="n">sum_step</span><span class="p">)])</span>
+<a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="n">pipeline</span><span class="o">.</span><span class="n">fit_transform</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+</code></pre></div></p>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>   foo  bar  foo_sum_bar
+<a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>0  101    4          105
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>1  102    5          107
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>2  103    6          109
+</code></pre></div>
+<h2 id="contributing">Contributing<a class="headerlink" href="#contributing" title="Permanent link">&para;</a></h2>
+<p>We're all kind of in the same boat. Preprocessing/feature engineering in data science is somehow very individual - every feature is different and must be handled and processed differently. But somehow we all have the same problems: sometimes date columns have to be changed. Sometimes strings have to be formatted, sometimes durations have to be calculated, etc. There is a huge number of preprocessing possibilities but we all use the same tools.</p>
+<p><a href="https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html">scikit-learns pipelines</a> help to use formalized functions. So why not also share these so-called transformers with others? This open-source project has the goal to collect useful preprocessing pipeline steps. Let us all collect what we used for preprocessing and share it with others. This way we can all benefit from each other's work and save a lot of time. So if you have a preprocessing step that you use regularly, please feel free to contribute it to this project. The idea is that this is not only a toolbox but also an inspiration for what is possible. Maybe you have not thought about this preprocessing step before.</p>
+<p>Please check out the <a href="https://chrislemke.github.io/sk-transformers/CONTRIBUTING/">guide</a> on how to contribute to this project.</p>
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+        </div>
+        
+          <a href="#" class="md-top md-icon" data-md-component="top" hidden>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+            Back to top
+          </a>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    <script id="__config" type="application/json">{"base": ".", "features": ["navigation.tracking", "navigation.top"], "search": "assets/javascripts/workers/search.12658920.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}}</script>
+    
+    
+      <script src="assets/javascripts/bundle.5cf534bf.min.js"></script>
+      
+        <script src="javascripts/mathjax.js"></script>
+      
+        <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+      
+        <script src="https://unpkg.com/tablesort@5.3.0/dist/tablesort.min.js"></script>
+      
+        <script src="javascripts/tablesort.js"></script>
+      
+    
+  </body>
+</html>
