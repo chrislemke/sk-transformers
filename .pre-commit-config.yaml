@@ -13,7 +13,7 @@ ci:
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v2.1.1
+    rev: v2.2.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -76,7 +76,7 @@ repos:
         files: pyproject.toml
 
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.0
+    rev: v1.6.3
     hooks:
       - id: docformatter
 
