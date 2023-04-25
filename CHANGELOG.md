@@ -1,5 +1,36 @@
 # Changelog
 
+## [0.11.0](https://github.com/chrislemke/sk-transformers/compare/v0.10.3...v0.11.0) (2023-04-25)
+
+
+### Features
+
+* add StringCombinationTransformer ([#108](https://github.com/chrislemke/sk-transformers/issues/108)) ([48c6977](https://github.com/chrislemke/sk-transformers/commit/48c69777cd0ac6f11bf860457fe150d826c627fe))
+* geo_distance_transformer ([#107](https://github.com/chrislemke/sk-transformers/issues/107)) ([2030569](https://github.com/chrislemke/sk-transformers/commit/2030569e549cffae923442537fb00cfed4098dc0))
+* support python 11 ([#100](https://github.com/chrislemke/sk-transformers/issues/100)) ([d2cf4ae](https://github.com/chrislemke/sk-transformers/commit/d2cf4aee132767e30d8b2f6edc4eafdd208fa9da))
+
+
+### Tests
+
+* add # pragma: no cover ([02ae9c7](https://github.com/chrislemke/sk-transformers/commit/02ae9c7b7eee11651c65878005e3dd33a07afeeb))
+
+
+### CI/CD
+
+* pre-commit autoupdate ([#101](https://github.com/chrislemke/sk-transformers/issues/101)) ([0d224e7](https://github.com/chrislemke/sk-transformers/commit/0d224e76d832e0ab8d7793e06c315f5c54ee7836))
+* pre-commit autoupdate ([#102](https://github.com/chrislemke/sk-transformers/issues/102)) ([dd2bb6b](https://github.com/chrislemke/sk-transformers/commit/dd2bb6b3ef143c2d18bb960ac6ee5aead549391f))
+* pre-commit autoupdate ([#103](https://github.com/chrislemke/sk-transformers/issues/103)) ([f7c8732](https://github.com/chrislemke/sk-transformers/commit/f7c8732a7cf86644889735ad81a508b3fd1c259b))
+* pre-commit autoupdate ([#104](https://github.com/chrislemke/sk-transformers/issues/104)) ([fd4173a](https://github.com/chrislemke/sk-transformers/commit/fd4173a66c252a1e6f0ab6668c44b5c6aee9ae00))
+* pre-commit autoupdate ([#105](https://github.com/chrislemke/sk-transformers/issues/105)) ([238d99f](https://github.com/chrislemke/sk-transformers/commit/238d99f171c18f8fc1f27d8c086c1b55cb523e46))
+* pre-commit autoupdate ([#112](https://github.com/chrislemke/sk-transformers/issues/112)) ([7c630ed](https://github.com/chrislemke/sk-transformers/commit/7c630eded06d3f1e0c92694ea61bee9db40e236f))
+
+
+### Maintenance
+
+* add support for `polars` ([#87](https://github.com/chrislemke/sk-transformers/issues/87)) ([b831485](https://github.com/chrislemke/sk-transformers/commit/b831485d0d857a5e0c4ec478e745697df0fb2eb9))
+* replace static methods in some transformers ([#110](https://github.com/chrislemke/sk-transformers/issues/110)) ([fa6215d](https://github.com/chrislemke/sk-transformers/commit/fa6215de6db0e713865b6f46847f8219864295b4))
+* series manipulation for ip to float ([#111](https://github.com/chrislemke/sk-transformers/issues/111)) ([39aa55a](https://github.com/chrislemke/sk-transformers/commit/39aa55afd3514c89c44b89cd4b8bc3f2e68a54c7))
+
 ## [0.10.3](https://github.com/chrislemke/sk-transformers/compare/v0.10.2...v0.10.3) (2023-03-10)
 
 
