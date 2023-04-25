@@ -358,13 +358,13 @@ class PhoneTransformer(BaseTransformer):
     @staticmethod
     def __phone_to_float(
         attribute: str, phone: str, divisor: int, error_value: str
-    ) -> float:
-        phone = phone.replace(" ", "")  # pragma: no cover
-        phone = re.sub(r"[^0-9+-]", "", phone)  # pragma: no cover
-        phone = re.sub(r"^00", "+", phone)  # pragma: no cover
-        try:  # pragma: no cover
+    ) -> float:  # pragma: no cover
+        phone = phone.replace(" ", "")
+        phone = re.sub(r"[^0-9+-]", "", phone)
+        phone = re.sub(r"^00", "+", phone)
+        try:
             return float(getattr(phonenumbers.parse(phone, None), attribute)) / divisor
-        except:  # pylint: disable=W0702 # pragma: no cover
+        except:  # pylint: disable=W0702
             try:
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
             except:  # pylint: disable=W0702
