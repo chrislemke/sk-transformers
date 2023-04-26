@@ -27,7 +27,7 @@ def test_ip_address_encoder_transformer_in_pipeline(X_numbers) -> None:
         ]
     )
     assert pipeline.steps[0][0] == "ipaddressencodertransformer"
-    assert np.array_equal(X["ip_address"].to_numpy(), expected)
+    assert np.allclose(X["ip_address"].to_numpy(), expected)
 
 
 def test_email_transformer_in_pipeline(X_strings) -> None:

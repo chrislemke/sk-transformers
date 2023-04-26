@@ -6,10 +6,11 @@ import warnings
 from difflib import SequenceMatcher
 from typing import Callable, List, Optional, Tuple, Union
 
+import numpy as np
 import pandas as pd
 import phonenumbers
 import polars as pl
-import sk_transformers
+
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
 
@@ -67,15 +68,63 @@ class IPAddressEncoderTransformer(BaseTransformer):
         X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
         function = functools.partial(
-            sk_transformers.ip_to_float,  # type: ignore
+            IPAddressEncoderTransformer.__ip_to_float,
             self.ip4_divisor,
             self.ip6_divisor,
             self.error_value,
         )
 
         return X.with_columns(
-            [pl.col(column).apply(function) for column in self.features]
+            [pl.col(column).map(function) for column in self.features]
         ).to_pandas()
+
+    @staticmethod
+    def __ip_to_float(
+        ip4_devisor: float,
+        ip6_devisor: float,
+        error_value: Union[int, float],
+        ip_address: pl.Series,
+    ) -> pl.Series:  # pragma: no cover
+        ip_df = pl.DataFrame({"ip_addresses": ip_address})
+        ip_df = ip_df.with_columns(
+            [
+                pl.when(ip_address.str.contains(r"^(?:\d{1,3}\.){3}\d{1,3}$"))
+                .then(ip_address)
+                .otherwise("0.0.0.0")  # nosec
+                .alias("ipv4"),
+                pl.when(
+                    ip_address.str.contains(r"^([0-9A-Fa-f]{1,4}:){7}[0-9A-Fa-f]{1,4}$")
+                )
+                .then(ip_address)
+                .otherwise("0:0:0:0:0:0:0:0")
+                .alias("ipv6"),
+            ]
+        )
+
+        ip_series_v4 = ip_df["ipv4"]
+        octets = ip_series_v4.str.split(".")
+
+        ip_float_v4 = pl.Series(np.zeros(ip_address.shape[0]))
+        for i in range(4):
+            factor_v4 = 256 ** (3 - i) / ip4_devisor
+            ip_float_v4 += (
+                octets.arr.slice(i, 1).arr.explode().cast(pl.UInt32) * factor_v4
+            )
+
+        ip_series_v6 = ip_df["ipv6"]
+        hextets = ip_series_v6.str.split(":")
+
+        ip_float_v6 = pl.Series(np.zeros(ip_address.shape[0]))
+        for i in range(8):
+            factor_v6 = 65536 ** (7 - i) / ip6_devisor
+            ip_float_v6 += (
+                hextets.arr.slice(i, 1).arr.explode().apply(lambda x: int(x, 16))
+                * factor_v6
+            )
+
+        return (ip_float_v4 + ip_float_v6).map_dict(
+            {0: error_value}, default=pl.first()
+        )
 
 
 class EmailTransformer(BaseTransformer):
@@ -118,7 +167,7 @@ class EmailTransformer(BaseTransformer):
         """
         X = check_ready_to_transform(self, X, self.features, return_polars=True)
 
-        for column in self.features:
+        for column in self.features:  # pylint: disable=duplicate-code
             X = X.with_columns(
                 pl.col(column)
                 .str.split_exact("@", 1)
@@ -162,7 +211,7 @@ class EmailTransformer(BaseTransformer):
         return X.to_pandas()
 
     @staticmethod
-    def __num_of_repeated_characters(string: str) -> int:
+    def __num_of_repeated_characters(string: str) -> int:  # pragma: no cover
         return max(len("".join(g)) for _, g in itertools.groupby(string))
 
 
@@ -309,16 +358,16 @@ class PhoneTransformer(BaseTransformer):
     @staticmethod
     def __phone_to_float(
         attribute: str, phone: str, divisor: int, error_value: str
-    ) -> float:
+    ) -> float:  # pragma: no cover
         phone = phone.replace(" ", "")
         phone = re.sub(r"[^0-9+-]", "", phone)
         phone = re.sub(r"^00", "+", phone)
         try:
             return float(getattr(phonenumbers.parse(phone, None), attribute)) / divisor
-        except:  # noqa: E722
+        except:  # pylint: disable=W0702
             try:
                 return float(re.sub(r"(?<!^)[^0-9]", "", error_value))
-            except:  # noqa: E722
+            except:  # pylint: disable=W0702
                 return float(error_value)
 
 
