@@ -70,7 +70,7 @@ repos:
       - id: text-unicode-replacement-char
 
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.3
+    rev: v1.6.5
     hooks:
       - id: docformatter
 
