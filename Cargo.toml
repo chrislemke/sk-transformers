@@ -1,0 +1,22 @@
+[package]
+name = "sk-transformers"
+version = "0.1.0"
+edition = "2021"
+readme = "docs/README.md"
+license-file = "LICENSE"
+description = "In this project Rust is used to provide a performative backend for the transformers library."
+authors = ["Chris Lemke", "Chris Lemke <1@lemke.ai>"]
+rust-version = "1.68.2"
+publish = false
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[lib]
+name = "sk_transformers"
+crate-type = ["cdylib"]
+
+
+[dependencies]
+geoutils = "0.5.1"
+ndarray = "0.15.6"
+numpy = "0.18.0"
+pyo3 = "0.18.3"

@@ -9,7 +9,7 @@ ci:
   autoupdate_branch: "develop"
   autoupdate_commit_msg: "ci: pre-commit autoupdate"
   autoupdate_schedule: weekly
-  skip: [python-safety-dependencies-check, poetry-lock, poetry-export]
+  skip: [cargo-check, fmt, clippy]
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
@@ -69,12 +69,6 @@ repos:
       - id: python-use-type-annotations
       - id: text-unicode-replacement-char
 
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.3.1
-    hooks:
-      - id: python-safety-dependencies-check
-        files: pyproject.toml
-
   - repo: https://github.com/PyCQA/docformatter
     rev: v1.6.5
     hooks:
@@ -93,11 +87,6 @@ repos:
     hooks:
       - id: ssort
 
-  - repo: https://github.com/asottile/pyupgrade
-    rev: v3.4.0
-    hooks:
-      - id: pyupgrade
-
   - repo: https://github.com/psf/black
     rev: 23.3.0
     hooks:
@@ -105,17 +94,10 @@ repos:
       - id: black-jupyter
         files: \.ipynb$
 
-  - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
+  - repo: https://github.com/charliermarsh/ruff-pre-commit
+    rev: "v0.0.262"
     hooks:
-      - id: isort
-        args: ["--profile=black"]
-
-  - repo: https://github.com/PyCQA/pylint
-    rev: v3.0.0a6
-    hooks:
-      - id: pylint
-        args: ["--rcfile=pyproject.toml"]
+      - id: ruff
 
   - repo: https://github.com/pre-commit/mirrors-mypy
     rev: v1.3.0
@@ -123,13 +105,13 @@ repos:
       - id: mypy
         args:
           - "--config-file=pyproject.toml"
-        exclude: "tests"
+        exclude: "tests/python"
 
   - repo: https://github.com/PyCQA/bandit
     rev: 1.7.5
     hooks:
       - id: bandit
-        exclude: "^tests/"
+        exclude: "^tests/python"
         args:
           - "-r"
 
@@ -138,19 +120,9 @@ repos:
     hooks:
       - id: nbstripout
 
-  - repo: https://github.com/python-poetry/poetry
-    rev: 1.4.0
+  - repo: https://github.com/doublify/pre-commit-rust
+    rev: v1.0
     hooks:
-      - id: poetry-check
-      - id: poetry-lock
-        language_version: 3.10.8
-      - id: poetry-export
-        args:
-          [
-            "--with",
-            "dev",
-            "--format",
-            "requirements.txt",
-            "--output",
-            "requirements.txt",
-          ]
+      - id: fmt
+      - id: cargo-check
+      - id: clippy

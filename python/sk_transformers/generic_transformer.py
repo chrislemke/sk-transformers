@@ -4,10 +4,9 @@ from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
 import pandas as pd
 import polars as pl
-from sklearn.preprocessing import FunctionTransformer
-
 from sk_transformers.base_transformer import BaseTransformer
 from sk_transformers.utils import check_ready_to_transform
+from sklearn.preprocessing import FunctionTransformer
 
 
 class ColumnEvalTransformer(BaseTransformer):
@@ -46,8 +45,6 @@ class ColumnEvalTransformer(BaseTransformer):
         ValueError: If the `eval_func` tries to assign multiple columns to one target column.
     """
 
-    __slots__ = ("features",)
-
     def __init__(
         self, features: List[Union[Tuple[str, str], Tuple[str, str, str]]]
     ) -> None:
@@ -73,7 +70,8 @@ class ColumnEvalTransformer(BaseTransformer):
         for eval_tuple in self.features:
             column = eval_tuple[0]
             eval_func = eval_tuple[1]
-            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore # pylint: disable=unused-variable
+            # ruff: noqa:F841
+            new_column = eval_tuple[2] if len(eval_tuple) == 3 else column  # type: ignore
 
             if eval_func[0] == ".":
                 raise ValueError(
@@ -82,7 +80,7 @@ class ColumnEvalTransformer(BaseTransformer):
 
             try:
                 X = X.with_columns(
-                    eval(  # pylint: disable=eval-used # nosec
+                    eval(  # nosec
                         f"pl.col({'column'}).{eval_func}.alias({'new_column'})"
                     )
                 )

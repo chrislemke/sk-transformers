@@ -1,14 +1,11 @@
 import numpy as np
 import pytest
-from sklearn.pipeline import make_pipeline
-
-from sk_transformers import (
+from sk_transformers.datetime_transformer import (
     DateColumnsTransformer,
     DurationCalculatorTransformer,
     TimestampTransformer,
 )
-
-# pylint: disable=missing-function-docstring, missing-class-docstring
+from sklearn.pipeline import make_pipeline
 
 
 def test_date_columns_transformer_in_pipeline(tiny_date_df):

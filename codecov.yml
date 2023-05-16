@@ -1,3 +1,4 @@
 ignore:
-  - "tests"
+  - "python/tests"
   - "docs"
+  - "src"

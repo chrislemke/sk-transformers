@@ -1,13 +1,17 @@
-[tool.poetry]
+[project]
 name = "sk-transformers"
-version = "0.11.0"
-description = "A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
-authors = ["Christopher Lemke <1@lemke.ai>"]
-license = "MIT"
 readme = "docs/README.md"
-packages = [{ include = "sk_transformers", from = "src" }]
-include = ["CHANGELOG.md"]
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+version = "0.10.3"
+description = "A collection of various pandas & scikit-learn compatible transformers for all kinds of preprocessing and feature engineering"
+authors = [
+  {email = "1@lemke.ai"},
+  {name = "Chris Lemke"}
+]
 classifiers = [
+    "Programming Language :: Rust",
+    "Programming Language :: Python :: Implementation :: CPython",
     "Intended Audience :: Science/Research",
     "Natural Language :: English",
     "Topic :: Scientific/Engineering :: Artificial Intelligence",
@@ -26,82 +30,63 @@ keywords = [
     "data science",
     "artificial intelligence"
 ]
+
+dependencies = [
+    "feature-engine ~=1.5.2",
+    "ipywidgets ~=8.0.4",
+    "joblib ~=1.2.0",
+    "numpy ~=1.23.5",
+    "pandas ~=1.5.2",
+    "phonenumbers ~=8.13.4",
+    "scikit-learn ~=1.2.0",
+    "polars ~=0.16.7",
+    "pyarrow ~=11.0.0",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest ~=7.3.1",
+    "pytest-cov ~=4.0.0"
+]
+
+dev = [
+    "black[jupyter]",
+    "bandit ~=1.7.4",
+    "mypy ~=1.0.0",
+    "ruff ~=0.0.262",
+    "pre-commit ~=3.0.4",
+    "nbstripout ~=0.6.1",
+    "ssort ~=0.11.6",
+    "maturin ~=0.14.17",
+]
+
+docs = [
+    "mkdocs ==1.4.2",
+    "mkdocstrings[python] ==0.19.1",
+    "mkdocs-material ==9.0.2",
+]
+
+[project.urls]
 homepage = "https://chrislemke.github.io/sk-transformers/"
 documentation = "https://chrislemke.github.io/sk-transformers/"
 repository = "https://github.com/chrislemke/sk-transformers/"
-
-[tool.poetry.urls]
 Changelog = "https://github.com/chrislemke/sk-transformers/blob/main/CHANGELOG.md"
 Issues = "https://github.com/chrislemke/sk-transformers/issues"
 Discussions = "https://github.com/chrislemke/sk-transformers/discussions"
 Contributing = "https://github.com/chrislemke/sk-transformers/blob/main/docs/CONTRIBUTING.md"
 
-[tool.poetry.dependencies]
-python = ">=3.8,<3.12"
-
-feature-engine = "^1.5.2"
-ipywidgets = "^8.0.4"
-joblib = "1.2.0"
-numpy = "1.23.5"
-pandas = "^1.5.2"
-phonenumbers = "^8.13.4"
-scikit-learn = "^1.2.0"
-rich = "^13.3.1"
-polars = "^0.16.7"
-pyarrow = "^11.0.0"
-
-[tool.poetry.group.test.dependencies]
-pytest = "^7.2.0"
-pytest-cov = "4.0.0"
-
-[tool.poetry.group.dev.dependencies]
-black = {extras = ["jupyter"], version = "^23.1.0"}
-bandit = "^1.7.4"
-isort = "^5.12.0"
-mypy = "^1.0.0"
-pylint = "^2.16.1"
-pre-commit = "^3.0.4"
-nbstripout = "^0.6.1"
-ssort = "^0.11.6"
-
-[tool.poetry.group.docs.dependencies]
-mkdocs = "1.4.2"
-mkdocstrings = {extras = ["python"], version = "0.19.1"}
-mkdocs-material = "9.0.2"
-
-[tool.poetry.group.dev]
-optional = false
-
-[tool.poetry.group.test]
-optional = true
-
-[tool.poetry.group.docs]
-optional = true
-
 [build-system]
-requires = ["poetry-core>=1.4.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["maturin>=0.14,<0.15"]
+build-backend = "maturin"
+
+[tool.maturin]
+python-source = "python"
+features = ["pyo3/extension-module"]
 
 [tool.pytest.ini_options]
 testpaths = [
-    "tests"
+    "tests/python"
 ]
-
-[tool.pylint.messages_control]
-disable = [
-    "C0301",
-    "C0103",
-    "C0114",
-    "E0401",
-    "R0902",
-    "R0903",
-    "R0913",
-    "R0914",
-    "W0201",
-    ]
-
-[tool.pylint.format]
-max-line-length = 88
 
 [tool.mypy]
 strict = true
@@ -111,10 +96,32 @@ disallow_any_generics = false
 warn_return_any = false
 warn_unused_ignores = false
 no_namespace_packages = true
-exclude = ["tests", "docs"]
+exclude = ["python/tests", "docs", "src"]
 
-[tool.isort]
-profile = "black"
-skip_glob = ["docs/*"]
-src_paths = ["src/sk_transformers", "tests"]
-extend_skip = [".md", ".yml", ".yaml"]
+[tool.ruff]
+ignore = ["E501"]
+line-length = 88
+target-version = "py38"
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "workflow/src/libs/",
+]

@@ -30,48 +30,62 @@ jobs:
         with:
           category: "/language:${{matrix.language}}"
 
-  testing:
-    name: Checks and tests
+  python_testing:
+    name: Python checks and tests
     runs-on: ubuntu-latest
     strategy:
       matrix:
         python-version: ["3.8", "3.9", "3.10", "3.11"]
     steps:
+      - name: Cache pip packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('**/pyproject.toml') }}
+          restore-keys: |
+            ${{ runner.os }}-pip-
       - uses: actions/checkout@v3
-      - name: Install poetry
-        run: |
-          curl -O -sSL https://install.python-poetry.org/install-poetry.py
-          python install-poetry.py -y --version 1.3.2
-          echo "PATH=${HOME}/.poetry/bin:${PATH}" >> $GITHUB_ENV
-          rm install-poetry.py
       - uses: actions/setup-python@v4
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "poetry"
-      - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
-        with:
-          python-version: ${{ matrix.python-version }}
-          cache: "poetry"
-      - name: Install dependencies and project
+      - name: Run Python checks and tests
         run: |
-          poetry env use ${{ matrix.python-version }}
-          poetry install --with test
-      - name: Check with isort
+          python --version
+          rustc --version
+          cargo tree
+          python -m venv env
+          source env/bin/activate
+          pip install maturin
+          maturin develop
+          pip install "sk-transformers[dev, test]"
+          black --check ./python/sk_transformers  ./tests/python
+          mypy --config-file=pyproject.toml .
+          bandit -r ./python/sk_transformers/*
+          ruff ./python/sk_transformers ./tests/python
+          pytest --cov tests/python --cov-fail-under=90 --cov-report term-missing
+
+  rust_testing:
+    name: Rust checks and tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: Swatinem/rust-cache@v2
+      - name: Update local toolchain
         run: |
-          poetry run isort --check-only .
-      - name: Check with black
+          rustup update
+          rustup component add clippy
+      - name: Rust linting
         run: |
-          poetry run black --check ./src/sk_transformers  ./tests
-      - name: Check with mypy
+          cargo fmt -- --check
+          cargo clippy -- -D warnings
+
+      - name: Rust testing
         run: |
-          poetry run mypy --config-file=pyproject.toml .
-      - name: Check with bandit
-        run: |
-          poetry run bandit -r ./src/sk_transformers/*
-      - name: Lint with pylint
-        run: |
-          poetry run pylint --rcfile=pyproject.toml ./src/sk_transformers ./tests
-      - name: Test with pytest
-        run: |
-          poetry run pytest --cov src/sk_transformers --cov-fail-under=90 --cov-report term-missing
+          python -m venv env
+          source env/bin/activate
+          pip install maturin
+          maturin develop
+          pip install sk-transformers
+          cargo build
+          cargo check
+          cargo test --all

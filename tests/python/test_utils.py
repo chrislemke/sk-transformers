@@ -1,14 +1,11 @@
 import numpy as np
 import pandas as pd
 import pytest
-
 from sk_transformers.utils import (
     check_data,
     check_ready_to_transform,
     prepare_categorical_data,
 )
-
-# pylint: disable=missing-function-docstring
 
 
 def test_check_ready_to_transform_for_empty_df() -> None:
