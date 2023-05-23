@@ -76,7 +76,7 @@ repos:
         files: pyproject.toml
 
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.6.5
+    rev: v1.7.1
     hooks:
       - id: docformatter
 
@@ -139,7 +139,7 @@ repos:
       - id: nbstripout
 
   - repo: https://github.com/python-poetry/poetry
-    rev: 1.4.0
+    rev: 1.5.0
     hooks:
       - id: poetry-check
       - id: poetry-lock
