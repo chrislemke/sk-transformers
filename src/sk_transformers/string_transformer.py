@@ -108,7 +108,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         for i in range(4):
             factor_v4 = 256 ** (3 - i) / ip4_devisor
             ip_float_v4 += (
-                octets.arr.slice(i, 1).arr.explode().cast(pl.UInt32) * factor_v4
+                octets.list.slice(i, 1).list.explode().cast(pl.UInt32) * factor_v4
             )
 
         ip_series_v6 = ip_df["ipv6"]
@@ -118,7 +118,7 @@ class IPAddressEncoderTransformer(BaseTransformer):
         for i in range(8):
             factor_v6 = 65536 ** (7 - i) / ip6_devisor
             ip_float_v6 += (
-                hextets.arr.slice(i, 1).arr.explode().apply(lambda x: int(x, 16))
+                hextets.list.slice(i, 1).list.explode().apply(lambda x: int(x, 16))
                 * factor_v6
             )
 
