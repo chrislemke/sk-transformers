@@ -95,21 +95,29 @@ class DateColumnsTransformer(BaseTransformer):
                 "day_of_year": pl.col(f"{column}_datetime").dt.ordinal_day(),
                 "week_of_year": pl.col(f"{column}_datetime").dt.week(),
                 "quarter": pl.col(f"{column}_datetime").dt.quarter(),
-                "is_leap_year": pl.col(f"{column}_datetime").dt.year() % 4 == 0,
+                "is_leap_year": pl.col(f"{column}_datetime").dt.is_leap_year(),
                 "is_month_start": pl.col(f"{column}_datetime").dt.day() == 1,
-                "is_month_end": pl.col(f"{column}_datetime")
-                .dt.day()
-                .is_in([28, 29, 30, 31]),
-                "is_quarter_start": pl.col(f"{column}_datetime")
-                .dt.ordinal_day()
-                .is_in([1, 91, 183, 275]),
-                "is_quarter_end": pl.col(f"{column}_datetime")
-                .dt.ordinal_day()
-                .is_in([90, 182, 274, 365]),
+                "is_month_end": (
+                    pl.col(f"{column}_datetime").dt.day()
+                    == pl.col(f"{column}_datetime").dt.month_end().dt.day()
+                ),
+                "is_quarter_start": (
+                    pl.col(f"{column}_datetime").dt.ordinal_day() == 1
+                ).or_(
+                    (
+                        pl.col(f"{column}_datetime").dt.ordinal_day()
+                        - pl.col(f"{column}_datetime").dt.is_leap_year()
+                    ).is_in([91, 183, 275])
+                ),
+                "is_quarter_end": (
+                    pl.col(f"{column}_datetime").dt.ordinal_day()
+                    - pl.col(f"{column}_datetime").dt.is_leap_year()
+                ).is_in([90, 182, 274, 365]),
                 "is_year_start": pl.col(f"{column}_datetime").dt.ordinal_day() == 1,
-                "is_year_end": pl.col(f"{column}_datetime")
-                .dt.ordinal_day()
-                .is_in([365, 366]),
+                "is_year_end": (
+                    pl.col(f"{column}_datetime").dt.ordinal_day()
+                    == 365 + pl.col(f"{column}_datetime").dt.is_leap_year()
+                ),
                 "is_weekend": pl.col(f"{column}_datetime").dt.weekday().is_in([6, 7]),
             }
 
