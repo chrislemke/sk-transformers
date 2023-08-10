@@ -83,7 +83,7 @@ class DateColumnsTransformer(BaseTransformer):
         for column in self.features:  # pylint: disable=duplicate-code
             X = X.with_columns(
                 pl.col(column)
-                .str.strptime(pl.Datetime, fmt=self.date_format)
+                .str.strptime(pl.Datetime, format=self.date_format)
                 .alias(column + "_datetime")
             )
 
@@ -186,16 +186,20 @@ class DurationCalculatorTransformer(BaseTransformer):
         if self.unit == "seconds":
             return X.with_columns(
                 (
-                    pl.col(self.features[1]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
-                    - pl.col(self.features[0]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                    pl.col(self.features[1]).str.strptime(
+                        pl.Datetime, format="%Y-%m-%d"
+                    )
+                    - pl.col(self.features[0]).str.strptime(
+                        pl.Datetime, format="%Y-%m-%d"
+                    )
                 )
                 .dt.seconds()
                 .alias(self.new_column_name)
             ).to_pandas()
         return X.with_columns(
             (
-                pl.col(self.features[1]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
-                - pl.col(self.features[0]).str.strptime(pl.Datetime, fmt="%Y-%m-%d")
+                pl.col(self.features[1]).str.strptime(pl.Datetime, format="%Y-%m-%d")
+                - pl.col(self.features[0]).str.strptime(pl.Datetime, format="%Y-%m-%d")
             )
             .dt.days()
             .alias(self.new_column_name)
