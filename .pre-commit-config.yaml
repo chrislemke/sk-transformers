@@ -13,7 +13,7 @@ ci:
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v2.4.0
+    rev: v3.1.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -81,7 +81,7 @@ repos:
       - id: docformatter
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.7.0
+    rev: 1.7.1
     hooks:
       - id: nbqa-check-ast
       - id: nbqa-mypy
@@ -89,7 +89,7 @@ repos:
       - id: nbqa-pyupgrade
 
   - repo: https://github.com/bwhmather/ssort
-    rev: v0.11.6
+    rev: 0.12.2
     hooks:
       - id: ssort
 
@@ -99,26 +99,26 @@ repos:
       - id: pyupgrade
 
   - repo: https://github.com/psf/black
-    rev: 23.10.1
+    rev: 23.12.1
     hooks:
       - id: black
       - id: black-jupyter
         files: \.ipynb$
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.12.0
+    rev: 5.13.2
     hooks:
       - id: isort
         args: ["--profile=black"]
 
   - repo: https://github.com/PyCQA/pylint
-    rev: v3.0.1
+    rev: v3.0.3
     hooks:
       - id: pylint
         args: ["--rcfile=pyproject.toml"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.6.1
+    rev: v1.8.0
     hooks:
       - id: mypy
         args:
@@ -126,7 +126,7 @@ repos:
         exclude: "tests"
 
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.5
+    rev: 1.7.6
     hooks:
       - id: bandit
         exclude: "^tests/"
