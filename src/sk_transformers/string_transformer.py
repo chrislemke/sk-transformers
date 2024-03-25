@@ -489,9 +489,11 @@ class StringSplitterTransformer(BaseTransformer):
     ) -> None:
         super().__init__()
         self.features = [
-            (split_tuple[0], split_tuple[1], split_tuple[2])
-            if len(split_tuple) == 3
-            else (split_tuple[0], split_tuple[1], -1)
+            (
+                (split_tuple[0], split_tuple[1], split_tuple[2])
+                if len(split_tuple) == 3
+                else (split_tuple[0], split_tuple[1], -1)
+            )
             for split_tuple in features
         ]
 
@@ -515,20 +517,22 @@ class StringSplitterTransformer(BaseTransformer):
         ]
 
         select_with_expr = [
-            pl.col(column)
-            .str.splitn(by=separator, n=max_possible_split + 1)
-            .struct.rename_fields(
-                [column + f"_part_{i}" for i in range(1, max_possible_split + 2)]
-            )
-            .alias(column + "_alias")
-            if maxsplit in [0, -1] or maxsplit > max_possible_split
-            else (
+            (
                 pl.col(column)
-                .str.splitn(by=separator, n=maxsplit + 1)
+                .str.splitn(by=separator, n=max_possible_split + 1)
                 .struct.rename_fields(
-                    [column + f"_part_{i}" for i in range(1, maxsplit + 2)]
+                    [column + f"_part_{i}" for i in range(1, max_possible_split + 2)]
                 )
                 .alias(column + "_alias")
+                if maxsplit in [0, -1] or maxsplit > max_possible_split
+                else (
+                    pl.col(column)
+                    .str.splitn(by=separator, n=maxsplit + 1)
+                    .struct.rename_fields(
+                        [column + f"_part_{i}" for i in range(1, maxsplit + 2)]
+                    )
+                    .alias(column + "_alias")
+                )
             )
             for (column, separator, maxsplit), max_possible_split in zip(
                 self.features, max_possible_splits_list
