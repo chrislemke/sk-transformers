@@ -291,9 +291,11 @@ class AggregateTransformer(BaseTransformer):
 
             agg_df = X.groupby(groupby_columns).agg(
                 [
-                    getattr(pl, agg_func)(agg_column).alias(agg_new_column)
-                    if isinstance(agg_func, str)
-                    else pl.col(agg_column).apply(agg_func).alias(agg_new_column)
+                    (
+                        getattr(pl, agg_func)(agg_column).alias(agg_new_column)
+                        if isinstance(agg_func, str)
+                        else pl.col(agg_column).apply(agg_func).alias(agg_new_column)
+                    )
                     for (agg_column, agg_func, agg_new_column) in agg_features
                 ]
             )
