@@ -13,7 +13,7 @@ ci:
 
 repos:
   - repo: https://github.com/compilerla/conventional-pre-commit
-    rev: v3.2.0
+    rev: v4.3.0
     hooks:
       - id: conventional-pre-commit
         stages: [commit-msg]
@@ -36,7 +36,7 @@ repos:
           ]
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0
+    rev: v6.0.0
     hooks:
       - id: trailing-whitespace
       - id: end-of-file-fixer
@@ -70,18 +70,18 @@ repos:
       - id: text-unicode-replacement-char
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-    rev: v1.3.3
+    rev: v1.4.2
     hooks:
       - id: python-safety-dependencies-check
         files: pyproject.toml
 
   - repo: https://github.com/PyCQA/docformatter
-    rev: v1.7.5
+    rev: v1.7.7
     hooks:
       - id: docformatter
 
   - repo: https://github.com/nbQA-dev/nbQA
-    rev: 1.8.5
+    rev: 1.9.1
     hooks:
       - id: nbqa-check-ast
       - id: nbqa-mypy
@@ -89,36 +89,36 @@ repos:
       - id: nbqa-pyupgrade
 
   - repo: https://github.com/bwhmather/ssort
-    rev: 0.12.4
+    rev: 0.15.0
     hooks:
       - id: ssort
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.15.2
+    rev: v3.21.2
     hooks:
       - id: pyupgrade
 
-  - repo: https://github.com/psf/black
-    rev: 24.4.0
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 25.11.0
     hooks:
       - id: black
       - id: black-jupyter
         files: \.ipynb$
 
   - repo: https://github.com/PyCQA/isort
-    rev: 5.13.2
+    rev: 7.0.0
     hooks:
       - id: isort
         args: ["--profile=black"]
 
   - repo: https://github.com/PyCQA/pylint
-    rev: v3.1.0
+    rev: v4.0.3
     hooks:
       - id: pylint
         args: ["--rcfile=pyproject.toml"]
 
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.9.0
+    rev: v1.18.2
     hooks:
       - id: mypy
         args:
@@ -126,7 +126,7 @@ repos:
         exclude: "tests"
 
   - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.8
+    rev: 1.9.2
     hooks:
       - id: bandit
         exclude: "^tests/"
@@ -134,7 +134,7 @@ repos:
           - "-r"
 
   - repo: https://github.com/kynan/nbstripout
-    rev: 0.7.1
+    rev: 0.8.2
     hooks:
       - id: nbstripout
 
